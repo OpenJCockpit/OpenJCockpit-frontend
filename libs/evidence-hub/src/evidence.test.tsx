@@ -154,7 +154,9 @@ describe('evidenceApp', () => {
     expect(await screen.findByText('dashboard')).toBeInTheDocument();
   });
 
-  it('loads a non-English translation lazily', async () => {
+  // The lazy locale chunk is transformed on first import, which is slow on a cold CI runner.
+  // The test timeout must exceed the inner findBy timeout, or the test dies before the wait does.
+  it('loads a non-English translation lazily', { timeout: 20_000 }, async () => {
     vi.mocked(api.loadWorkspace).mockResolvedValue(WORKSPACE);
     const routes = await evidenceApp.loadRoutes();
     renderWith(<RouterProvider router={createMemoryRouter(routes)} />, PROJECT, 'nl');
@@ -162,7 +164,7 @@ describe('evidenceApp', () => {
       await screen.findByRole(
         'heading',
         { level: 1, name: /Uitvoeringsbewijs/ },
-        { timeout: 5000 },
+        { timeout: 15_000 },
       ),
     ).toBeInTheDocument();
   });
