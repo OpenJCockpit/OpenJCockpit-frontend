@@ -1,0 +1,99 @@
+# Frontend stack: the dashboard (host app) and the four federated remotes.
+#
+# This repository is deliberately independent of the backend repository (OpenJCockpit/OpenJCockpit).
+# The two run as separate Compose projects and talk over the ports the backend publishes on the host:
+#
+#   backend  -> http://localhost:9080  ai-control-service (the /api the dashboard proxies to)
+#   backend  -> http://localhost:8080  Keycloak (the browser logs in here)
+#   frontend -> http://localhost:4000  dashboard, 4403-4406 remotes (the browser loads these)
+#
+# Start the backend first (`docker compose up -d` in the backend checkout), then `docker compose up -d --build`
+# here. The dashboard's nginx resolves its API upstream at startup, so a backend that is not up yet only
+# surfaces as 502s on /api until it is.
+#
+# Backend on another host, or behind another port: set API_UPSTREAM / KEYCLOAK_URL in .env (see .env.example).
+
+x-host-gateway: &host-gateway
+  # Makes host.docker.internal resolve on Linux too (Docker Desktop provides it already).
+  - "host.docker.internal:host-gateway"
+
+services:
+  dashboard:
+    build:
+      context: .
+      dockerfile: apps/dashboard/Dockerfile
+      args:
+        BUILD_SHA: ${BUILD_SHA:-dev}
+    image: openjcockpit/dashboard:local
+    container_name: openjcockpit-dashboard
+    restart: unless-stopped
+    ports:
+      - "4000:8080"
+    extra_hosts: *host-gateway
+    environment:
+      # Server-side: nginx proxies /api here. The backend publishes ai-control-service on host port 9080.
+      API_UPSTREAM: ${API_UPSTREAM:-http://host.docker.internal:9080}
+      # Browser-side: where the user logs in. The backend publishes Keycloak on host port 8080.
+      KEYCLOAK_URL: ${KEYCLOAK_URL:-http://localhost:8080}
+      KEYCLOAK_REALM: ${KEYCLOAK_REALM:-openjcockpit}
+      KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID:-openjcockpit}
+      # The browser loads remotes from the published host ports, so these are localhost origins.
+      FEDERATION_MANIFEST: '{"skillsHub":"http://localhost:4403/mf-manifest.json","specs":"http://localhost:4404/mf-manifest.json","evidence":"http://localhost:4405/mf-manifest.json","quality":"http://localhost:4406/mf-manifest.json"}'
+      FEDERATION_ALLOWED_ORIGINS_JSON: '["http://localhost:4403","http://localhost:4404","http://localhost:4405","http://localhost:4406"]'
+      FEDERATION_ALLOWED_ORIGINS: http://localhost:4403 http://localhost:4404 http://localhost:4405 http://localhost:4406
+
+  remote-skills-hub:
+    build:
+      context: .
+      dockerfile: deploy/remote/Dockerfile
+      args:
+        REMOTE: remote-skills-hub
+        BUILD_SHA: ${BUILD_SHA:-dev}
+    container_name: openjcockpit-remote-skills-hub
+    restart: unless-stopped
+    ports:
+      - "4403:8080"
+    environment:
+      HOST_ORIGIN: http://localhost:4000
+
+  remote-specs:
+    build:
+      context: .
+      dockerfile: deploy/remote/Dockerfile
+      args:
+        REMOTE: remote-specs
+        BUILD_SHA: ${BUILD_SHA:-dev}
+    container_name: openjcockpit-remote-specs
+    restart: unless-stopped
+    ports:
+      - "4404:8080"
+    environment:
+      HOST_ORIGIN: http://localhost:4000
+
+  remote-evidence:
+    build:
+      context: .
+      dockerfile: deploy/remote/Dockerfile
+      args:
+        REMOTE: remote-evidence
+        BUILD_SHA: ${BUILD_SHA:-dev}
+    container_name: openjcockpit-remote-evidence
+    restart: unless-stopped
+    ports:
+      - "4405:8080"
+    environment:
+      HOST_ORIGIN: http://localhost:4000
+
+  remote-quality:
+    build:
+      context: .
+      dockerfile: deploy/remote/Dockerfile
+      args:
+        REMOTE: remote-quality
+        BUILD_SHA: ${BUILD_SHA:-dev}
+    container_name: openjcockpit-remote-quality
+    restart: unless-stopped
+    ports:
+      - "4406:8080"
+    environment:
+      HOST_ORIGIN: http://localhost:4000

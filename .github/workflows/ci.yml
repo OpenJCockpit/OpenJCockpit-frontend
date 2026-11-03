@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  pull_request: {}
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    uses: ./.github/workflows/frontend-ci.yml
+    permissions:
+      contents: read
+      pull-requests: write
+
+  # Critical end-to-end checks run on EVERY pull request and push to main (see e2e-ci.yml).
+  e2e:
+    uses: ./.github/workflows/e2e-ci.yml
+    permissions:
+      contents: read
+
+  gate:
+    name: ci-summary
+    needs: [frontend, e2e]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check CI leg results
+        env:
+          RESULTS: "frontend=${{ needs.frontend.result }} e2e=${{ needs.e2e.result }}"
+        run: |
+          set -euo pipefail
+          echo "$RESULTS"
+          for entry in $RESULTS; do
+            case "${entry#*=}" in
+              success|skipped) ;;
+              *) echo "::error::CI leg ${entry%%=*} concluded '${entry#*=}'"; exit 1 ;;
+            esac
+          done

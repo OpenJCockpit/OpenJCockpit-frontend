@@ -1,0 +1,83 @@
+name: E2E CI
+
+# BLOCKING merge gate (called by ci.yml on every pull request and every push to main).
+#
+#   critical  -- the smallest set of end-to-end checks that must pass before merge: login, unauthenticated
+#                rejection, session handling and API authorization (deny by default, role separation,
+#                admin-only routes). `npm run e2e:critical`. A failure fails ci-summary.
+#   extended  -- the rest of the reduced-mode Playwright suite, reported but not blocking (it includes
+#                long-running UI flows that remain informational).
+#
+# The suite drives a real backend, so the backend repository (OpenJCockpit/OpenJCockpit) is checked out next
+# to this one and its reduced stack (postgres, keycloak, ai-control-service) is started from it. The
+# backend repository runs the same suite against its own changes (its e2e-ci.yml checks this repo out).
+#
+# No artefacts are uploaded: Playwright traces and storage state contain live bearer tokens and Keycloak
+# session cookies for the seeded e2e identity (e2e/README.md).
+
+on:
+  workflow_call: {}
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    name: playwright critical (blocking)
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      OJC_BACKEND_DIR: ${{ github.workspace }}/.backend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Check out the backend
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          repository: OpenJCockpit/OpenJCockpit
+          ref: ${{ vars.BACKEND_REF || 'main' }}
+          path: .backend
+          token: ${{ secrets.CROSS_REPO_TOKEN || github.token }}
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install workspace dependencies (dashboard, e2e)
+        run: npm ci
+
+      - name: Install Playwright browser
+        working-directory: e2e
+        run: npx playwright install --with-deps chromium
+
+      - name: Provide a non-empty OPENAI_API_KEY so ai-control-service can boot
+        run: cp .backend/.env.example .backend/.env
+
+      - name: Start reduced stack (postgres, keycloak, ai-control-service)
+        working-directory: e2e
+        run: npm run stack:reduced
+
+      - name: Critical E2E (blocking)
+        working-directory: e2e
+        run: npm run e2e:critical
+
+      - name: Extended E2E (reduced mode, informational)
+        id: extended
+        working-directory: e2e
+        continue-on-error: true
+        run: npm run e2e:reduced
+
+      - name: Surface extended result
+        if: always()
+        env:
+          OUTCOME: ${{ steps.extended.outcome }}
+        run: |
+          echo "::notice::Extended Playwright suite outcome: $OUTCOME (informational)"
+
+      - name: Stop reduced stack
+        if: always()
+        working-directory: e2e
+        run: npm run stack:reduced:stop
