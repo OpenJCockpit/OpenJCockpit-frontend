@@ -30,6 +30,8 @@ export function createI18n({
     ns: [DEFAULT_NAMESPACE],
     resources: { ...resources, en: { ...en, ...resources.en } },
     interpolation: { escapeValue: false },
+    // Lazy bundles land after first render; re-render consumers when one is added (default is never).
+    react: { bindI18nStore: 'added' },
   });
   return instance;
 }
