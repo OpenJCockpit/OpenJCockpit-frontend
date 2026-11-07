@@ -114,6 +114,18 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
+  # Vulnerability scan on every pull request (same script as `npm run trivy` locally): npm dependencies,
+  # Dockerfile misconfigurations and the five built images. Fixable HIGH/CRITICAL findings fail the job, so they
+  # surface here instead of at release time (release-images.yml gates on fixable CRITICAL).
+  trivy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Trivy scan (dependencies, Dockerfiles, images)
+        run: scripts/trivy-scan.sh all
+
   # Nothing else exercises the Dockerfile or the nginx templates (the full-mode e2e does, but CI does not run it).
   # Builds the image, starts it with non-default env and checks the endpoints the runtime config depends on.
   image:
