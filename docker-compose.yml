@@ -5,11 +5,11 @@
 #
 #   backend  -> http://localhost:9080  ai-control-service (the /api the dashboard proxies to)
 #   backend  -> http://localhost:8080  Keycloak (the browser logs in here)
-#   frontend -> http://localhost:4000  dashboard, 4403-4406 remotes (the browser loads these)
+#   frontend -> http://localhost:4000  dashboard; it also serves the four remotes under /remotes/<name>/
 #
 # Start the backend first (`docker compose up -d` in the backend checkout), then `docker compose up -d --build`
-# here. The dashboard's nginx resolves its API upstream at startup, so a backend that is not up yet only
-# surfaces as 502s on /api until it is.
+# here. The dashboard's nginx resolves its API and remote upstreams per request, so a backend that is not up yet
+# only surfaces as 502s on /api until it is.
 #
 # Backend on another host, or behind another port: set API_UPSTREAM / KEYCLOAK_URL in .env (see .env.example).
 
@@ -37,10 +37,11 @@ services:
       KEYCLOAK_URL: ${KEYCLOAK_URL:-http://localhost:8080}
       KEYCLOAK_REALM: ${KEYCLOAK_REALM:-openjcockpit}
       KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID:-openjcockpit}
-      # The browser loads remotes from the published host ports, so these are localhost origins.
-      FEDERATION_MANIFEST: '{"skillsHub":"http://localhost:4403/mf-manifest.json","specs":"http://localhost:4404/mf-manifest.json","evidence":"http://localhost:4405/mf-manifest.json","quality":"http://localhost:4406/mf-manifest.json"}'
-      FEDERATION_ALLOWED_ORIGINS_JSON: '["http://localhost:4403","http://localhost:4404","http://localhost:4405","http://localhost:4406"]'
-      FEDERATION_ALLOWED_ORIGINS: http://localhost:4403 http://localhost:4404 http://localhost:4405 http://localhost:4406
+      # Same-origin: the dashboard's nginx proxies /remotes/<name>/ to the remote containers (host remote-<name>,
+      # port 8080: REMOTE_HOST_PREFIX / REMOTE_PORT), so no extra origin, CORS or allow-list is needed.
+      FEDERATION_MANIFEST: '{"skillsHub":"/remotes/skills-hub/mf-manifest.json","specs":"/remotes/specs/mf-manifest.json","evidence":"/remotes/evidence/mf-manifest.json","quality":"/remotes/quality/mf-manifest.json"}'
+      FEDERATION_ALLOWED_ORIGINS_JSON: '[]'
+      FEDERATION_ALLOWED_ORIGINS: ""
 
   remote-skills-hub:
     build:
@@ -51,10 +52,7 @@ services:
         BUILD_SHA: ${BUILD_SHA:-dev}
     container_name: openjcockpit-remote-skills-hub
     restart: unless-stopped
-    ports:
-      - "4403:8080"
-    environment:
-      HOST_ORIGIN: http://localhost:4000
+    # Internal only: reached through the dashboard at /remotes/<name>/.
 
   remote-specs:
     build:
@@ -65,10 +63,7 @@ services:
         BUILD_SHA: ${BUILD_SHA:-dev}
     container_name: openjcockpit-remote-specs
     restart: unless-stopped
-    ports:
-      - "4404:8080"
-    environment:
-      HOST_ORIGIN: http://localhost:4000
+    # Internal only: reached through the dashboard at /remotes/<name>/.
 
   remote-evidence:
     build:
@@ -79,10 +74,7 @@ services:
         BUILD_SHA: ${BUILD_SHA:-dev}
     container_name: openjcockpit-remote-evidence
     restart: unless-stopped
-    ports:
-      - "4405:8080"
-    environment:
-      HOST_ORIGIN: http://localhost:4000
+    # Internal only: reached through the dashboard at /remotes/<name>/.
 
   remote-quality:
     build:
@@ -93,7 +85,4 @@ services:
         BUILD_SHA: ${BUILD_SHA:-dev}
     container_name: openjcockpit-remote-quality
     restart: unless-stopped
-    ports:
-      - "4406:8080"
-    environment:
-      HOST_ORIGIN: http://localhost:4000
+    # Internal only: reached through the dashboard at /remotes/<name>/.

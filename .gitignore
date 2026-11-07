@@ -43,3 +43,6 @@ coverage/
 
 # Backend checkout used by CI for the REST contract and the e2e stack
 .backend/
+
+# TLS material for docker-compose.tls.yml
+certs/

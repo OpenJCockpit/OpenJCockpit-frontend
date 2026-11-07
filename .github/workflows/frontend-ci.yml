@@ -128,8 +128,8 @@ jobs:
         run: docker build -f apps/dashboard/Dockerfile --build-arg BUILD_SHA="$GITHUB_SHA" -t "$IMAGE" .
 
       - name: Start container
-        # nginx resolves the proxy_pass host at startup and exits if it is unknown. The default
-        # (ai-control-service) only exists in Compose, so point it at a literal address here.
+        # The upstream hosts are resolved per request, so an unknown default (ai-control-service) is only a 502
+        # on /api; a literal address keeps this job independent of DNS.
         run: |
           docker run -d --name dashboard -p 8080:8080 \
             -e API_UPSTREAM=http://127.0.0.1:9 \
@@ -169,7 +169,47 @@ jobs:
         if: failure()
         run: docker logs dashboard || true
 
-  # The remote image is built once per remote; its nginx rules (no-store manifest, immutable chunks, CORS,
+  # The dashboard serves the remotes under /remotes/<name>/. Only the dashboard and the four remote images together
+  # show that each remote's base path, the proxy locations and the manifest agree.
+  single-origin:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Build images
+        run: |
+          docker build -q -f apps/dashboard/Dockerfile -t dashboard:ci . &
+          for r in skills-hub specs evidence quality; do
+            docker build -q -f deploy/remote/Dockerfile --build-arg REMOTE="remote-$r" -t "remote-$r:ci" . &
+          done
+          wait -n; wait -n; wait -n; wait -n; wait -n
+
+      - name: Start the stack
+        run: |
+          docker network create stack
+          for r in skills-hub specs evidence quality; do
+            docker run -d --name "remote-$r" --network stack "remote-$r:ci"
+          done
+          docker run -d --name dashboard --network stack -p 8080:8080 \
+            -e API_UPSTREAM=http://127.0.0.1:9 \
+            -e FEDERATION_MANIFEST='{"skillsHub":"/remotes/skills-hub/mf-manifest.json","specs":"/remotes/specs/mf-manifest.json","evidence":"/remotes/evidence/mf-manifest.json","quality":"/remotes/quality/mf-manifest.json"}' \
+            dashboard:ci
+          for _ in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:8080/healthz >/dev/null 2>&1 && exit 0
+            sleep 1
+          done
+          echo "::error::dashboard did not become healthy within 30s"
+          exit 1
+
+      - name: Every remote is reachable through the dashboard
+        run: scripts/smoke-remotes.sh http://127.0.0.1:8080
+
+      - name: Container logs
+        if: failure()
+        run: docker logs dashboard || true
+
+  # The remote image is built once per remote; its nginx rules (no-store manifest, immutable chunks,
   # no HTML fallback for missing files) are what the host's runtime loading depends on.
   remote-image:
     runs-on: ubuntu-latest
@@ -188,7 +228,7 @@ jobs:
 
       - name: Start container
         run: |
-          docker run -d --name remote -p 8080:8080 -e HOST_ORIGIN=https://hub.example.test "$IMAGE"
+          docker run -d --name remote -p 8080:8080 "$IMAGE"
           for _ in $(seq 1 30); do
             curl -fsS http://127.0.0.1:8080/healthz >/dev/null 2>&1 && exit 0
             sleep 1
@@ -202,7 +242,6 @@ jobs:
           base=http://127.0.0.1:8080
           curl -fsS "$base/mf-manifest.json" | jq -e '.exposes | any(.path == "./app")'
           curl -fsSI "$base/mf-manifest.json" | grep -qi '^cache-control: no-store'
-          curl -fsSI "$base/mf-manifest.json" | grep -qi '^access-control-allow-origin: https://hub.example.test'
           curl -fsS "$base/version.json" | jq -e --arg sha "$GITHUB_SHA" '.sha == $sha'
           chunk=$(curl -fsS "$base/mf-manifest.json" | jq -r '[.shared[].assets.js.async[]?] | first')
           curl -fsSI "$base/$chunk" | grep -qi '^cache-control: public, max-age=31536000, immutable'

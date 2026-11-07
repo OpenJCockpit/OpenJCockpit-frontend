@@ -14,6 +14,7 @@ libs/                 feature and shared libraries
 e2e/                  Playwright suite (runs against a live backend)
 docs/                 architecture, guidelines, mock server, hub-app integration guide, UI patterns
 docker-compose.yml    dashboard + remotes in containers
+docker-compose.tls.yml  optional TLS override (docs/tls.md)
 ```
 
 ## How the two repositories connect
@@ -33,7 +34,7 @@ The stacks are separate Compose projects that reach each other through ports pub
 | dashboard container | `ai-control-service` | nginx proxies `/api` to `API_UPSTREAM` (default `http://host.docker.internal:9080`) |
 | browser | Keycloak | `KEYCLOAK_URL` (default `http://localhost:8080`) |
 | Vite dev server | `ai-control-service` | proxy `/api` to `http://localhost:9080` |
-| browser | dashboard / remotes | `localhost:4000` / `4403`-`4406` |
+| browser | dashboard and remotes | `localhost:4000` (remotes under `/remotes/<name>/`, proxied to the remote containers) |
 
 Backend somewhere else? Copy `.env.example` to `.env` and override `API_UPSTREAM` / `KEYCLOAK_URL`.
 

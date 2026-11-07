@@ -1,0 +1,22 @@
+# TLS override for docker-compose.yml. Usage:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.tls.yml up -d --build
+#
+# Put the certificate and key in ./certs (tls.crt = chain, leaf first; tls.key = private key), or point
+# TLS_CERT_DIR at another directory. Only the dashboard terminates TLS: the remotes are served through it under
+# /remotes/<name>/ and stay on plain HTTP inside the Compose network. See docs/tls.md.
+#
+#   PUBLIC_HOST  hostname browsers use (default localhost); the certificate must cover it
+#   TLS_CERT_DIR directory holding tls.crt and tls.key (default ./certs)
+
+services:
+  dashboard:
+    ports: !override
+      - "4443:8443"
+    volumes:
+      - ${TLS_CERT_DIR:-./certs}:/etc/nginx/tls:ro
+    environment:
+      TLS_CERT_FILE: /etc/nginx/tls/tls.crt
+      TLS_KEY_FILE: /etc/nginx/tls/tls.key
+      TLS_PUBLIC_PORT: "4443"
+      KEYCLOAK_URL: ${KEYCLOAK_URL:-https://${PUBLIC_HOST:-localhost}:8443}
