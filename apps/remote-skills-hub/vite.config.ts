@@ -17,6 +17,8 @@ export default defineConfig({
       manifest: true,
     }),
   ],
+  // Served by the dashboard under /remotes/<name>/ in the container build (see vite.config.base.ts).
+  base: process.env.REMOTE_BASE ?? '/',
   build: { target: 'esnext' },
   server: {
     port: PORT,

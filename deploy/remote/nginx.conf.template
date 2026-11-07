@@ -11,12 +11,11 @@ server {
   gzip_proxied any;
   gzip_types text/css text/javascript application/javascript application/json;
 
-  # The host loads this remote's code cross-origin. add_header in a location drops inherited headers,
-  # so every location repeats the CORS and nosniff lines.
+  # The dashboard proxies this remote under /remotes/<name>/, so the browser sees one origin and needs no CORS.
+  # add_header in a location drops inherited headers, so every location repeats the nosniff line.
 
   # Hashed chunks never change.
   location /assets/ {
-    add_header Access-Control-Allow-Origin "${HOST_ORIGIN}" always;
     add_header X-Content-Type-Options "nosniff" always;
     add_header Cache-Control "public, max-age=31536000, immutable";
     try_files $uri =404;
@@ -25,7 +24,6 @@ server {
   # The manifest and entry name the current chunks, so they are revalidated on every load. A missing
   # *.js or *.json is a plain 404: an HTML fallback would be parsed as JavaScript or JSON and mask the failure.
   location ~ ^/(mf-manifest\.json|mf-stats\.json|remoteEntry\.js)$ {
-    add_header Access-Control-Allow-Origin "${HOST_ORIGIN}" always;
     add_header X-Content-Type-Options "nosniff" always;
     add_header Cache-Control "no-store";
     try_files $uri =404;

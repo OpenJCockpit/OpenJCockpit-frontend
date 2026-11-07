@@ -74,7 +74,7 @@ export function registerManifestRemotes(
   for (const [name, entry] of Object.entries(manifest)) {
     if (isAllowedOrigin(entry, allowedOrigins, dev)) {
       names.push(name);
-      entries.push({ name, entry });
+      entries.push({ name, entry: new URL(entry, window.location.href).href });
     } else {
       rejected.push(name);
       console.error(`Remote "${name}" rejected: origin of ${entry} is not allowed`);

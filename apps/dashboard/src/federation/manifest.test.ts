@@ -101,6 +101,14 @@ describe('registerManifestRemotes', () => {
     ]);
   });
 
+  it('registers a same-origin relative entry as an absolute URL', () => {
+    const result = registerManifestRemotes({ a: '/remotes/specs/mf-manifest.json' }, [], false);
+    expect(result.names).toEqual(['a']);
+    expect(registerRemotes).toHaveBeenCalledWith([
+      { name: 'a', entry: `${window.location.origin}/remotes/specs/mf-manifest.json` },
+    ]);
+  });
+
   it('defaults dev from the build mode', () => {
     expect(registerManifestRemotes({ a: 'http://localhost:4403/m.json' }, []).names).toEqual(['a']);
   });

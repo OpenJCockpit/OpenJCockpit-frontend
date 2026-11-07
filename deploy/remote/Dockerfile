@@ -18,15 +18,14 @@ COPY --from=manifests /manifests ./
 RUN --mount=type=cache,target=/root/.npm npm ci
 COPY libs libs
 COPY apps/$REMOTE apps/$REMOTE
-RUN NX_DAEMON=false npx nx run "$REMOTE":build
+# Served by the dashboard under /remotes/<name>/ (remote-specs -> /remotes/specs/), not on an origin of its own.
+RUN REMOTE_BASE="/remotes/${REMOTE#remote-}/" NX_DAEMON=false npx nx run "$REMOTE":build
 
 FROM nginxinc/nginx-unprivileged:1.27-alpine@sha256:65e3e85dbaed8ba248841d9d58a899b6197106c23cb0ff1a132b7bfe0547e4c0
 ARG REMOTE
 ARG BUILD_SHA=unknown
-# Origin of the host that loads this remote; the only origin CORS lets read its files.
 ENV BUILD_SHA=$BUILD_SHA \
-    HOST_ORIGIN=http://localhost:4000 \
-    NGINX_ENVSUBST_FILTER=^(HOST_ORIGIN$|BUILD_SHA$)
+    NGINX_ENVSUBST_FILTER=^BUILD_SHA$
 COPY --from=build /app/apps/$REMOTE/dist /usr/share/nginx/html
 COPY deploy/remote/nginx.conf.template /etc/nginx/templates/default.conf.template
 EXPOSE 8080

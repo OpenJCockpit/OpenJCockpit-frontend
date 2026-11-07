@@ -5,6 +5,9 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   // Source maps stay off in production: no external tracker to upload them to (see docs/frontend-production-readiness.md).
+  // Deployed remotes are served by the dashboard under /remotes/<name>/ (single origin), so the container build
+  // sets REMOTE_BASE to that path. Unset (dev servers, tests) keeps the default '/'.
+  base: process.env.REMOTE_BASE ?? '/',
   build: { sourcemap: false },
   css: {
     // Class names in .module.scss files stay kebab/BEM; TSX reads them as camelCase.

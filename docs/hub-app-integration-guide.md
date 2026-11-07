@@ -57,14 +57,14 @@ Host env, rendered by nginx at container start (all `no-store`):
 
 | Variable                          | Default | Effect                                                                                            |
 | --------------------------------- | ------- | ------------------------------------------------------------------------------------------------- |
-| `FEDERATION_MANIFEST`             | `{}`    | JSON object served as `/federation.manifest.json`: name to `https://<origin>/mf-manifest.json`.   |
+| `FEDERATION_MANIFEST`             | `{}`    | JSON object served as `/federation.manifest.json`: name to a URL: `/remotes/<name>/mf-manifest.json` or `https://<origin>/mf-manifest.json`. |
 | `FEDERATION_ALLOWED_ORIGINS_JSON` | `[]`    | Served as `/config.json` `federation.allowedOrigins`; the host drops manifest entries outside it. |
 | `FEDERATION_ALLOWED_ORIGINS`      | empty   | Space-separated origins added to the CSP `script-src`, `style-src` and `connect-src`.             |
 
-Keep the last two in step. Remote env: `HOST_ORIGIN` (default `http://localhost:4000`) is the only origin CORS allows. The remote serves `mf-manifest.json` and `remoteEntry.js` as `no-store`, `/assets/` as immutable, and answers a missing file with a plain 404 (no HTML fallback).
+Keep the last two in step. Entries on the host's own origin (`/remotes/<name>/...`) need neither. The host's nginx proxies `/remotes/<name>/` to `http://<REMOTE_HOST_PREFIX><name>:<REMOTE_PORT>` (defaults `remote-` and `8080`), and the remote image is built with base `/remotes/<name>/` (`remote-specs` serves `/remotes/specs/`). The remote serves `mf-manifest.json` and `remoteEntry.js` as `no-store`, `/assets/` as immutable, and answers a missing file with a plain 404 (no HTML fallback).
 
-`docker-compose.yml` runs the host plus the remotes on ports 4403 (skills hub), 4404 (specs), 4405 (evidence) and 4406 (quality) with these variables set.
+`docker-compose.yml` runs the host on port 4000 and the four remotes internally, reached through the host at `/remotes/<name>/`.
 
-Adding an app to a deployed hub: deploy the remote image, then add its origin to the three host variables and restart the host.
+Adding an app to a deployed hub: build its image with base `/remotes/<name>/`, run it as `remote-<name>` next to the host, then add `"<key>":"/remotes/<name>/mf-manifest.json"` to `FEDERATION_MANIFEST` and restart the host. No allow-list change and no host rebuild.
 
-Governance gates in CI (`frontend-ci.yml`): `scripts/check-remotes.mjs` (each remote exposes `./app`, shares the singletons, bundles no identity SDK, and its `app-entry` reaches the contract only through the shared scope, never a private copy); both image jobs smoke-test the endpoints above; the host's contract version gate rejects a remote with a higher `HUB_CONTRACT_VERSION` at runtime.
+Governance gates in CI (`frontend-ci.yml`): `scripts/check-remotes.mjs` (each remote exposes `./app`, shares the singletons, bundles no identity SDK, and its `app-entry` reaches the contract only through the shared scope, never a private copy); the image jobs smoke-test the endpoints above and `single-origin` checks every remote through the host; the host's contract version gate rejects a remote with a higher `HUB_CONTRACT_VERSION` at runtime.

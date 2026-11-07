@@ -97,7 +97,7 @@ All user-facing copy goes through `t()` from `@openjcockpit/i18n`. One namespace
 - **TypeScript:** `strict` and `noUncheckedIndexedAccess` on.
 - **Tests:** Vitest and Testing Library per project; Playwright in `e2e` against a running stack. The e2e suite does not cover agent pipelines (see `e2e/README.md`).
 - **No backend needed for UI work:** `npm run start:hub:mock` runs everything against an in-memory API ([frontend-mock-server.md](frontend-mock-server.md)). Mock code is never in production builds.
-- **Images:** one per deployable (host plus one per remote). CORS on a remote allows only `HOST_ORIGIN`. Manifest origins must be on the host's allow-list; see the deployment section of the integration guide.
+- **Images:** one per deployable (host plus one per remote). The host serves the remotes under `/remotes/<name>/` (one origin, no CORS). A manifest entry on another origin must be on the host's allow-list; see the deployment section of the integration guide.
 
 ## Design decisions
 

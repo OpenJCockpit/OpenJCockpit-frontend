@@ -28,13 +28,19 @@ ENV BUILD_SHA=$BUILD_SHA \
     KEYCLOAK_URL=http://localhost:8080 \
     KEYCLOAK_REALM=openjcockpit \
     KEYCLOAK_CLIENT_ID=openjcockpit \
+    NGINX_ENTRYPOINT_LOCAL_RESOLVERS=1 \
+    REMOTE_HOST_PREFIX=remote- \
+    REMOTE_PORT=8080 \
     FEDERATION_MANIFEST={} \
     FEDERATION_ALLOWED_ORIGINS_JSON=[] \
     FEDERATION_ALLOWED_ORIGINS= \
-    NGINX_ENVSUBST_FILTER=^(KEYCLOAK_|FEDERATION_|API_UPSTREAM$|BUILD_SHA$)
+    NGINX_ENVSUBST_FILTER=^(KEYCLOAK_|FEDERATION_|REMOTE_|NGINX_LOCAL_RESOLVERS$|API_UPSTREAM$|BUILD_SHA$)
 COPY --from=build /app/apps/dashboard/dist /usr/share/nginx/html
 COPY apps/dashboard/nginx.conf.template /etc/nginx/templates/default.conf.template
 COPY apps/dashboard/security-headers.inc.template /etc/nginx/templates/security-headers.inc.template
-EXPOSE 8080
+COPY deploy/tls/listen.inc.template /etc/nginx/templates/listen.inc.template
+COPY --chmod=0755 deploy/tls/35-enable-tls.sh /docker-entrypoint.d/35-enable-tls.sh
+# 8443 only listens when TLS_CERT_FILE and TLS_KEY_FILE are set (see deploy/tls/35-enable-tls.sh).
+EXPOSE 8080 8443
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget -q -O /dev/null http://127.0.0.1:8080/healthz || exit 1
