@@ -17,7 +17,17 @@
     "affected": "nx affected -t lint typecheck test build",
     "start:hub": "nx run-many -t dev -p dashboard,remote-skills-hub,remote-specs,remote-evidence,remote-quality --parallel=6",
     "start:hub:mock": "MOCK_API=1 nx run-many -t dev -p dashboard,remote-skills-hub,remote-specs,remote-evidence,remote-quality --parallel=6",
-    "build:hub": "nx run-many -t build -p remote-skills-hub,remote-specs,remote-evidence,remote-quality,dashboard"
+    "build:hub": "nx run-many -t build -p remote-skills-hub,remote-specs,remote-evidence,remote-quality,dashboard",
+    "trivy": "scripts/trivy-scan.sh",
+    "trivy:fs": "scripts/trivy-scan.sh fs"
+  },
+  "overrides": {
+    "nx": {
+      "undici": "7.30.1"
+    },
+    "@module-federation/dts-plugin": {
+      "undici": "7.30.1"
+    }
   },
   "nx": {
     "includedScripts": [

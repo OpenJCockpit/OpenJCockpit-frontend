@@ -19,7 +19,11 @@ COPY libs libs
 COPY apps/dashboard apps/dashboard
 RUN NX_DAEMON=false npx nx run dashboard:build
 
-FROM nginxinc/nginx-unprivileged:1.27-alpine@sha256:65e3e85dbaed8ba248841d9d58a899b6197106c23cb0ff1a132b7bfe0547e4c0
+FROM nginxinc/nginx-unprivileged:1.30-alpine@sha256:f5116ed4606f3eb015dd4a8e28cb9b351476dc0ad4bc6e9f93b19cec130cdf03
+# Pick up Alpine security patches published after the base image was built (the digest pin does not move on its own).
+USER root
+RUN apk upgrade --no-cache
+USER 101
 # The nginx image renders /etc/nginx/templates/*.template into /etc/nginx/conf.d at startup. The filter
 # keeps envsubst from touching nginx's own $variables ($uri, $host, ...).
 ARG BUILD_SHA=unknown

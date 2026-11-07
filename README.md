@@ -72,6 +72,21 @@ is read from the sibling checkout `../OpenJCockpit`; set `OPENAPI_CONTRACT` to a
 contract change in the backend, run `npx nx run api:generate` here and commit the result. CI fails when the
 generated types are stale against the backend's `main` (repository variable `BACKEND_REF` selects another ref).
 
+### Vulnerability scan (Trivy)
+
+CI runs Trivy on every pull request and fails on fixable HIGH or CRITICAL findings in the npm dependencies, the
+Dockerfiles and the five built images. Run the same scan before opening a PR:
+
+```bash
+npm run trivy:fs   # dependencies + Dockerfiles, a few seconds
+npm run trivy      # also builds and scans the dashboard and remote images (needs docker)
+```
+
+It uses a local `trivy` if installed, otherwise the pinned container. `TRIVY_SEVERITY=CRITICAL` narrows the gate
+(the release workflow blocks on fixable CRITICAL only). Typical fixes: an npm `overrides` entry or a dependency
+bump for a package finding, a newer base-image digest for an OS package (the final stages also run `apk upgrade`).
+See `scripts/trivy-scan.sh`.
+
 ### End-to-end tests
 
 `e2e/` drives a real backend. `npm run stack:reduced` (in `e2e/`) starts the backend's reduced stack from
@@ -79,7 +94,7 @@ generated types are stale against the backend's `main` (repository variable `BAC
 
 ## CI and releases
 
-- `ci.yml` -> `frontend-ci.yml` (lint, tests, build, image smoke tests) and `e2e-ci.yml`; the required check is `ci-summary`.
+- `ci.yml` -> `frontend-ci.yml` (lint, tests, build, Trivy scan, image smoke tests) and `e2e-ci.yml`; the required check is `ci-summary`.
 - CI checks the backend repository out for the contract and the e2e stack. If it is private, add a `CROSS_REPO_TOKEN`
   secret with read access to it (the default `GITHUB_TOKEN` cannot read other private repositories).
 - Releases: push a `vX.Y.Z` tag; `release-images.yml` publishes `ghcr.io/openjcockpit/dashboard:vX.Y.Z`. The
