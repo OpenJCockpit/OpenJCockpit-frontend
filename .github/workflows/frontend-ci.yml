@@ -18,6 +18,7 @@ jobs:
       NX_DAEMON: "false"
       # The REST contract is owned by the backend repository; orval reads it from this checkout.
       OPENAPI_CONTRACT: ${{ github.workspace }}/.backend/shared/contracts/openapi.yaml
+      OPENAPI_CONTROLTOWER_CONTRACT: ${{ github.workspace }}/.controltower/contracts/openapi.yaml
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -51,11 +52,22 @@ jobs:
           sparse-checkout: shared/contracts
           token: ${{ secrets.CROSS_REPO_TOKEN || github.token }}
 
+      # Same for the ControlTower contract (CONTROLTOWER_REF overrides main for a contract change still in a PR).
+      - name: Fetch ControlTower REST contract
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          repository: OpenJCockpit/OpenJControlTower
+          ref: ${{ vars.CONTROLTOWER_REF || 'main' }}
+          path: .controltower
+          sparse-checkout: contracts
+          token: ${{ secrets.CROSS_REPO_TOKEN || github.token }}
+
       - name: Check generated API types are up to date
         run: |
           npx nx run api:generate --skip-nx-cache
+          npx nx run api:generate-controltower --skip-nx-cache
           git diff --exit-code -- libs/api/src/generated \
-            || { echo "::error::libs/api/src/generated is stale. Run 'npx nx run api:generate' (backend checked out as ../OpenJCockpit) and commit the result."; exit 1; }
+            || { echo "::error::libs/api/src/generated is stale. Run 'npx nx run api:generate api:generate-controltower' (backends checked out as ../OpenJCockpit and ../OpenJControlTower) and commit the result."; exit 1; }
 
       - name: Lint, check styles, typecheck, coverage (runs tests), build (affected on pull requests)
         if: github.event_name == 'pull_request'

@@ -20,9 +20,17 @@
     },
     "generate": {
       "executor": "nx:run-commands",
-      "outputs": ["{projectRoot}/src/generated"],
+      "outputs": ["{projectRoot}/src/generated/contract.ts"],
       "options": {
-        "command": "orval",
+        "command": "orval --project api",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "generate-controltower": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/src/generated/controltower-contract.ts"],
+      "options": {
+        "command": "orval --project controltower",
         "cwd": "{projectRoot}"
       }
     }

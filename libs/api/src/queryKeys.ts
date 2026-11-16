@@ -6,6 +6,19 @@ export const queryKeys = {
   specQueue: (projectId: string | null) => ['spec-queue', projectId, 'queue'] as const,
   specQueueSpecFiles: (projectId: string) => ['spec-queue', projectId, 'spec-files'] as const,
   specQueueSettings: (projectId: string) => ['spec-queue', projectId, 'settings'] as const,
+  controlTowerProjects: ['controltower', 'projects'] as const,
+  controlTowerProject: (cockpitProjectId: string | null) =>
+    ['controltower', 'projects', cockpitProjectId] as const,
+  controlTowerTemplates: ['controltower', 'templates'] as const,
+  controlTowerSpecTemplates: ['controltower', 'spec-templates'] as const,
+  controlTowerInterviews: (projectId: string | null) =>
+    ['controltower', projectId, 'interviews'] as const,
+  controlTowerInterview: (interviewId: string) =>
+    ['controltower', 'interview', interviewId] as const,
+  controlTowerSpecs: (projectId: string | null) => ['controltower', projectId, 'specs'] as const,
+  controlTowerGraph: (projectId: string | null) => ['controltower', projectId, 'graph'] as const,
+  controlTowerQueue: (projectId: string | null) => ['controltower', projectId, 'queue'] as const,
+  controlTowerSettings: ['controltower', 'settings'] as const,
   workflows: ['workflows'] as const,
   workflowGroups: ['workflow-groups'] as const,
   linkableAgents: ['linkable-agents'] as const,
