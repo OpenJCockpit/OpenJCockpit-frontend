@@ -22,7 +22,7 @@ import { ControlTowerQuery } from '../ControlTowerQuery';
 import { errorMessage } from '../errorMessage';
 import { ActionFeedback } from '../ActionFeedback';
 import { useAction } from '../useAction';
-import { useRepositoryMutation, useSpecTemplates, useTemplates } from '../hooks';
+import { useGlobalMutation, useSpecTemplates, useTemplates } from '../hooks';
 import { useWriteAccess } from '../useWriteAccess';
 import { DEFAULT_SPEC_TEMPLATE, sampleQuestions } from '../sampleQuestions';
 import common from '../shared.module.scss';
@@ -42,8 +42,8 @@ export function TemplatesPage() {
   const [specName, setSpecName] = useState('');
   const [specContent, setSpecContent] = useState(DEFAULT_SPEC_TEMPLATE);
   const { run, feedback } = useAction();
-  const createTemplate = useRepositoryMutation(null, createControlTowerTemplate);
-  const createSpecTemplate = useRepositoryMutation(null, createControlTowerSpecTemplate);
+  const createTemplate = useGlobalMutation(createControlTowerTemplate);
+  const createSpecTemplate = useGlobalMutation(createControlTowerSpecTemplate);
 
   const invalidJson = (e: unknown) =>
     e instanceof SyntaxError ? t('templates.invalidJson') : errorMessage(e);

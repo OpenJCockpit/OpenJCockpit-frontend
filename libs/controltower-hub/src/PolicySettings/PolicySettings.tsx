@@ -18,7 +18,7 @@ import {
 import { ControlTowerQuery } from '../ControlTowerQuery';
 import { ActionFeedback } from '../ActionFeedback';
 import { useAction } from '../useAction';
-import { useControlTowerSettings, useRepositoryMutation } from '../hooks';
+import { useControlTowerSettings, useGlobalMutation } from '../hooks';
 import { WithTranslations } from '../registerTranslations';
 
 /** The policies shipped in the ControlTower repository under infrastructure/opa/policies. */
@@ -40,7 +40,7 @@ function PolicyForm({ data }: { data: ControlTowerSettingsView }) {
   const { t } = useTranslation('controltower');
   const [policy, setPolicy] = useState<ControlTowerPolicySettings>(data.policy);
   const { run, feedback, pending, clear } = useAction();
-  const save = useRepositoryMutation(null, saveControlTowerPolicy);
+  const save = useGlobalMutation(saveControlTowerPolicy);
 
   const editable = data.editable;
   const set = (patch: Partial<ControlTowerPolicySettings>) => {

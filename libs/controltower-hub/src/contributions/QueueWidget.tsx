@@ -1,10 +1,8 @@
 import { Link } from 'react-router';
-import { useQuery } from '@tanstack/react-query';
 import { useHubProject } from '@openjcockpit/hub-contract';
 import { useTranslation } from '@openjcockpit/i18n';
 import { ErrorState, LoadingState, StatusMessage } from '@openjcockpit/ui';
-import { getControlTowerProjectByCockpitProject, queryKeys } from '@openjcockpit/api';
-import { useQueueProposal } from '../hooks';
+import { useOptionalControlTowerRepository, useQueueProposal } from '../hooks';
 import { WithTranslations } from '../registerTranslations';
 import { CONTROLTOWER_QUEUE_PATH } from '../routePaths';
 
@@ -12,12 +10,7 @@ function QueueCount() {
   const { t } = useTranslation('controltower');
   const cockpitProjectId = useHubProject().selected?.id ?? null;
   // Same cache entries as the pages, so a dispatch refreshes the widget too.
-  const repository = useQuery({
-    queryKey: queryKeys.controlTowerProject(cockpitProjectId),
-    queryFn: ({ signal }) =>
-      getControlTowerProjectByCockpitProject(cockpitProjectId as string, signal),
-    enabled: cockpitProjectId !== null,
-  });
+  const repository = useOptionalControlTowerRepository();
   const queue = useQueueProposal(repository.data?.id ?? null);
 
   if (cockpitProjectId === null) {

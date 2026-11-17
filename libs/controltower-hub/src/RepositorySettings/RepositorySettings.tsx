@@ -19,7 +19,7 @@ import {
   type ControlTowerProject,
   type ControlTowerProjectRequest,
 } from '@openjcockpit/api';
-import { useControlTowerRepository, useRepositoryMutation } from '../hooks';
+import { useControlTowerRepository, useGlobalMutation } from '../hooks';
 import { ControlTowerQuery } from '../ControlTowerQuery';
 import { ActionFeedback } from '../ActionFeedback';
 import { useAction } from '../useAction';
@@ -59,7 +59,7 @@ function RepositoryForm({ data }: { data: ControlTowerProject | null }) {
   const [form, setForm] = useState<Form>(data ? fromRepository(data) : EMPTY);
   const check = useAction();
   const submit = useAction();
-  const save = useRepositoryMutation(null, (body: ControlTowerProjectRequest) =>
+  const save = useGlobalMutation((body: ControlTowerProjectRequest) =>
     data ? updateControlTowerProject(data.id, body) : createControlTowerProject(body),
   );
 

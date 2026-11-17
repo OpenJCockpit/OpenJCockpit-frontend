@@ -26,15 +26,27 @@ import type {
   ControlTowerSpecTemplate,
   ControlTowerTemplate,
 } from '@openjcockpit/api';
-import { useSelectedProject } from '@openjcockpit/hub-contract';
+import { useHubProject, useSelectedProject } from '@openjcockpit/hub-contract';
+
+function useRepositoryQuery(
+  cockpitProjectId: string | null,
+): UseQueryResult<ControlTowerProject | null> {
+  return useQuery({
+    queryKey: queryKeys.controlTowerProject(cockpitProjectId),
+    queryFn: ({ signal }) =>
+      getControlTowerProjectByCockpitProject(cockpitProjectId as string, signal),
+    enabled: cockpitProjectId !== null,
+  });
+}
 
 /** The ControlTower repository linked to the selected Cockpit project; `null` data means none is linked. */
 export function useControlTowerRepository(): UseQueryResult<ControlTowerProject | null> {
-  const project = useSelectedProject();
-  return useQuery({
-    queryKey: queryKeys.controlTowerProject(project.id),
-    queryFn: ({ signal }) => getControlTowerProjectByCockpitProject(project.id, signal),
-  });
+  return useRepositoryQuery(useSelectedProject().id);
+}
+
+/** Like `useControlTowerRepository`, but for places that can render without a selected project (home widgets). The query stays idle then. */
+export function useOptionalControlTowerRepository(): UseQueryResult<ControlTowerProject | null> {
+  return useRepositoryQuery(useHubProject().selected?.id ?? null);
 }
 
 export function useTemplates(): UseQueryResult<ControlTowerTemplate[]> {
@@ -89,12 +101,8 @@ export function useControlTowerSettings(): UseQueryResult<ControlTowerSettingsVi
   });
 }
 
-/**
- * A mutation that refreshes everything of one repository afterwards: an approval changes the specs, the graph and the queue.
- * Pass `null` for data that is not tied to a repository.
- */
-export function useRepositoryMutation<TData, TVariables>(
-  repositoryId: string | null,
+function useControlTowerMutation<TData, TVariables>(
+  scopeKey: readonly string[],
   mutationFn: (variables: TVariables) => Promise<TData>,
 ): UseMutationResult<TData, Error, TVariables> {
   const client = useQueryClient();
@@ -102,9 +110,22 @@ export function useRepositoryMutation<TData, TVariables>(
     // Not passed on as is: the library adds a second argument, which request functions with optional parameters would take.
     mutationFn: (variables: TVariables) => mutationFn(variables),
     onSuccess: async () => {
-      await client.invalidateQueries({
-        queryKey: repositoryId ? ['controltower', repositoryId] : ['controltower'],
-      });
+      await client.invalidateQueries({ queryKey: scopeKey });
     },
   });
+}
+
+/** A mutation that refreshes everything of one repository afterwards: an approval changes the specs, the graph and the queue. */
+export function useRepositoryMutation<TData, TVariables>(
+  repositoryId: string,
+  mutationFn: (variables: TVariables) => Promise<TData>,
+): UseMutationResult<TData, Error, TVariables> {
+  return useControlTowerMutation(['controltower', repositoryId], mutationFn);
+}
+
+/** A mutation on data that is not tied to a repository (templates, policy, the repository link). Refreshes all ControlTower queries. */
+export function useGlobalMutation<TData, TVariables>(
+  mutationFn: (variables: TVariables) => Promise<TData>,
+): UseMutationResult<TData, Error, TVariables> {
+  return useControlTowerMutation(['controltower'], mutationFn);
 }
