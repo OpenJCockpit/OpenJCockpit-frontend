@@ -100,6 +100,19 @@ export function InterviewSession({ repositoryId, interview, run, onChange, onClo
         kind={active ? 'active' : 'done'}
       />
       <h3>{active ? interview.currentQuestion : t('interviews.completed')}</h3>
+      {interview.answers.length > 0 && (
+        <section aria-label={t('interviews.transcript')}>
+          <h4>{t('interviews.transcript')}</h4>
+          <dl className={styles.transcript}>
+            {interview.answers.map((a, index) => (
+              <div key={`${a.questionId}-${index}`}>
+                <dt>{a.question}</dt>
+                <dd>{a.answer}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      )}
       {active ? (
         <form onSubmit={onAnswer} className={styles.session}>
           <TextAreaField

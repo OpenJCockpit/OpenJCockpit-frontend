@@ -84,6 +84,7 @@
       "submit": "Antwoord versturen",
       "completed": "Interview voltooid",
       "enough": "Het interview bevat genoeg informatie voor een spec-voorstel.",
+      "transcript": "Vragen en antwoorden",
       "specTemplate": "Sjabloon voor de spec-uitvoer",
       "defaultSpecTemplate": "OpenJCockpit-standaard",
       "generate": "Spec-concepten genereren",

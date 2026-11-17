@@ -84,6 +84,7 @@
       "submit": "Enviar respuesta",
       "completed": "Entrevista completada",
       "enough": "La entrevista tiene información suficiente para una propuesta de spec.",
+      "transcript": "Preguntas y respuestas",
       "specTemplate": "Plantilla de salida de la spec",
       "defaultSpecTemplate": "Predeterminada de OpenJCockpit",
       "generate": "Generar borradores de spec",

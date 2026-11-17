@@ -60,6 +60,26 @@ describe('interviews', () => {
     expect(sessionStorage.getItem('controltower.answerDraft.i1')).toBeNull();
   });
 
+  it('shows the questions and answers of a completed interview', async () => {
+    ct.listControlTowerInterviews.mockResolvedValue([
+      {
+        ...INTERVIEW,
+        status: 'COMPLETE',
+        answers: [
+          { questionId: 'goal', question: 'What is the goal?', answer: 'Ship it' },
+          { questionId: 'users', question: 'Who are the users?', answer: 'Ops team' },
+        ],
+      },
+    ]);
+    renderRoutes(controltowerRoutes, { path });
+    fireEvent.click(await screen.findByText('Kick-off'));
+    expect(screen.getByText('Interview completed')).toBeInTheDocument();
+    expect(screen.getByText('What is the goal?')).toBeInTheDocument();
+    expect(screen.getByText('Ship it')).toBeInTheDocument();
+    expect(screen.getByText('Who are the users?')).toBeInTheDocument();
+    expect(screen.getByText('Ops team')).toBeInTheDocument();
+  });
+
   it('lists the newest interview first with its date', async () => {
     ct.listControlTowerInterviews.mockResolvedValue([
       { ...INTERVIEW, id: 'old', title: 'Old one', createdAt: '2026-01-01T10:00:00Z' },
