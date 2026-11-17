@@ -153,8 +153,16 @@
       "published": "De spec-branches zijn gemerged in de branch die OpenJCockpit leest.",
       "dispatch": "Klare specs dispatchen",
       "openSpecQueue": "Spec-wachtrij openen",
-      "result": { "DISPATCHED": "Verzonden" },
-      "unknownHint": "Onzekere HTTP-uitkomsten worden als UNKNOWN vastgelegd en nooit automatisch opnieuw geprobeerd."
+      "result": { "DISPATCHED": "Verzonden", "UNKNOWN": "Onbekend" },
+      "unknownHint": "Onzekere HTTP-uitkomsten worden als UNKNOWN vastgelegd en nooit automatisch opnieuw geprobeerd.",
+      "waiting": "Wacht op voorgangers",
+      "blockedBy": "Geblokkeerd door",
+      "disabledNothingReady": "Niets te verzenden: nog geen spec is gereed.",
+      "disabledNotPublished": "Bevestig dat de spec-branches zijn samengevoegd om verzenden mogelijk te maken.",
+      "confirmTitle": "Gereedstaande specs verzenden?",
+      "confirmMessage_one": "Dit verzendt {{count}} spec naar OpenJCockpit:",
+      "confirmMessage_other": "Dit verzendt {{count}} specs naar OpenJCockpit:",
+      "dispatching": "Verzenden…"
     },
     "templates": {
       "savedTitle": "Opgeslagen sjablonen",

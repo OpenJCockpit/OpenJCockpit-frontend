@@ -8,8 +8,8 @@ describe('HubPage', () => {
     const onBack = vi.fn();
     renderWithI18n(
       <HubPage
-        icon="I"
-        title="Hub"
+        eyebrow="Hub"
+        title="Project"
         subtitle={<p>About</p>}
         tabs={<nav>Tabs</nav>}
         onBack={onBack}
@@ -18,7 +18,8 @@ describe('HubPage', () => {
         <p>Content</p>
       </HubPage>,
     );
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Hub');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Project');
+    expect(screen.getByText('Hub')).toBeInTheDocument();
     expect(screen.getByText('About')).toBeInTheDocument();
     expect(screen.getByText('Tabs')).toBeInTheDocument();
     expect(screen.getByText('Content')).toBeInTheDocument();
@@ -28,7 +29,7 @@ describe('HubPage', () => {
 
   it('uses the host header instead of its own', () => {
     render(
-      <HubPage icon="I" title="Hub" header={<header>Host header</header>} onBack={vi.fn()}>
+      <HubPage eyebrow="Hub" title="Project" header={<header>Host header</header>} onBack={vi.fn()}>
         <p>Content</p>
       </HubPage>,
     );

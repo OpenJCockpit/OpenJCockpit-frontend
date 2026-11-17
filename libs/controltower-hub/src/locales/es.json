@@ -153,8 +153,16 @@
       "published": "Las ramas de las specs están fusionadas en la rama que lee OpenJCockpit.",
       "dispatch": "Despachar las specs listas",
       "openSpecQueue": "Abrir la cola de specs",
-      "result": { "DISPATCHED": "Enviado" },
-      "unknownHint": "Los resultados HTTP inciertos se registran como UNKNOWN y nunca se reintentan automáticamente."
+      "result": { "DISPATCHED": "Enviado", "UNKNOWN": "Desconocido" },
+      "unknownHint": "Los resultados HTTP inciertos se registran como UNKNOWN y nunca se reintentan automáticamente.",
+      "waiting": "Esperando predecesores",
+      "blockedBy": "Bloqueada por",
+      "disabledNothingReady": "Nada que enviar: aún no hay ninguna spec lista.",
+      "disabledNotPublished": "Confirma que las ramas de las specs están fusionadas para habilitar el envío.",
+      "confirmTitle": "¿Enviar las specs listas?",
+      "confirmMessage_one": "Esto envía {{count}} spec a OpenJCockpit:",
+      "confirmMessage_other": "Esto envía {{count}} specs a OpenJCockpit:",
+      "dispatching": "Enviando…"
     },
     "templates": {
       "savedTitle": "Plantillas guardadas",

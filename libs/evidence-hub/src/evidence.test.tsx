@@ -161,11 +161,7 @@ describe('evidenceApp', () => {
     const routes = await evidenceApp.loadRoutes();
     renderWith(<RouterProvider router={createMemoryRouter(routes)} />, PROJECT, 'nl');
     expect(
-      await screen.findByRole(
-        'heading',
-        { level: 1, name: /Uitvoeringsbewijs/ },
-        { timeout: 15_000 },
-      ),
+      await screen.findByText(/Uitvoeringsbewijs/, undefined, { timeout: 15_000 }),
     ).toBeInTheDocument();
   });
 });

@@ -153,8 +153,16 @@
       "published": "The spec branches are merged into the branch that OpenJCockpit reads.",
       "dispatch": "Dispatch ready specs",
       "openSpecQueue": "Open the spec queue",
-      "result": { "DISPATCHED": "Dispatched" },
-      "unknownHint": "Uncertain HTTP outcomes are recorded as UNKNOWN, never automatically retried."
+      "result": { "DISPATCHED": "Dispatched", "UNKNOWN": "Unknown" },
+      "unknownHint": "Uncertain HTTP outcomes are recorded as UNKNOWN, never automatically retried.",
+      "waiting": "Waiting on predecessors",
+      "blockedBy": "Blocked by",
+      "disabledNothingReady": "Nothing to dispatch: no spec is ready yet.",
+      "disabledNotPublished": "Confirm that the spec branches are merged to enable dispatch.",
+      "confirmTitle": "Dispatch ready specs?",
+      "confirmMessage_one": "This sends {{count}} spec to OpenJCockpit:",
+      "confirmMessage_other": "This sends {{count}} specs to OpenJCockpit:",
+      "dispatching": "Dispatching…"
     },
     "templates": {
       "savedTitle": "Saved templates",

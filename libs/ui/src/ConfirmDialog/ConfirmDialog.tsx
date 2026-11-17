@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useId, type ReactNode } from 'react';
 import { Button } from '../Button/Button';
 import { cx } from '../cx';
 import { feedbackErrorClass } from '../Feedback/Feedback';
@@ -10,6 +10,8 @@ import styles from './ConfirmDialog.module.scss';
 export interface ConfirmDialogProps {
   title: string;
   message: string;
+  /** Extra content under the message, such as a list of the affected items. */
+  details?: ReactNode;
   confirmLabel: string;
   cancelLabel: string;
   /** Shown on the confirm button while `busy`. */
@@ -26,6 +28,7 @@ export interface ConfirmDialogProps {
 export function ConfirmDialog({
   title,
   message,
+  details,
   confirmLabel,
   cancelLabel,
   busyLabel,
@@ -44,6 +47,7 @@ export function ConfirmDialog({
     >
       <h2 id={titleId}>{title}</h2>
       <p className={fieldHintClass}>{message}</p>
+      {details}
       {error && (
         <p className={feedbackErrorClass} role="alert" data-testid="confirm-action-error">
           {error}

@@ -153,8 +153,16 @@
       "published": "Die Spec-Branches sind in den Branch gemergt, den OpenJCockpit liest.",
       "dispatch": "Bereite Specs dispatchen",
       "openSpecQueue": "Spec-Queue öffnen",
-      "result": { "DISPATCHED": "Versendet" },
-      "unknownHint": "Unsichere HTTP-Ergebnisse werden als UNKNOWN erfasst und nie automatisch wiederholt."
+      "result": { "DISPATCHED": "Versendet", "UNKNOWN": "Unbekannt" },
+      "unknownHint": "Unsichere HTTP-Ergebnisse werden als UNKNOWN erfasst und nie automatisch wiederholt.",
+      "waiting": "Wartet auf Vorgänger",
+      "blockedBy": "Blockiert durch",
+      "disabledNothingReady": "Nichts zu versenden: Noch keine Spec ist bereit.",
+      "disabledNotPublished": "Bestätige, dass die Spec-Branches gemergt sind, um den Versand zu aktivieren.",
+      "confirmTitle": "Bereite Specs versenden?",
+      "confirmMessage_one": "Dies sendet {{count}} Spec an OpenJCockpit:",
+      "confirmMessage_other": "Dies sendet {{count}} Specs an OpenJCockpit:",
+      "dispatching": "Wird versendet…"
     },
     "templates": {
       "savedTitle": "Gespeicherte Vorlagen",
