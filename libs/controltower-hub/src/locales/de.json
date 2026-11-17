@@ -86,7 +86,8 @@
       "close": "Sitzung schließen",
       "none": "Noch keine Interviews erfasst.",
       "loadFailed": "Die Interviews konnten nicht geladen werden.",
-      "summary": "{{kind}} · {{status}} · {{count}} Antworten",
+      "summary_one": "{{kind}} · {{status}} · {{count}} Antwort",
+      "summary_other": "{{kind}} · {{status}} · {{count}} Antworten",
       "privacy": "Die Spracherkennung des Browsers nutzt möglicherweise einen Sprachdienst eines Drittanbieters; prüfe die Datenschutzrichtlinie, bevor du sensible Daten verwendest.",
       "status": {
         "ACTIVE": "Läuft",
@@ -144,6 +145,7 @@
       "published": "Die Spec-Branches sind in den Branch gemergt, den OpenJCockpit liest.",
       "dispatch": "Bereite Specs dispatchen",
       "openSpecQueue": "Spec-Queue öffnen",
+      "result": { "DISPATCHED": "Versendet" },
       "unknownHint": "Unsichere HTTP-Ergebnisse werden als UNKNOWN erfasst und nie automatisch wiederholt."
     },
     "templates": {

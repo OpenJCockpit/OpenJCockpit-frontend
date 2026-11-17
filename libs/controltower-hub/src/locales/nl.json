@@ -86,7 +86,8 @@
       "close": "Sessie sluiten",
       "none": "Nog geen interviews vastgelegd.",
       "loadFailed": "De interviews konden niet worden geladen.",
-      "summary": "{{kind}} · {{status}} · {{count}} antwoorden",
+      "summary_one": "{{kind}} · {{status}} · {{count}} antwoord",
+      "summary_other": "{{kind}} · {{status}} · {{count}} antwoorden",
       "privacy": "Spraakherkenning in de browser kan een spraakdienst van een derde gebruiken; raadpleeg je privacybeleid voordat je gevoelige gegevens gebruikt.",
       "status": {
         "ACTIVE": "Bezig",
@@ -144,6 +145,7 @@
       "published": "De spec-branches zijn gemerged in de branch die OpenJCockpit leest.",
       "dispatch": "Klare specs dispatchen",
       "openSpecQueue": "Spec-wachtrij openen",
+      "result": { "DISPATCHED": "Verzonden" },
       "unknownHint": "Onzekere HTTP-uitkomsten worden als UNKNOWN vastgelegd en nooit automatisch opnieuw geprobeerd."
     },
     "templates": {

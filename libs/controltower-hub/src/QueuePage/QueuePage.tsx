@@ -16,10 +16,11 @@ import {
 } from '@openjcockpit/ui';
 import { dispatchControlTowerSpecs, type ControlTowerDispatchOutcome } from '@openjcockpit/api';
 import { useQueueProposal, useRepositoryMutation } from '../hooks';
-import { useRepository } from '../RepositoryGate';
+import { useRepository } from '../RepositoryGate/RepositoryGate';
 import { SPEC_QUEUE_PATH } from '../routePaths';
 import { useWriteAccess } from '../useWriteAccess';
-import styles from './pages.module.scss';
+import common from '../shared.module.scss';
+import styles from './QueuePage.module.scss';
 
 /** The specs that may be sent to OpenJCockpit now, and the opt-in dispatch. */
 export function QueuePage() {
@@ -37,7 +38,7 @@ export function QueuePage() {
   if (data) {
     ready = data.length ? (
       data.map((candidate, index) => (
-        <div className={styles.row} key={candidate.specId}>
+        <div className={common.row} key={candidate.specId}>
           <span className={styles.queueIndex}>{index + 1}</span>
           <div className={styles.grow}>
             <b>{candidate.title}</b>
@@ -62,19 +63,19 @@ export function QueuePage() {
   }
 
   return (
-    <div className={styles.twoCol}>
+    <div className={common.twoCol}>
       <Panel>
         <PanelHeader>
           <PanelTitle>{t('queue.ready')}</PanelTitle>
           {data && <StatusChip label={t('queue.count', { count: data.length })} kind="neutral" />}
         </PanelHeader>
-        <div className={styles.body}>{ready}</div>
+        <div className={common.body}>{ready}</div>
       </Panel>
       <Panel>
         <PanelHeader>
           <PanelTitle>{t('queue.dispatchTitle')}</PanelTitle>
         </PanelHeader>
-        <div className={styles.body}>
+        <div className={common.body}>
           <StatusMessage>{t('queue.hint')}</StatusMessage>
           {canWrite && (
             <>
@@ -83,7 +84,7 @@ export function QueuePage() {
                 checked={published}
                 onChange={setPublished}
               />
-              <div className={styles.actions}>
+              <div className={common.actions}>
                 <Button
                   variant="primary"
                   disabled={dispatch.isPending || !published || !data?.length}
@@ -104,7 +105,11 @@ export function QueuePage() {
           )}
           {outcomes && (
             <div role="status">
-              <p>{outcomes.map((o) => o.result).join(', ')}</p>
+              <p>
+                {outcomes
+                  .map((o) => t(`queue.result.${o.result}`, { defaultValue: o.result }))
+                  .join(', ')}
+              </p>
               <Link className={buttonClass({ variant: 'secondary' })} to={SPEC_QUEUE_PATH}>
                 {t('queue.openSpecQueue')}
               </Link>

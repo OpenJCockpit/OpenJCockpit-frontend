@@ -23,8 +23,9 @@ import {
 import { errorMessage } from '../errorMessage';
 import { useRepositoryMutation, useSpecTemplates, useTemplates } from '../hooks';
 import { useWriteAccess } from '../useWriteAccess';
-import { DEFAULT_SPEC_TEMPLATE, sampleQuestions } from './sampleQuestions';
-import styles from './pages.module.scss';
+import { DEFAULT_SPEC_TEMPLATE, sampleQuestions } from '../sampleQuestions';
+import common from '../shared.module.scss';
+import styles from './TemplatesPage.module.scss';
 
 const pretty = (kind: ControlTowerTemplateKind) => JSON.stringify(sampleQuestions(kind), null, 2);
 
@@ -98,14 +99,14 @@ export function TemplatesPage() {
           {error}
         </StatusMessage>
       )}
-      <div className={styles.twoCol}>
+      <div className={common.twoCol}>
         <Panel>
           <PanelHeader>
             <PanelTitle>{t('templates.savedTitle')}</PanelTitle>
           </PanelHeader>
-          <div className={styles.body}>
+          <div className={common.body}>
             {list(templates, t('templates.none'), (item) => (
-              <div className={styles.row} key={item.id}>
+              <div className={common.row} key={item.id}>
                 <div>
                   <b>{item.name}</b>
                   <small>{t('templates.questions', { count: item.questions.length })}</small>
@@ -120,7 +121,7 @@ export function TemplatesPage() {
             <PanelHeader>
               <PanelTitle>{t('templates.new')}</PanelTitle>
             </PanelHeader>
-            <form className={styles.body} onSubmit={saveTemplate}>
+            <form className={common.body} onSubmit={saveTemplate}>
               <TextField label={t('templates.name')} required value={name} onChange={setName} />
               <SelectField
                 label={t('templates.kind')}
@@ -142,7 +143,7 @@ export function TemplatesPage() {
                 value={questionJson}
                 onChange={setQuestionJson}
               />
-              <div className={styles.actions}>
+              <div className={common.actions}>
                 <Button variant="primary" type="submit" disabled={createTemplate.isPending}>
                   {t('templates.save')}
                 </Button>
@@ -156,12 +157,12 @@ export function TemplatesPage() {
           <PanelTitle>{t('templates.specTitle')}</PanelTitle>
           <StatusChip label={t('templates.markdown')} kind="neutral" />
         </PanelHeader>
-        <div className={styles.body}>
+        <div className={common.body}>
           <StatusMessage>{t('templates.specHint')}</StatusMessage>
-          <div className={styles.twoCol}>
+          <div className={common.twoCol}>
             <div>
               {list(specTemplates, t('templates.none'), (item) => (
-                <div className={styles.row} key={item.id}>
+                <div className={common.row} key={item.id}>
                   <div>
                     <b>{item.name}</b>
                     <small>
@@ -173,7 +174,7 @@ export function TemplatesPage() {
               ))}
             </div>
             {canWrite && (
-              <form className={styles.body} onSubmit={saveSpecTemplate}>
+              <form className={common.body} onSubmit={saveSpecTemplate}>
                 <TextField
                   label={t('templates.name')}
                   required
@@ -187,7 +188,7 @@ export function TemplatesPage() {
                   value={specContent}
                   onChange={setSpecContent}
                 />
-                <div className={styles.actions}>
+                <div className={common.actions}>
                   <Button variant="primary" type="submit" disabled={createSpecTemplate.isPending}>
                     {t('templates.saveSpec')}
                   </Button>

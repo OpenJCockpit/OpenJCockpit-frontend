@@ -33,7 +33,11 @@ describe('ControlTower mock routes', () => {
     expect(created).toMatchObject({ hasSecret: true, defaultBranch: 'dev', gitUsername: 'u' });
     expect(() => call('POST', '/projects', repoBody)).toThrow(MockError);
     expect(call('GET', '/projects', {}, 'cockpitProjectId=p1')).toHaveLength(1);
-    expect(call('GET', '/projects', {}, 'cockpitProjectId=zzz')).toHaveLength(0);
+    // A project without a repository gets a linked mock one on first lookup, once.
+    const linked = call('GET', '/projects', {}, 'cockpitProjectId=zzz');
+    expect(linked).toHaveLength(1);
+    expect(linked[0]).toMatchObject({ name: 'zzz-repo', cockpitProjectId: 'zzz' });
+    expect(call('GET', '/projects', {}, 'cockpitProjectId=zzz')).toHaveLength(1);
     const updated = call('PUT', `/projects/${String(created.id)}`, { name: 'Renamed', gitUrl: '' });
     expect(updated).toMatchObject({
       name: 'Renamed',

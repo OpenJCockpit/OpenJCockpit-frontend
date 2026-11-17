@@ -20,10 +20,11 @@ import {
   type ControlTowerSpecStatus,
 } from '@openjcockpit/api';
 import { useRepositoryMutation, useSpecs } from '../hooks';
-import { useRepository } from '../RepositoryGate';
+import { useRepository } from '../RepositoryGate/RepositoryGate';
 import { errorMessage } from '../errorMessage';
 import { useWriteAccess } from '../useWriteAccess';
-import styles from './pages.module.scss';
+import common from '../shared.module.scss';
+import styles from './SpecsPage.module.scss';
 
 const STATUS_KIND: Record<ControlTowerSpecStatus, StatusKind> = {
   DRAFT: 'open',
@@ -96,7 +97,7 @@ export function SpecsPage() {
             </p>
             <pre>{spec.body}</pre>
             {canWrite && (
-              <div className={styles.actions}>
+              <div className={common.actions}>
                 {spec.status === 'DRAFT' && (
                   <Button variant="primary" onClick={() => askApprove(spec)}>
                     {t('specs.approveAndPush')}
@@ -140,7 +141,7 @@ export function SpecsPage() {
         <PanelTitle>{t('specs.title')}</PanelTitle>
         {data && <StatusChip label={t('specs.count', { count: data.length })} kind="neutral" />}
       </PanelHeader>
-      <div className={styles.body}>
+      <div className={common.body}>
         {message && <StatusMessage role="status">{message}</StatusMessage>}
         {error && (
           <StatusMessage variant="error" role="alert">

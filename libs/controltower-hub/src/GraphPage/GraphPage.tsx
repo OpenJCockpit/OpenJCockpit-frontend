@@ -10,10 +10,10 @@ import {
   PanelTitle,
 } from '@openjcockpit/ui';
 import { useGraph } from '../hooks';
-import { useRepository } from '../RepositoryGate';
+import { useRepository } from '../RepositoryGate/RepositoryGate';
 import { layoutGraph, NODE_HEIGHT, NODE_WIDTH } from './graphLayout';
-import svgStyles from './Graph.module.scss';
-import styles from './pages.module.scss';
+import styles from './Graph.module.scss';
+import common from '../shared.module.scss';
 
 const ELLIPSIS = '…';
 const ID_LENGTH = 18;
@@ -43,34 +43,29 @@ export function GraphPage() {
         >
           <defs>
             <marker id="ct-arrow" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto">
-              <path d="M0 0 L6 3 L0 6" className={svgStyles.arrow} />
+              <path d="M0 0 L6 3 L0 6" className={styles.arrow} />
             </marker>
           </defs>
           {layout.edges.map((edge) => (
-            <path
-              key={edge.key}
-              className={svgStyles.edge}
-              d={edge.path}
-              markerEnd="url(#ct-arrow)"
-            />
+            <path key={edge.key} className={styles.edge} d={edge.path} markerEnd="url(#ct-arrow)" />
           ))}
           {layout.nodes.map((node) => {
             const p = layout.positions.get(node.id) as { x: number; y: number };
             return (
               <g key={node.id} transform={`translate(${p.x},${p.y})`}>
                 <rect
-                  className={cx(svgStyles.node, node.ready && svgStyles.nodeReady)}
+                  className={cx(styles.node, node.ready && styles.nodeReady)}
                   width={NODE_WIDTH}
                   height={NODE_HEIGHT}
                   rx="9"
                 />
-                <text className={svgStyles.nodeId} x="12" y="19">
+                <text className={styles.nodeId} x="12" y="19">
                   {node.id.substring(0, ID_LENGTH)}
                 </text>
-                <text className={svgStyles.nodeTitle} x="12" y="36">
+                <text className={styles.nodeTitle} x="12" y="36">
                   {clip(node.title, TITLE_LENGTH)}
                 </text>
-                <text className={svgStyles.nodeStatus} x="12" y="53">
+                <text className={styles.nodeStatus} x="12" y="53">
                   {node.ready ? t('graph.ready', { status: node.status }) : node.status}
                 </text>
               </g>
@@ -96,7 +91,7 @@ export function GraphPage() {
       <PanelHeader>
         <PanelTitle>{t('graph.title')}</PanelTitle>
       </PanelHeader>
-      <p className={styles.body}>{t('graph.hint')}</p>
+      <p className={common.body}>{t('graph.hint')}</p>
       {content}
     </Panel>
   );

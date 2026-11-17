@@ -2,8 +2,8 @@ import { Link, Outlet, useOutletContext } from 'react-router';
 import { useTranslation } from '@openjcockpit/i18n';
 import type { ControlTowerProject } from '@openjcockpit/api';
 import { buttonClass, EmptyState, ErrorState, LoadingState } from '@openjcockpit/ui';
-import { useControlTowerRepository } from './hooks';
-import { CONTROLTOWER_REPOSITORY_SETTINGS_PATH } from './routePaths';
+import { useControlTowerRepository } from '../hooks';
+import { CONTROLTOWER_REPOSITORY_SETTINGS_PATH } from '../routePaths';
 
 /** The repository the pages below work on, provided by `RepositoryGate`. */
 export function useRepository(): ControlTowerProject {

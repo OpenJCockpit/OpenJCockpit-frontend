@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useSyncExternalStore, type ReactNode } from 'react';
 import type { i18n as I18n } from 'i18next';
 import { useTranslation } from 'react-i18next';
 
@@ -48,7 +48,19 @@ export function WithTranslations({
   children: ReactNode;
 }) {
   const { i18n } = useTranslation();
-  useState(() => i18n.addResourceBundle('en', namespace, english, true, true));
+  // Adding a bundle notifies every useTranslation subscriber, which must not happen while this component renders.
+  // So register in a layout effect (before paint) and render the children once the namespace is in the store.
+  const registered = useSyncExternalStore(
+    (notify) => {
+      i18n.store.on('added', notify);
+      return () => i18n.store.off('added', notify);
+    },
+    () => i18n.hasResourceBundle('en', namespace),
+    () => false,
+  );
+  useLayoutEffect(() => {
+    i18n.addResourceBundle('en', namespace, english, true, true);
+  }, [i18n, namespace, english]);
 
   useEffect(() => {
     const follow = (language: string) =>
@@ -58,5 +70,5 @@ export function WithTranslations({
     return () => i18n.off('languageChanged', follow);
   }, [i18n, namespace, locales]);
 
-  return <>{children}</>;
+  return registered ? <>{children}</> : null;
 }

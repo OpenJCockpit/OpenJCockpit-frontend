@@ -86,7 +86,8 @@
       "close": "Cerrar sesión",
       "none": "Aún no hay entrevistas registradas.",
       "loadFailed": "No se pudieron cargar las entrevistas.",
-      "summary": "{{kind}} · {{status}} · {{count}} respuestas",
+      "summary_one": "{{kind}} · {{status}} · {{count}} respuesta",
+      "summary_other": "{{kind}} · {{status}} · {{count}} respuestas",
       "privacy": "El reconocimiento de voz del navegador puede usar un servicio de voz de terceros; consulta tu política de privacidad antes de usar datos sensibles.",
       "status": {
         "ACTIVE": "En curso",
@@ -144,6 +145,7 @@
       "published": "Las ramas de las specs están fusionadas en la rama que lee OpenJCockpit.",
       "dispatch": "Despachar las specs listas",
       "openSpecQueue": "Abrir la cola de specs",
+      "result": { "DISPATCHED": "Enviado" },
       "unknownHint": "Los resultados HTTP inciertos se registran como UNKNOWN y nunca se reintentan automáticamente."
     },
     "templates": {

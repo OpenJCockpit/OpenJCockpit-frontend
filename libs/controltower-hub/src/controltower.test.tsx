@@ -5,8 +5,8 @@ import { chooseOption } from '@openjcockpit/ui/testing';
 import { controltowerApp } from './index';
 import { controltowerRoutes } from './controltowerRoutes';
 import { errorMessage } from './errorMessage';
-import { layoutGraph } from './pages/graphLayout';
-import { sampleQuestions } from './pages/sampleQuestions';
+import { layoutGraph } from './GraphPage/graphLayout';
+import { sampleQuestions } from './sampleQuestions';
 import {
   ADMIN,
   ct,
@@ -251,7 +251,7 @@ describe('dispatch queue', () => {
     fireEvent.click(screen.getByRole('checkbox'));
     await waitFor(() => expect(button).toBeEnabled());
     fireEvent.click(button);
-    expect(await screen.findByText('DISPATCHED')).toBeInTheDocument();
+    expect(await screen.findByText('Dispatched')).toBeInTheDocument();
     expect(ct.dispatchControlTowerSpecs).toHaveBeenCalledWith('r1', true);
     expect(screen.getByRole('link', { name: 'Open the spec queue' })).toHaveAttribute(
       'href',

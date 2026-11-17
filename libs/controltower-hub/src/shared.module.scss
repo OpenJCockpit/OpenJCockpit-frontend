@@ -1,0 +1,48 @@
+// Classes used by several ControlTower pages. Page-only styles live next to their page.
+.twoCol {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+.body {
+  display: grid;
+  gap: 12px;
+  padding: 4px 16px 16px;
+}
+// Form fields in a panel body: label text above a full-width control. :where() keeps this below the checkbox field's own layout.
+// Block (not flex) so the label text and its required mark stay on one line.
+:where(.body) label {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
+:where(.body) :is(input:not([type='checkbox']):not([role='combobox']), textarea) {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+}
+:where(.body) textarea {
+  resize: vertical;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgb(var(--accent-rgb) / 0.075);
+  overflow-wrap: anywhere;
+  & small {
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+  }
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

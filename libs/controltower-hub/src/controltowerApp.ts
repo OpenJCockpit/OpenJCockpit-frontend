@@ -40,7 +40,7 @@ export const controltowerApp: AppDefinition = {
       screen: 'project',
       groupKey: 'settings.groups.projectIntegrations',
       requiresProject: true,
-      component: () => import('./settings/RepositorySection'),
+      component: () => import('./RepositorySettings/RepositorySettings'),
     },
     {
       id: 'controltower-policy',
@@ -50,7 +50,7 @@ export const controltowerApp: AppDefinition = {
       requiredPermissions: CONTROLTOWER_ADMIN_ROLES,
       order: 130,
       groupKey: 'settings.groups.integrations',
-      component: () => import('./settings/PolicySection'),
+      component: () => import('./PolicySettings/PolicySettings'),
     },
   ],
 };

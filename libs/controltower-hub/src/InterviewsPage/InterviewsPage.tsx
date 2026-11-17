@@ -22,12 +22,13 @@ import {
   type ControlTowerInterview,
 } from '@openjcockpit/api';
 import { useInterviews, useRepositoryMutation, useSpecTemplates, useTemplates } from '../hooks';
-import { useRepository } from '../RepositoryGate';
+import { useRepository } from '../RepositoryGate/RepositoryGate';
 import { CONTROLTOWER_SPECS_PATH } from '../routePaths';
 import { errorMessage } from '../errorMessage';
 import { useWriteAccess } from '../useWriteAccess';
 import { SpeechButtons } from './SpeechButtons';
-import styles from './pages.module.scss';
+import common from '../shared.module.scss';
+import styles from './InterviewsPage.module.scss';
 
 /** Adaptive discovery interviews, typed or dictated; a completed one generates spec drafts. */
 export function InterviewsPage() {
@@ -116,7 +117,7 @@ export function InterviewsPage() {
               text={active.currentQuestion}
               onTranscript={(text) => setAnswer((old) => (old ? `${old} ${text}` : text))}
             />
-            <div className={styles.actions}>
+            <div className={common.actions}>
               <Button variant="primary" type="submit" disabled={busy || !canWrite}>
                 {t('interviews.submit')}
               </Button>
@@ -134,7 +135,7 @@ export function InterviewsPage() {
                 ...specTemplates.map((s) => ({ value: s.id, label: s.name })),
               ]}
             />
-            <div className={styles.actions}>
+            <div className={common.actions}>
               <Button
                 variant="primary"
                 disabled={busy || !canWrite || active.status !== 'COMPLETE'}
@@ -172,7 +173,7 @@ export function InterviewsPage() {
             placeholder={t('interviews.featurePlaceholder')}
           />
         )}
-        <div className={styles.actions}>
+        <div className={common.actions}>
           <Button variant="primary" type="submit" disabled={!templateId || busy || !canWrite}>
             <Icon name="plus" /> {t('interviews.start')}
           </Button>
@@ -185,7 +186,7 @@ export function InterviewsPage() {
   if (interviews.data) {
     previous = interviews.data.length ? (
       interviews.data.map((interview) => (
-        <div className={styles.row} key={interview.id}>
+        <div className={common.row} key={interview.id}>
           <button
             type="button"
             className={styles.rowButton}
@@ -222,12 +223,12 @@ export function InterviewsPage() {
   }
 
   return (
-    <div className={styles.twoCol}>
+    <div className={common.twoCol}>
       <Panel>
         <PanelHeader>
           <PanelTitle>{t('interviews.session')}</PanelTitle>
         </PanelHeader>
-        <div className={styles.body}>
+        <div className={common.body}>
           {error && (
             <StatusMessage variant="error" role="alert">
               {error}
@@ -240,7 +241,7 @@ export function InterviewsPage() {
         <PanelHeader>
           <PanelTitle>{t('interviews.previous')}</PanelTitle>
         </PanelHeader>
-        <div className={styles.body}>
+        <div className={common.body}>
           {previous}
           <StatusMessage>{t('interviews.privacy')}</StatusMessage>
         </div>

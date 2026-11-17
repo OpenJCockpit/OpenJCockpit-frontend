@@ -137,7 +137,11 @@ export function Select({
               aria-selected={o.value === value}
               className={cx(styles.option, i === active && styles.active)}
               onPointerEnter={() => setActive(i)}
-              onClick={() => choose(i)}
+              onClick={(e) => {
+                // Inside a <label> (SelectField) the click would otherwise re-activate the trigger and reopen the list.
+                e.preventDefault();
+                choose(i);
+              }}
             >
               {o.label}
             </li>

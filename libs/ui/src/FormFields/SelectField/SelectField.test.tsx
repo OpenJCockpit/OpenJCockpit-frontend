@@ -39,4 +39,22 @@ describe('SelectField', () => {
     expect(onChange).toHaveBeenCalledWith('g1');
     expect(screen.getByText('Pick one')).toHaveClass(fieldHintClass);
   });
+
+  it('SelectField closes the list after an option is picked', () => {
+    render(
+      <SelectField
+        label="Group"
+        value=""
+        onChange={vi.fn()}
+        options={[
+          { value: '', label: 'None' },
+          { value: 'g1', label: 'G1' },
+        ]}
+      />,
+    );
+
+    chooseOption(screen.getByRole('combobox', { name: /Group/ }), 'G1');
+
+    expect(screen.queryByRole('listbox')).toBeNull();
+  });
 });

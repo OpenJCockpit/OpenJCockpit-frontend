@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import { DASHBOARD_PATH, useHubHeader } from '@openjcockpit/hub-contract';
 import { useTranslation } from '@openjcockpit/i18n';
@@ -11,23 +12,7 @@ import {
   pageClass,
   pageHeaderClass,
 } from '@openjcockpit/ui';
-import {
-  CONTROLTOWER_GRAPH_PATH,
-  CONTROLTOWER_INTERVIEWS_PATH,
-  CONTROLTOWER_QUEUE_PATH,
-  CONTROLTOWER_ROUTE,
-  CONTROLTOWER_SPECS_PATH,
-  CONTROLTOWER_TEMPLATES_PATH,
-} from './routePaths';
-
-const TABS = [
-  { path: CONTROLTOWER_ROUTE, key: 'overview' },
-  { path: CONTROLTOWER_INTERVIEWS_PATH, key: 'interviews' },
-  { path: CONTROLTOWER_SPECS_PATH, key: 'specs' },
-  { path: CONTROLTOWER_GRAPH_PATH, key: 'graph' },
-  { path: CONTROLTOWER_QUEUE_PATH, key: 'queue' },
-  { path: CONTROLTOWER_TEMPLATES_PATH, key: 'templates' },
-] as const;
+import { pageUrl, pages } from '../pages';
 
 /** Page chrome shared by every ControlTower page: the host header, the title and the page tabs. */
 export function ControlTowerShell() {
@@ -49,19 +34,24 @@ export function ControlTowerShell() {
           </div>
         </div>
         <TabNav secondary aria-label={t('tabs.label')}>
-          {TABS.map(({ path, key }) => (
-            <Tab
-              key={key}
-              type="button"
-              active={pathname === path}
-              aria-current={pathname === path ? 'page' : undefined}
-              onClick={() => void navigate(path)}
-            >
-              {t(`tabs.${key}`)}
-            </Tab>
-          ))}
+          {pages.map((page) => {
+            const path = pageUrl(page);
+            return (
+              <Tab
+                key={page.tabKey}
+                type="button"
+                active={pathname === path}
+                aria-current={pathname === path ? 'page' : undefined}
+                onClick={() => void navigate(path)}
+              >
+                {t(`tabs.${page.tabKey}`)}
+              </Tab>
+            );
+          })}
         </TabNav>
-        <Outlet />
+        <Suspense fallback={<p>{t('loading')}</p>}>
+          <Outlet />
+        </Suspense>
       </main>
     </AppShell>
   );

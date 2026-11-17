@@ -1,14 +1,9 @@
 import type { RouteObject } from 'react-router';
 import { RequireProject } from '@openjcockpit/hub-contract';
-import { ControlTowerShell } from './ControlTowerShell';
-import { GraphPage } from './pages/GraphPage';
-import { InterviewsPage } from './pages/InterviewsPage';
-import { OverviewPage } from './pages/OverviewPage';
-import { QueuePage } from './pages/QueuePage';
-import { SpecsPage } from './pages/SpecsPage';
-import { TemplatesPage } from './pages/TemplatesPage';
+import { ControlTowerShell } from './ControlTowerShell/ControlTowerShell';
+import { pageRoute, pages } from './pages';
 import { WithTranslations } from './registerTranslations';
-import { RepositoryGate } from './RepositoryGate';
+import { RepositoryGate } from './RepositoryGate/RepositoryGate';
 
 /** Relative to the app route, which the host mounts as `/controltower/*`. Templates are global; the rest need a project and its repository. */
 export const controltowerRoutes: RouteObject[] = [
@@ -19,20 +14,14 @@ export const controltowerRoutes: RouteObject[] = [
       </WithTranslations>
     ),
     children: [
-      { path: 'templates', element: <TemplatesPage /> },
+      ...pages.filter((page) => page.scope === 'global').map(pageRoute),
       {
         element: (
           <RequireProject>
             <RepositoryGate />
           </RequireProject>
         ),
-        children: [
-          { index: true, element: <OverviewPage /> },
-          { path: 'interviews', element: <InterviewsPage /> },
-          { path: 'specs', element: <SpecsPage /> },
-          { path: 'graph', element: <GraphPage /> },
-          { path: 'queue', element: <QueuePage /> },
-        ],
+        children: pages.filter((page) => page.scope === 'project').map(pageRoute),
       },
     ],
   },

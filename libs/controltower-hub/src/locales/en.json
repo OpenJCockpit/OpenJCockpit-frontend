@@ -86,7 +86,8 @@
       "close": "Close session",
       "none": "No interviews recorded yet.",
       "loadFailed": "Failed to load the interviews.",
-      "summary": "{{kind}} · {{status}} · {{count}} answers",
+      "summary_one": "{{kind}} · {{status}} · {{count}} answer",
+      "summary_other": "{{kind}} · {{status}} · {{count}} answers",
       "privacy": "Browser speech recognition may use a third-party speech service; consult your privacy policy before using sensitive data.",
       "status": {
         "ACTIVE": "In progress",
@@ -144,6 +145,7 @@
       "published": "The spec branches are merged into the branch that OpenJCockpit reads.",
       "dispatch": "Dispatch ready specs",
       "openSpecQueue": "Open the spec queue",
+      "result": { "DISPATCHED": "Dispatched" },
       "unknownHint": "Uncertain HTTP outcomes are recorded as UNKNOWN, never automatically retried."
     },
     "templates": {
