@@ -98,7 +98,10 @@
         "ACTIVE": "En curso",
         "COMPLETE": "Completada",
         "GENERATED": "Specs generadas"
-      }
+      },
+      "starting": "Iniciando…",
+      "submitting": "Enviando…",
+      "generating": "Generando…"
     },
     "speech": {
       "speak": "Hablar",
@@ -147,7 +150,8 @@
       "approveAllMessage_other": "{{count}} borradores se aprueban uno a uno, cada uno subido a su propia rama de Git. Si uno falla, el resto sigue como borrador.",
       "approvedAll_one": "{{count}} spec subida a su rama.",
       "approvedAll_other": "{{count}} specs subidas a sus ramas.",
-      "approveAllFailed": "Aprobadas {{done}} de {{total}}. «{{title}}» falló: {{error}} Los borradores restantes no se aprobaron."
+      "approveAllFailed": "Aprobadas {{done}} de {{total}}. «{{title}}» falló: {{error}} Los borradores restantes no se aprobaron.",
+      "emptyAction": "Iniciar una entrevista de descubrimiento"
     },
     "graph": {
       "title": "Grafo de dependencias",
@@ -155,7 +159,7 @@
       "label": "Grafo de dependencias de las specs",
       "empty": "Aún no hay especificaciones. Inicia tu primera entrevista.",
       "loadFailed": "No se pudo cargar el grafo de dependencias.",
-      "ready": "{{status}} · LISTA",
+      "ready": "{{status}} · Listo",
       "legend": "Estado",
       "zoomIn": "Acercar",
       "zoomOut": "Alejar",
@@ -169,7 +173,8 @@
       "noDependencies": "{{title}} no tiene dependencias",
       "tooltip": "{{id}} · {{title}}",
       "listLabel": "Dependencias de especificaciones",
-      "openHint": "Pulsa Intro para abrir"
+      "openHint": "Pulsa Intro para abrir",
+      "emptyAction": "Iniciar una entrevista de descubrimiento"
     },
     "queue": {
       "ready": "Trabajo listo",
@@ -195,7 +200,8 @@
       "confirmTitle": "¿Enviar las specs listas?",
       "confirmMessage_one": "Esto envía {{count}} spec a OpenJCockpit:",
       "confirmMessage_other": "Esto envía {{count}} specs a OpenJCockpit:",
-      "dispatching": "Enviando…"
+      "dispatching": "Enviando…",
+      "emptyAction": "Revisar especificaciones"
     },
     "templates": {
       "savedTitle": "Plantillas guardadas",
@@ -266,6 +272,13 @@
           "text": "Solo estos roles pueden enviar specs a OpenJCockpit."
         }
       }
+    },
+    "dismiss": "Cerrar",
+    "repositorySettings": "Ajustes del repositorio",
+    "readOnly": "Solo los operadores y administradores pueden hacer cambios aquí. Puede ver esta página.",
+    "kind": {
+      "PROJECT": "Proyecto inicial",
+      "FEATURE": "Nueva funcionalidad"
     }
   }
 }

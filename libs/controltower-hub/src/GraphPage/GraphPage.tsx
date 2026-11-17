@@ -1,8 +1,17 @@
 import { useTranslation } from '@openjcockpit/i18n';
-import { EmptyState, Panel, PanelBody, PanelHeader, PanelTitle } from '@openjcockpit/ui';
+import { Link } from 'react-router';
+import {
+  EmptyState,
+  Panel,
+  PanelBody,
+  PanelHeader,
+  PanelTitle,
+  buttonClass,
+} from '@openjcockpit/ui';
 import { ControlTowerQuery } from '../ControlTowerQuery';
 import { useGraph } from '../hooks';
 import { useRepository } from '../RepositoryGate/RepositoryGate';
+import { CONTROLTOWER_INTERVIEWS_PATH } from '../routePaths';
 import { DependencyGraph } from './DependencyGraph';
 
 /** The spec dependency graph: an arrow means "the predecessor must be done first". */
@@ -21,7 +30,19 @@ export function GraphPage() {
         query={graph}
         loadFailed={t('graph.loadFailed')}
         isEmpty={(data) => data.nodes.length === 0}
-        empty={<EmptyState title={t('graph.empty')} />}
+        empty={
+          <EmptyState
+            title={t('graph.empty')}
+            action={
+              <Link
+                className={buttonClass({ variant: 'secondary' })}
+                to={CONTROLTOWER_INTERVIEWS_PATH}
+              >
+                {t('graph.emptyAction')}
+              </Link>
+            }
+          />
+        }
       >
         {(data) => <DependencyGraph graph={data} />}
       </ControlTowerQuery>

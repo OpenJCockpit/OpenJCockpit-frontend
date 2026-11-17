@@ -14,7 +14,7 @@ export function InterviewsPage() {
   const { t } = useTranslation('controltower');
   const repository = useRepository();
   const [active, setActive] = useState<ControlTowerInterview | null>(null);
-  const { run, feedback } = useAction();
+  const { run, feedback, clear } = useAction();
 
   return (
     <TwoColumn>
@@ -23,7 +23,7 @@ export function InterviewsPage() {
           <PanelTitle>{t('interviews.session')}</PanelTitle>
         </PanelHeader>
         <PanelBody>
-          <ActionFeedback feedback={feedback} />
+          <ActionFeedback feedback={feedback} onDismiss={clear} />
           {active ? (
             <InterviewSession
               key={active.id}

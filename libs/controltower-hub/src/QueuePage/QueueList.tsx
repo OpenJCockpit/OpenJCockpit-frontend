@@ -2,6 +2,7 @@ import { Link } from 'react-router';
 import { useTranslation } from '@openjcockpit/i18n';
 import {
   EmptyState,
+  buttonClass,
   ListRow,
   Panel,
   PanelBody,
@@ -51,7 +52,19 @@ export function QueueList({ query, specs }: Props) {
           query={query}
           loadFailed={t('queue.loadFailed')}
           isEmpty={(rows) => rows.length === 0}
-          empty={<EmptyState title={t('queue.empty')} />}
+          empty={
+            <EmptyState
+              title={t('queue.empty')}
+              action={
+                <Link
+                  className={buttonClass({ variant: 'secondary' })}
+                  to={CONTROLTOWER_SPECS_PATH}
+                >
+                  {t('queue.emptyAction')}
+                </Link>
+              }
+            />
+          }
         >
           {(rows) =>
             rows.map((candidate, index) => (

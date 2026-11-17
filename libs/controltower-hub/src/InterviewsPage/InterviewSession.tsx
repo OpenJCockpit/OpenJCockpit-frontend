@@ -68,7 +68,7 @@ export function InterviewSession({ repositoryId, interview, run, onChange, onClo
   return (
     <div className={styles.session}>
       <StatusChip
-        label={`${t(`interviews.status.${interview.status}`)} · ${interview.kind}`}
+        label={`${t(`interviews.status.${interview.status}`)} · ${t(`kind.${interview.kind}`)}`}
         kind={active ? 'active' : 'done'}
       />
       <h3>{active ? interview.currentQuestion : t('interviews.completed')}</h3>
@@ -94,7 +94,7 @@ export function InterviewSession({ repositoryId, interview, run, onChange, onClo
           />
           <ActionRow>
             <Button variant="primary" type="submit" disabled={busy || !canWrite}>
-              {t('interviews.submit')}
+              {send.isPending ? t('interviews.submitting') : t('interviews.submit')}
             </Button>
           </ActionRow>
         </form>
@@ -116,7 +116,8 @@ export function InterviewSession({ repositoryId, interview, run, onChange, onClo
               disabled={busy || !canWrite || interview.status !== 'COMPLETE'}
               onClick={onGenerate}
             >
-              <Icon name="sparkle" /> {t('interviews.generate')}
+              <Icon name={generate.isPending ? 'spinner' : 'sparkle'} />{' '}
+              {generate.isPending ? t('interviews.generating') : t('interviews.generate')}
             </Button>
             <Button variant="secondary" onClick={onClose}>
               {t('interviews.close')}

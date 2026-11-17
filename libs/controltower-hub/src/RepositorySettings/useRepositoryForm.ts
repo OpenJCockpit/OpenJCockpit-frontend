@@ -95,6 +95,8 @@ export function useRepositoryForm(data: ControlTowerProject | null) {
     checking: check.pending,
     checkFeedback: check.feedback,
     submitFeedback: submit.feedback,
+    clearCheckFeedback: check.clear,
+    clearSubmitFeedback: submit.clear,
     project,
   };
 }

@@ -98,7 +98,10 @@
         "ACTIVE": "Läuft",
         "COMPLETE": "Abgeschlossen",
         "GENERATED": "Specs generiert"
-      }
+      },
+      "starting": "Wird gestartet…",
+      "submitting": "Wird gesendet…",
+      "generating": "Wird erzeugt…"
     },
     "speech": {
       "speak": "Sprechen",
@@ -147,7 +150,8 @@
       "approveAllMessage_other": "{{count}} Entwürfe werden nacheinander freigegeben, jeder in einen eigenen Git-Branch gepusht. Schlägt einer fehl, bleiben die übrigen Entwürfe.",
       "approvedAll_one": "{{count}} Spec in ihren Branch gepusht.",
       "approvedAll_other": "{{count}} Specs in ihre Branches gepusht.",
-      "approveAllFailed": "{{done}} von {{total}} freigegeben. „{{title}}“ ist fehlgeschlagen: {{error}} Die übrigen Entwürfe wurden nicht freigegeben."
+      "approveAllFailed": "{{done}} von {{total}} freigegeben. „{{title}}“ ist fehlgeschlagen: {{error}} Die übrigen Entwürfe wurden nicht freigegeben.",
+      "emptyAction": "Discovery-Interview starten"
     },
     "graph": {
       "title": "Abhängigkeitsgraph",
@@ -155,7 +159,7 @@
       "label": "Abhängigkeitsgraph der Specs",
       "empty": "Noch keine Spezifikationen. Starte dein erstes Interview.",
       "loadFailed": "Der Abhängigkeitsgraph konnte nicht geladen werden.",
-      "ready": "{{status}} · BEREIT",
+      "ready": "{{status}} · Bereit",
       "legend": "Status",
       "zoomIn": "Vergrößern",
       "zoomOut": "Verkleinern",
@@ -169,7 +173,8 @@
       "noDependencies": "{{title}} hat keine Abhängigkeiten",
       "tooltip": "{{id}} · {{title}}",
       "listLabel": "Spezifikationsabhängigkeiten",
-      "openHint": "Eingabetaste zum Öffnen"
+      "openHint": "Eingabetaste zum Öffnen",
+      "emptyAction": "Discovery-Interview starten"
     },
     "queue": {
       "ready": "Bereite Arbeit",
@@ -195,7 +200,8 @@
       "confirmTitle": "Bereite Specs versenden?",
       "confirmMessage_one": "Dies sendet {{count}} Spec an OpenJCockpit:",
       "confirmMessage_other": "Dies sendet {{count}} Specs an OpenJCockpit:",
-      "dispatching": "Wird versendet…"
+      "dispatching": "Wird versendet…",
+      "emptyAction": "Spezifikationen prüfen"
     },
     "templates": {
       "savedTitle": "Gespeicherte Vorlagen",
@@ -266,6 +272,13 @@
           "text": "Nur diese Rollen dürfen Specs an OpenJCockpit senden."
         }
       }
+    },
+    "dismiss": "Schließen",
+    "repositorySettings": "Repository-Einstellungen",
+    "readOnly": "Nur Operatoren und Administratoren können hier Änderungen vornehmen. Sie können diese Seite ansehen.",
+    "kind": {
+      "PROJECT": "Erstes Projekt",
+      "FEATURE": "Neues Feature"
     }
   }
 }

@@ -98,7 +98,10 @@
         "ACTIVE": "In progress",
         "COMPLETE": "Complete",
         "GENERATED": "Specs generated"
-      }
+      },
+      "starting": "Starting…",
+      "submitting": "Submitting…",
+      "generating": "Generating…"
     },
     "speech": {
       "speak": "Speak",
@@ -147,7 +150,8 @@
       "approveAllMessage_other": "{{count}} drafts are approved one at a time, each pushed to its own Git branch. If one fails, the rest stay drafts.",
       "approvedAll_one": "{{count}} spec pushed to its branch.",
       "approvedAll_other": "{{count}} specs pushed to their branches.",
-      "approveAllFailed": "Approved {{done}} of {{total}}. \"{{title}}\" failed: {{error}} The remaining drafts were not approved."
+      "approveAllFailed": "Approved {{done}} of {{total}}. \"{{title}}\" failed: {{error}} The remaining drafts were not approved.",
+      "emptyAction": "Start a discovery interview"
     },
     "graph": {
       "title": "Dependency graph",
@@ -155,7 +159,7 @@
       "label": "Spec dependency graph",
       "empty": "No specifications yet. Generate your first interview.",
       "loadFailed": "Failed to load the dependency graph.",
-      "ready": "{{status}} · READY",
+      "ready": "{{status}} · Ready",
       "legend": "Status",
       "zoomIn": "Zoom in",
       "zoomOut": "Zoom out",
@@ -169,7 +173,8 @@
       "noDependencies": "{{title}} has no dependencies",
       "tooltip": "{{id}} · {{title}}",
       "listLabel": "Spec dependencies",
-      "openHint": "Press Enter to open"
+      "openHint": "Press Enter to open",
+      "emptyAction": "Start a discovery interview"
     },
     "queue": {
       "ready": "Ready work",
@@ -195,7 +200,8 @@
       "confirmTitle": "Dispatch ready specs?",
       "confirmMessage_one": "This sends {{count}} spec to OpenJCockpit:",
       "confirmMessage_other": "This sends {{count}} specs to OpenJCockpit:",
-      "dispatching": "Dispatching…"
+      "dispatching": "Dispatching…",
+      "emptyAction": "Review specifications"
     },
     "templates": {
       "savedTitle": "Saved templates",
@@ -266,6 +272,13 @@
           "text": "Only these roles may send specs to OpenJCockpit."
         }
       }
+    },
+    "dismiss": "Dismiss",
+    "repositorySettings": "Repository settings",
+    "readOnly": "Only operators and administrators can make changes here. You can view this page.",
+    "kind": {
+      "PROJECT": "Initial project",
+      "FEATURE": "New feature"
     }
   }
 }

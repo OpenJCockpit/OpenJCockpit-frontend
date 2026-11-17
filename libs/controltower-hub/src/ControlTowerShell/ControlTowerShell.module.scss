@@ -1,0 +1,25 @@
+.skeleton {
+  display: grid;
+  gap: 12px;
+}
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.repository {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+/* The global Templates tab is not part of the project: set it apart from the project tabs. */
+.globalTab {
+  margin-inline-start: auto;
+  padding-inline-start: 16px;
+  border-inline-start: 1px solid var(--line);
+}

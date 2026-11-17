@@ -98,7 +98,10 @@
         "ACTIVE": "Bezig",
         "COMPLETE": "Voltooid",
         "GENERATED": "Specs gegenereerd"
-      }
+      },
+      "starting": "Starten…",
+      "submitting": "Verzenden…",
+      "generating": "Genereren…"
     },
     "speech": {
       "speak": "Spreken",
@@ -147,7 +150,8 @@
       "approveAllMessage_other": "{{count}} concepten worden één voor één goedgekeurd, elk naar een eigen Git-branch gepusht. Mislukt er één, dan blijven de overige concepten.",
       "approvedAll_one": "{{count}} spec naar zijn branch gepusht.",
       "approvedAll_other": "{{count}} specs naar hun branches gepusht.",
-      "approveAllFailed": "{{done}} van {{total}} goedgekeurd. \"{{title}}\" mislukte: {{error}} De overige concepten zijn niet goedgekeurd."
+      "approveAllFailed": "{{done}} van {{total}} goedgekeurd. \"{{title}}\" mislukte: {{error}} De overige concepten zijn niet goedgekeurd.",
+      "emptyAction": "Een discovery-interview starten"
     },
     "graph": {
       "title": "Afhankelijkhedengraaf",
@@ -155,7 +159,7 @@
       "label": "Afhankelijkhedengraaf van de specs",
       "empty": "Nog geen specificaties. Start je eerste interview.",
       "loadFailed": "De afhankelijkhedengraaf kon niet worden geladen.",
-      "ready": "{{status}} · KLAAR",
+      "ready": "{{status}} · Klaar",
       "legend": "Status",
       "zoomIn": "Inzoomen",
       "zoomOut": "Uitzoomen",
@@ -169,7 +173,8 @@
       "noDependencies": "{{title}} heeft geen afhankelijkheden",
       "tooltip": "{{id}} · {{title}}",
       "listLabel": "Specificatie-afhankelijkheden",
-      "openHint": "Druk op Enter om te openen"
+      "openHint": "Druk op Enter om te openen",
+      "emptyAction": "Een discovery-interview starten"
     },
     "queue": {
       "ready": "Klaar werk",
@@ -195,7 +200,8 @@
       "confirmTitle": "Gereedstaande specs verzenden?",
       "confirmMessage_one": "Dit verzendt {{count}} spec naar OpenJCockpit:",
       "confirmMessage_other": "Dit verzendt {{count}} specs naar OpenJCockpit:",
-      "dispatching": "Verzenden…"
+      "dispatching": "Verzenden…",
+      "emptyAction": "Specificaties beoordelen"
     },
     "templates": {
       "savedTitle": "Opgeslagen sjablonen",
@@ -266,6 +272,13 @@
           "text": "Alleen deze rollen mogen specs naar OpenJCockpit sturen."
         }
       }
+    },
+    "dismiss": "Sluiten",
+    "repositorySettings": "Repository-instellingen",
+    "readOnly": "Alleen operators en beheerders kunnen hier wijzigingen aanbrengen. U kunt deze pagina bekijken.",
+    "kind": {
+      "PROJECT": "Eerste project",
+      "FEATURE": "Nieuwe functie"
     }
   }
 }

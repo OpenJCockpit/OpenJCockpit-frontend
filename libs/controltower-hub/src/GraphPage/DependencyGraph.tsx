@@ -210,7 +210,9 @@ export function DependencyGraph({ graph }: { graph: ControlTowerGraph }) {
                       {clip(node.title, TITLE_LENGTH)}
                     </text>
                     <text className={styles.nodeStatus} x="12" y="53">
-                      {node.ready ? t('graph.ready', { status: node.status }) : node.status}
+                      {node.ready
+                        ? t('graph.ready', { status: statusLabel(node.status) })
+                        : statusLabel(node.status)}
                     </text>
                   </g>
                 </Tooltip>

@@ -43,7 +43,7 @@ export function StartInterviewForm({ repositoryId, run, onStarted }: Props) {
         onChange={setTemplateId}
         options={[
           { value: '', label: t('interviews.selectTemplate') },
-          ...templates.map((c) => ({ value: c.id, label: `${c.name} (${c.kind})` })),
+          ...templates.map((c) => ({ value: c.id, label: `${c.name} (${t(`kind.${c.kind}`)})` })),
         ]}
       />
       {template?.kind === 'FEATURE' && (
@@ -62,7 +62,8 @@ export function StartInterviewForm({ repositoryId, run, onStarted }: Props) {
           type="submit"
           disabled={!templateId || start.isPending || !canWrite}
         >
-          <Icon name="plus" /> {t('interviews.start')}
+          <Icon name={start.isPending ? 'spinner' : 'plus'} />{' '}
+          {start.isPending ? t('interviews.starting') : t('interviews.start')}
         </Button>
       </ActionRow>
     </form>

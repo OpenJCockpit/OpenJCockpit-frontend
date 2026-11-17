@@ -11,7 +11,7 @@ describe('graph', () => {
     renderRoutes(controltowerRoutes, { path });
     const svg = await screen.findByRole('group', { name: 'Spec dependency graph' });
     expect(within(svg).getByText('Login page')).toBeInTheDocument();
-    expect(within(svg).getByText('APPROVED · READY')).toBeInTheDocument();
+    expect(within(svg).getByText('Approved · Ready')).toBeInTheDocument();
     expect(svg.querySelectorAll('path[marker-end]')).toHaveLength(1);
   });
 

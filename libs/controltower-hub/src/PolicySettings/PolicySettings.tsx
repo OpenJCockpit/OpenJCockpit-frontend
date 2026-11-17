@@ -19,7 +19,9 @@ import { DECISION_PATH_PLACEHOLDER, OPA_URL_PLACEHOLDER, usePolicyForm } from '.
 /** Open Policy Agent settings of the ControlTower backend. The backend lets only administrators save. */
 function PolicyForm({ data }: { data: ControlTowerSettingsView }) {
   const { t } = useTranslation('controltower');
-  const { policy, set, onSubmit, onTest, saving, testing, feedback } = usePolicyForm(data.policy);
+  const { policy, set, onSubmit, onTest, saving, testing, feedback, clearFeedback } = usePolicyForm(
+    data.policy,
+  );
   const editable = data.editable;
 
   return (
@@ -69,7 +71,7 @@ function PolicyForm({ data }: { data: ControlTowerSettingsView }) {
             </Button>
           </div>
         )}
-        <ActionFeedback feedback={feedback} />
+        <ActionFeedback feedback={feedback} onDismiss={clearFeedback} />
       </form>
       <StandardPolicyList />
     </>

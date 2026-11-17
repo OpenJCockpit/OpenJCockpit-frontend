@@ -67,7 +67,7 @@ export function QuestionTemplatesPanel({ run }: { run: RunAction }) {
                   <b>{item.name}</b>
                   <small>{t('templates.questions', { count: item.questions.length })}</small>
                 </div>
-                <StatusChip label={item.kind} kind="neutral" />
+                <StatusChip label={t(`kind.${item.kind}`)} kind="neutral" />
               </ListRow>
             )}
           />

@@ -89,7 +89,11 @@ describe('dispatch queue', () => {
     renderRoutes(controltowerRoutes, { path });
     expect(screen.queryByText(/never automatically retried/)).toBeNull();
     await dispatchThroughDialog();
-    const status = await screen.findByRole('status');
+    const status = await waitFor(() => {
+      const found = screen.getAllByRole('status').find((el) => el.querySelector('li'));
+      if (!found) throw new Error('no dispatch outcome yet');
+      return found;
+    });
     const rows = within(status).getAllByRole('listitem');
     expect(rows).toHaveLength(2);
     expect(rows[0]).toHaveTextContent('Logout');

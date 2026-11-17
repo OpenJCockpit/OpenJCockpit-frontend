@@ -11,6 +11,7 @@ import {
   PanelTitle,
   StatusChip,
   StatusMessage,
+  buttonClass,
   useConfirmDialog,
 } from '@openjcockpit/ui';
 import {
@@ -20,7 +21,7 @@ import {
 } from '@openjcockpit/api';
 import { ControlTowerQuery } from '../ControlTowerQuery';
 import { useRepositoryMutation, useSpecs } from '../hooks';
-import { CONTROLTOWER_QUEUE_PATH } from '../routePaths';
+import { CONTROLTOWER_INTERVIEWS_PATH, CONTROLTOWER_QUEUE_PATH } from '../routePaths';
 import { useRepository } from '../RepositoryGate/RepositoryGate';
 import { ActionFeedback } from '../ActionFeedback';
 import { errorMessage } from '../errorMessage';
@@ -38,7 +39,7 @@ export function SpecsPage() {
   const repository = useRepository();
   const specs = useSpecs(repository.id);
   const data = specs.data;
-  const { run, feedback } = useAction();
+  const { run, feedback, clear } = useAction();
   const { confirm, dialog } = useConfirmDialog();
   const handoff = useHandoffNotice();
   const canWrite = useWriteAccess();
@@ -137,7 +138,7 @@ export function SpecsPage() {
             {t('specs.draftsCreated', { count: handoff })}
           </StatusMessage>
         )}
-        <ActionFeedback feedback={feedback} />
+        <ActionFeedback feedback={feedback} onDismiss={clear} />
         {canWrite && drafts.length > 1 && (
           <ActionRow>
             <Button variant="secondary" disabled={approve.isPending} onClick={askApproveAll}>
@@ -149,7 +150,19 @@ export function SpecsPage() {
           query={specs}
           loadFailed={t('specs.loadFailed')}
           isEmpty={(rows) => rows.length === 0}
-          empty={<EmptyState title={t('specs.empty')} />}
+          empty={
+            <EmptyState
+              title={t('specs.empty')}
+              action={
+                <Link
+                  className={buttonClass({ variant: 'secondary' })}
+                  to={CONTROLTOWER_INTERVIEWS_PATH}
+                >
+                  {t('specs.emptyAction')}
+                </Link>
+              }
+            />
+          }
         >
           {(rows) => {
             const shown = filterSpecs(rows, filter);

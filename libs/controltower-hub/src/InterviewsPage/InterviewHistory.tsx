@@ -34,7 +34,7 @@ export function InterviewHistory({ repositoryId, onSelect }: Props) {
                   <b>{interview.title}</b>
                   <small>
                     {t('interviews.summary', {
-                      kind: interview.kind,
+                      kind: t(`kind.${interview.kind}`),
                       status: t(`interviews.status.${interview.status}`),
                       count: interview.answers.length,
                     })}
