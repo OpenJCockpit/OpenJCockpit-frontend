@@ -8,6 +8,7 @@ import {
   createControlTowerProject,
   createControlTowerSpecTemplate,
   createControlTowerTemplate,
+  deleteControlTowerTemplate,
   dispatchControlTowerSpecs,
   generateControlTowerSpecs,
   getControlTowerGraph,
@@ -24,6 +25,7 @@ import {
   startControlTowerInterview,
   testControlTowerPolicy,
   updateControlTowerProject,
+  updateControlTowerTemplate,
 } from './controltowerApi';
 import type { ControlTowerPolicySettings, ControlTowerProjectRequest } from './controltowerTypes';
 
@@ -122,6 +124,12 @@ describe('controltowerApi', () => {
       '/templates',
     ],
     [
+      'updateTemplate',
+      () => updateControlTowerTemplate('t 1', { name: 'T', kind: 'FEATURE', questions: [] }),
+      'PUT',
+      '/templates/t%201',
+    ],
+    [
       'createSpecTemplate',
       () => createControlTowerSpecTemplate({ name: 'S', content: '# S' }),
       'POST',
@@ -170,6 +178,13 @@ describe('controltowerApi', () => {
     mockFetch.mockResolvedValueOnce(ok([]));
     await generateControlTowerSpecs('i1');
     expect(lastCall().init.body).toBeUndefined();
+  });
+
+  it('DELETEs a template by its encoded id', async () => {
+    mockFetch.mockResolvedValue({ ok: true, status: 204 });
+    await deleteControlTowerTemplate('t 1');
+    expect(lastCall().url).toContain('/controltower-api/templates/t%201');
+    expect(lastCall().init.method).toBe('DELETE');
   });
 
   it('POSTs approve and complete without a body', async () => {

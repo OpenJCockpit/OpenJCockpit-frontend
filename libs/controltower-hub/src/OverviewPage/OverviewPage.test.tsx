@@ -1,4 +1,4 @@
-import { fireEvent, screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { controltowerRoutes } from '../controltowerRoutes';
 import { ct, renderRoutes, SPEC_DISPATCHED, SPEC_DRAFT } from '../testUtils';
@@ -35,14 +35,6 @@ describe('overview', () => {
     renderRoutes(controltowerRoutes);
     await screen.findByText('demo-repo');
     expect(await within(stat('Interviews')).findByText('0')).toBeInTheDocument();
-  });
-
-  it('shows the subtitle on the overview only', async () => {
-    renderRoutes(controltowerRoutes);
-    expect(await screen.findByText(/Interview-first requirements/)).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('link', { name: /Specifications/ }));
-    await screen.findByText('Specification registry');
-    expect(screen.queryByText(/Interview-first requirements/)).not.toBeInTheDocument();
   });
 
   describe('primary button', () => {

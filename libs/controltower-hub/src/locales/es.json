@@ -1,7 +1,6 @@
 {
   "controltower": {
     "title": "Control Tower",
-    "subtitle": "Requisitos basados en entrevistas, specs con dependencias y entrega controlada.",
     "back": "Volver al panel",
     "loading": "Cargando…",
     "retry": "Reintentar",
@@ -101,7 +100,10 @@
       },
       "starting": "Iniciando…",
       "submitting": "Enviando…",
-      "generating": "Generando…"
+      "generating": "Generando…",
+      "answered_one": "{{count}} respondida",
+      "answered_other": "{{count}} respondidas",
+      "submitShortcut": "Ctrl/Cmd+Intro para enviar"
     },
     "speech": {
       "speak": "Hablar",
@@ -225,7 +227,37 @@
       "custom": "Plantilla de spec propia",
       "markdownTemplate": "Plantilla Markdown",
       "saveSpec": "Guardar plantilla de spec",
-      "specSaved": "Plantilla de spec guardada."
+      "specSaved": "Plantilla de spec guardada.",
+      "questionN": "Pregunta {{number}}",
+      "questionText": "Pregunta",
+      "completionCriteria": "Criterios de finalización",
+      "maxFollowUps": "Máx. preguntas de seguimiento",
+      "required": "Obligatoria",
+      "moveUp": "Subir la pregunta {{number}}",
+      "moveDown": "Bajar la pregunta {{number}}",
+      "removeQuestion": "Quitar la pregunta {{number}}",
+      "up": "Subir",
+      "down": "Bajar",
+      "remove": "Quitar",
+      "addQuestion": "Añadir pregunta",
+      "replaceTitle": "¿Reemplazar las preguntas editadas?",
+      "replaceMessage": "Al cambiar el tipo de entrevista se reemplazan las preguntas editadas por las preguntas de ejemplo de ese tipo.",
+      "replace": "Reemplazar",
+      "deleteTitle": "¿Eliminar la plantilla?",
+      "deleteMessage": "¿Eliminar «{{name}}»? Esta acción no se puede deshacer.",
+      "delete": "Eliminar",
+      "deleting": "Eliminando…",
+      "deleted": "Plantilla eliminada.",
+      "edit": "Editar",
+      "editNamed": "Editar {{name}}",
+      "duplicate": "Duplicar",
+      "duplicateNamed": "Duplicar {{name}}",
+      "deleteNamed": "Eliminar {{name}}",
+      "copyName": "{{name}} (copia)",
+      "editing": "Editar plantilla: {{name}}",
+      "update": "Actualizar plantilla",
+      "useEditor": "Usar el editor de preguntas",
+      "editAsJson": "Editar como JSON"
     },
     "policy": {
       "loadFailed": "No se pudo cargar la configuración de políticas.",

@@ -1,5 +1,5 @@
 import { useTranslation } from '@openjcockpit/i18n';
-import { EmptyState, Icon, ListRow, StatusMessage } from '@openjcockpit/ui';
+import { EmptyState, Icon, ListRow } from '@openjcockpit/ui';
 import type { ControlTowerInterview } from '@openjcockpit/api';
 import { ControlTowerQuery } from '../ControlTowerQuery';
 import { useInterviews } from '../hooks';
@@ -10,9 +10,17 @@ interface Props {
   onSelect: (interview: ControlTowerInterview) => void;
 }
 
+const time = (interview: ControlTowerInterview) =>
+  interview.createdAt ? Date.parse(interview.createdAt) || 0 : 0;
+
+/** Newest first; interviews without a timestamp keep their order after the dated ones. */
+export function newestFirst(rows: ControlTowerInterview[]): ControlTowerInterview[] {
+  return [...rows].sort((a, b) => time(b) - time(a));
+}
+
 /** The repository's earlier interviews; picking one reopens it. */
 export function InterviewHistory({ repositoryId, onSelect }: Props) {
-  const { t } = useTranslation('controltower');
+  const { t, i18n } = useTranslation('controltower');
   const interviews = useInterviews(repositoryId);
   return (
     <>
@@ -23,7 +31,7 @@ export function InterviewHistory({ repositoryId, onSelect }: Props) {
         empty={<EmptyState title={t('interviews.none')} />}
       >
         {(rows) =>
-          rows.map((interview) => (
+          newestFirst(rows).map((interview) => (
             <ListRow key={interview.id}>
               <button
                 type="button"
@@ -38,6 +46,8 @@ export function InterviewHistory({ repositoryId, onSelect }: Props) {
                       status: t(`interviews.status.${interview.status}`),
                       count: interview.answers.length,
                     })}
+                    {interview.createdAt &&
+                      ` · ${new Date(interview.createdAt).toLocaleDateString(i18n.language)}`}
                   </small>
                 </span>
                 <Icon name="arrow-right" />
@@ -46,7 +56,6 @@ export function InterviewHistory({ repositoryId, onSelect }: Props) {
           ))
         }
       </ControlTowerQuery>
-      <StatusMessage>{t('interviews.privacy')}</StatusMessage>
     </>
   );
 }

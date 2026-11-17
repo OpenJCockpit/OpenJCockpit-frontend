@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent, type KeyboardEvent } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from '@openjcockpit/i18n';
 import {
@@ -31,13 +31,32 @@ interface Props {
   onClose: () => void;
 }
 
+const draftKey = (interviewId: string) => `controltower.answerDraft.${interviewId}`;
+
+function readDraft(interviewId: string): string {
+  try {
+    return sessionStorage.getItem(draftKey(interviewId)) ?? '';
+  } catch {
+    return '';
+  }
+}
+
+function writeDraft(interviewId: string, text: string) {
+  try {
+    if (text) sessionStorage.setItem(draftKey(interviewId), text);
+    else sessionStorage.removeItem(draftKey(interviewId));
+  } catch {
+    // Storage can be blocked; the draft then lives only in memory.
+  }
+}
+
 /** One interview: the current question with its answer form, or, once complete, the spec generation step. */
 export function InterviewSession({ repositoryId, interview, run, onChange, onClose }: Props) {
   const { t } = useTranslation('controltower');
   const navigate = useNavigate();
   const canWrite = useWriteAccess();
   const specTemplates = useSpecTemplates().data ?? [];
-  const [answer, setAnswer] = useState('');
+  const [answer, setAnswer] = useState(() => readDraft(interview.id));
   const [specTemplateId, setSpecTemplateId] = useState('');
   const send = useRepositoryMutation(repositoryId, (body: { id: string; answer: string }) =>
     answerControlTowerInterview(body.id, body.answer),
@@ -48,12 +67,21 @@ export function InterviewSession({ repositoryId, interview, run, onChange, onClo
   const busy = send.isPending || generate.isPending;
   const active = interview.status === 'ACTIVE';
 
+  useEffect(() => writeDraft(interview.id, answer), [interview.id, answer]);
+
   function onAnswer(event: FormEvent) {
     event.preventDefault();
     void run(async () => {
       onChange(await send.mutateAsync({ id: interview.id, answer }));
       setAnswer('');
     });
+  }
+
+  function onKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey) && !busy && canWrite) {
+      event.preventDefault();
+      event.currentTarget.form?.requestSubmit();
+    }
   }
 
   function onGenerate() {
@@ -68,7 +96,7 @@ export function InterviewSession({ repositoryId, interview, run, onChange, onClo
   return (
     <div className={styles.session}>
       <StatusChip
-        label={`${t(`interviews.status.${interview.status}`)} · ${t(`kind.${interview.kind}`)}`}
+        label={`${t(`interviews.status.${interview.status}`)} · ${t(`kind.${interview.kind}`)} · ${t('interviews.answered', { count: interview.answers.length })}`}
         kind={active ? 'active' : 'done'}
       />
       <h3>{active ? interview.currentQuestion : t('interviews.completed')}</h3>
@@ -80,6 +108,7 @@ export function InterviewSession({ repositoryId, interview, run, onChange, onClo
             required
             value={answer}
             onChange={setAnswer}
+            onKeyDown={onKeyDown}
             placeholder={t('interviews.answerPlaceholder')}
           />
           <SpeechInputButtons
@@ -92,10 +121,12 @@ export function InterviewSession({ repositoryId, interview, run, onChange, onClo
             }}
             onTranscript={(text) => setAnswer((old) => (old ? `${old} ${text}` : text))}
           />
+          <StatusMessage>{t('interviews.privacy')}</StatusMessage>
           <ActionRow>
             <Button variant="primary" type="submit" disabled={busy || !canWrite}>
               {send.isPending ? t('interviews.submitting') : t('interviews.submit')}
             </Button>
+            <small>{t('interviews.submitShortcut')}</small>
           </ActionRow>
         </form>
       ) : (

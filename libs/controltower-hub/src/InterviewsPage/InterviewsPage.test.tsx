@@ -36,6 +36,42 @@ describe('interviews', () => {
     expect(await screen.findByText(/2 drafts created/)).toBeInTheDocument();
   });
 
+  it('shows the answer count, keeps an unsent draft per interview and submits with Ctrl+Enter', async () => {
+    ct.answerControlTowerInterview.mockResolvedValue({ ...INTERVIEW, status: 'COMPLETE' });
+    ct.listControlTowerInterviews.mockResolvedValue([
+      { ...INTERVIEW, answers: [{ questionId: 'goal', question: 'q', answer: 'a' }] },
+    ]);
+    const first = renderRoutes(controltowerRoutes, { path });
+    fireEvent.click(await screen.findByText('Kick-off'));
+    expect(screen.getByText(/1 answered/)).toBeInTheDocument();
+    fireEvent.change(screen.getByRole('textbox', { name: /Your answer/ }), {
+      target: { value: 'half typed' },
+    });
+    first.unmount();
+
+    renderRoutes(controltowerRoutes, { path });
+    fireEvent.click(await screen.findByText('Kick-off'));
+    const box = screen.getByRole('textbox', { name: /Your answer/ });
+    expect(box).toHaveValue('half typed');
+    fireEvent.keyDown(box, { key: 'Enter', ctrlKey: true });
+    await waitFor(() =>
+      expect(ct.answerControlTowerInterview).toHaveBeenCalledWith('i1', 'half typed'),
+    );
+    expect(sessionStorage.getItem('controltower.answerDraft.i1')).toBeNull();
+  });
+
+  it('lists the newest interview first with its date', async () => {
+    ct.listControlTowerInterviews.mockResolvedValue([
+      { ...INTERVIEW, id: 'old', title: 'Old one', createdAt: '2026-01-01T10:00:00Z' },
+      { ...INTERVIEW, id: 'undated', title: 'Undated one' },
+      { ...INTERVIEW, id: 'new', title: 'New one', createdAt: '2026-06-01T10:00:00Z' },
+    ]);
+    renderRoutes(controltowerRoutes, { path });
+    await screen.findByText('New one');
+    const titles = screen.getAllByRole('button').map((b) => b.querySelector('b')?.textContent);
+    expect(titles.filter(Boolean)).toEqual(['New one', 'Old one', 'Undated one']);
+  });
+
   it('generates with the default template and can close the session', async () => {
     ct.generateControlTowerSpecs.mockResolvedValue([]);
     ct.listControlTowerInterviews.mockResolvedValue([{ ...INTERVIEW, status: 'COMPLETE' }]);

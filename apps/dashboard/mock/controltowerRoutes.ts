@@ -1,4 +1,4 @@
-import { type Rec, MockError, findBy, nextId, upsert } from './store';
+import { type Rec, MockError, findBy, nextId, remove, upsert } from './store';
 
 // Mock of the ControlTower backend, served under /controltower-api (the prefix the dashboard proxies to the
 // ControlTower service). State lives as long as the dev server, like the rest of the mock API.
@@ -357,6 +357,19 @@ add('POST', '/templates', ({ body }) => {
   const created = { ...body, id: nextId('tpl') };
   templates.push(created);
   return created;
+});
+add('PUT', '/templates/:id', ({ p, body }) => {
+  const current = findBy(templates, 'id', id0(p), 'Template');
+  if (current.builtIn)
+    throw new MockError(409, 'BUILT_IN_TEMPLATE', 'Built-in templates cannot be changed');
+  return upsert(templates, 'id', id0(p), { ...body, id: id0(p), builtIn: false });
+});
+add('DELETE', '/templates/:id', ({ p }) => {
+  const current = findBy(templates, 'id', id0(p), 'Template');
+  if (current.builtIn)
+    throw new MockError(409, 'BUILT_IN_TEMPLATE', 'Built-in templates cannot be deleted');
+  remove(templates, 'id', id0(p), 'Template');
+  return null;
 });
 add('GET', '/spec-templates', () => specTemplates);
 add('POST', '/spec-templates', ({ body }) => {

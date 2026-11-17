@@ -48,7 +48,6 @@ export function ControlTowerShell() {
     <HubPage
       eyebrow={t('title')}
       title={project?.name}
-      subtitle={onOverview ? <p>{t('subtitle')}</p> : undefined}
       header={header}
       onBack={() => void navigate(DASHBOARD_PATH)}
       backTitle={t('back')}

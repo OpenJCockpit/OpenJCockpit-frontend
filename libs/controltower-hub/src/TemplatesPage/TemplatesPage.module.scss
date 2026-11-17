@@ -2,3 +2,29 @@
   font-family: monospace;
   font-size: 12px;
 }
+
+.questionEditor {
+  display: grid;
+  gap: 12px;
+}
+
+.question {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.questionActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.rowActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

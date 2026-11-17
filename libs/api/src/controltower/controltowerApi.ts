@@ -1,4 +1,4 @@
-import { apiRequest } from '../core/http';
+import { apiRequest, apiRequestVoid } from '../core/http';
 import type {
   ControlTowerConnectionCheckRequest,
   ControlTowerConnectionCheckResult,
@@ -26,7 +26,7 @@ import type {
  */
 export const CONTROLTOWER_API_PREFIX = '/controltower-api';
 
-type Method = 'GET' | 'POST' | 'PUT';
+type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 function request<T>(
   path: string,
@@ -92,6 +92,25 @@ export function createControlTowerTemplate(
   body: ControlTowerCreateTemplate,
 ): Promise<ControlTowerTemplate> {
   return request('/templates', 'POST', 'Failed to save the interview template', body);
+}
+
+export function updateControlTowerTemplate(
+  templateId: string,
+  body: ControlTowerCreateTemplate,
+): Promise<ControlTowerTemplate> {
+  return request(
+    `/templates/${id(templateId)}`,
+    'PUT',
+    'Failed to save the interview template',
+    body,
+  );
+}
+
+export function deleteControlTowerTemplate(templateId: string): Promise<void> {
+  return apiRequestVoid(`${CONTROLTOWER_API_PREFIX}/templates/${id(templateId)}`, {
+    method: 'DELETE',
+    errorMessage: 'Failed to delete the interview template',
+  });
 }
 
 export function listControlTowerSpecTemplates(

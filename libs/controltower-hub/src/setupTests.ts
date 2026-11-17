@@ -13,4 +13,7 @@ vi.mock('@openjcockpit/api', async (importOriginal) => {
   return { ...original, ...mocked };
 });
 
-beforeEach(() => stubApi());
+beforeEach(() => {
+  sessionStorage.clear();
+  stubApi();
+});

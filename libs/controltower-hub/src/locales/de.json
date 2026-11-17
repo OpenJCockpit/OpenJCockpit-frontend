@@ -1,7 +1,6 @@
 {
   "controltower": {
     "title": "Control Tower",
-    "subtitle": "Interviewbasierte Anforderungen, abhängigkeitsbewusste Specs und kontrollierte Auslieferung.",
     "back": "Zurück zum Dashboard",
     "loading": "Lädt…",
     "retry": "Erneut versuchen",
@@ -101,7 +100,10 @@
       },
       "starting": "Wird gestartet…",
       "submitting": "Wird gesendet…",
-      "generating": "Wird erzeugt…"
+      "generating": "Wird erzeugt…",
+      "answered_one": "{{count}} beantwortet",
+      "answered_other": "{{count}} beantwortet",
+      "submitShortcut": "Strg/Cmd+Enter zum Senden"
     },
     "speech": {
       "speak": "Sprechen",
@@ -225,7 +227,37 @@
       "custom": "Eigene Spec-Vorlage",
       "markdownTemplate": "Markdown-Vorlage",
       "saveSpec": "Spec-Vorlage speichern",
-      "specSaved": "Spec-Vorlage gespeichert."
+      "specSaved": "Spec-Vorlage gespeichert.",
+      "questionN": "Frage {{number}}",
+      "questionText": "Frage",
+      "completionCriteria": "Abschlusskriterien",
+      "maxFollowUps": "Max. Rückfragen",
+      "required": "Pflichtfrage",
+      "moveUp": "Frage {{number}} nach oben",
+      "moveDown": "Frage {{number}} nach unten",
+      "removeQuestion": "Frage {{number}} entfernen",
+      "up": "Hoch",
+      "down": "Runter",
+      "remove": "Entfernen",
+      "addQuestion": "Frage hinzufügen",
+      "replaceTitle": "Bearbeitete Fragen ersetzen?",
+      "replaceMessage": "Beim Ändern des Interviewtyps werden Ihre bearbeiteten Fragen durch die Beispielfragen dieses Typs ersetzt.",
+      "replace": "Ersetzen",
+      "deleteTitle": "Vorlage löschen?",
+      "deleteMessage": "„{{name}}“ löschen? Das kann nicht rückgängig gemacht werden.",
+      "delete": "Löschen",
+      "deleting": "Wird gelöscht…",
+      "deleted": "Vorlage gelöscht.",
+      "edit": "Bearbeiten",
+      "editNamed": "{{name}} bearbeiten",
+      "duplicate": "Duplizieren",
+      "duplicateNamed": "{{name}} duplizieren",
+      "deleteNamed": "{{name}} löschen",
+      "copyName": "{{name}} (Kopie)",
+      "editing": "Vorlage bearbeiten: {{name}}",
+      "update": "Vorlage aktualisieren",
+      "useEditor": "Fragen-Editor verwenden",
+      "editAsJson": "Als JSON bearbeiten"
     },
     "policy": {
       "loadFailed": "Die Richtlinien-Einstellungen konnten nicht geladen werden.",

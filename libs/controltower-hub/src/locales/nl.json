@@ -1,7 +1,6 @@
 {
   "controltower": {
     "title": "Control Tower",
-    "subtitle": "Interviewgestuurde requirements, specs met afhankelijkheden en beheerste oplevering.",
     "back": "Terug naar het dashboard",
     "loading": "Laden…",
     "retry": "Opnieuw proberen",
@@ -101,7 +100,10 @@
       },
       "starting": "Starten…",
       "submitting": "Verzenden…",
-      "generating": "Genereren…"
+      "generating": "Genereren…",
+      "answered_one": "{{count}} beantwoord",
+      "answered_other": "{{count}} beantwoord",
+      "submitShortcut": "Ctrl/Cmd+Enter om te verzenden"
     },
     "speech": {
       "speak": "Spreken",
@@ -225,7 +227,37 @@
       "custom": "Eigen spec-sjabloon",
       "markdownTemplate": "Markdown-sjabloon",
       "saveSpec": "Spec-sjabloon opslaan",
-      "specSaved": "Spec-sjabloon opgeslagen."
+      "specSaved": "Spec-sjabloon opgeslagen.",
+      "questionN": "Vraag {{number}}",
+      "questionText": "Vraag",
+      "completionCriteria": "Afrondingscriteria",
+      "maxFollowUps": "Max. vervolgvragen",
+      "required": "Verplicht",
+      "moveUp": "Vraag {{number}} omhoog",
+      "moveDown": "Vraag {{number}} omlaag",
+      "removeQuestion": "Vraag {{number}} verwijderen",
+      "up": "Omhoog",
+      "down": "Omlaag",
+      "remove": "Verwijderen",
+      "addQuestion": "Vraag toevoegen",
+      "replaceTitle": "Bewerkte vragen vervangen?",
+      "replaceMessage": "Als je het interviewtype wijzigt, worden je bewerkte vragen vervangen door de voorbeeldvragen van dat type.",
+      "replace": "Vervangen",
+      "deleteTitle": "Sjabloon verwijderen?",
+      "deleteMessage": "\"{{name}}\" verwijderen? Dit kan niet ongedaan worden gemaakt.",
+      "delete": "Verwijderen",
+      "deleting": "Verwijderen…",
+      "deleted": "Sjabloon verwijderd.",
+      "edit": "Bewerken",
+      "editNamed": "{{name}} bewerken",
+      "duplicate": "Dupliceren",
+      "duplicateNamed": "{{name}} dupliceren",
+      "deleteNamed": "{{name}} verwijderen",
+      "copyName": "{{name}} (kopie)",
+      "editing": "Sjabloon bewerken: {{name}}",
+      "update": "Sjabloon bijwerken",
+      "useEditor": "Vrageneditor gebruiken",
+      "editAsJson": "Bewerken als JSON"
     },
     "policy": {
       "loadFailed": "De beleidsinstellingen konden niet worden geladen.",
