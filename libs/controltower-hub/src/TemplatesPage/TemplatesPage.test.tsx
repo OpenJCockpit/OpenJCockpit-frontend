@@ -46,6 +46,16 @@ describe('templates', () => {
     expect(ct.createControlTowerTemplate).not.toHaveBeenCalled();
   });
 
+  it('shows a backend failure when saving an interview template', async () => {
+    ct.createControlTowerTemplate.mockRejectedValueOnce(new Error('Name taken'));
+    renderRoutes(controltowerRoutes, { path });
+    fireEvent.change((await screen.findAllByRole('textbox', { name: /Template name/ }))[0]!, {
+      target: { value: 'Mine' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Save template' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Name taken');
+  });
+
   it('saves a spec template and shows a backend failure', async () => {
     ct.createControlTowerSpecTemplate.mockRejectedValueOnce(new Error('Name taken'));
     ct.createControlTowerSpecTemplate.mockResolvedValueOnce({});
