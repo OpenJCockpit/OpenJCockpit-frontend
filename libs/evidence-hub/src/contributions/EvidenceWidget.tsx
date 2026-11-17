@@ -1,22 +1,25 @@
 import { useTranslation } from '@openjcockpit/i18n';
-import { ErrorState, LoadingState } from '@openjcockpit/ui';
+import { QueryState } from '@openjcockpit/ui';
 import { EvidenceList } from '../EvidenceList/EvidenceList';
 import { WithTranslations } from '../registerTranslations';
 import { useWorkspace } from '../useWorkspace';
 
 function Content() {
   const { t } = useTranslation('evidence');
-  const { data, isError, refetch, hasProject } = useWorkspace();
-  if (!hasProject) return <p data-testid="evidence-widget-no-project">{t('noProject')}</p>;
-  if (isError) {
-    return (
-      <ErrorState onRetry={() => void refetch()} retryLabel={t('retry')}>
-        {t('failed')}
-      </ErrorState>
-    );
+  const workspace = useWorkspace();
+  if (!workspace.hasProject) {
+    return <p data-testid="evidence-widget-no-project">{t('noProject')}</p>;
   }
-  if (!data) return <LoadingState>{t('loading')}</LoadingState>;
-  return <EvidenceList events={data.evidenceEvents} limit={3} />;
+  return (
+    <QueryState
+      query={workspace}
+      loadFailed={t('failed')}
+      retryLabel={t('retry')}
+      loadingLabel={t('loading')}
+    >
+      {(data) => <EvidenceList events={data.evidenceEvents} limit={3} />}
+    </QueryState>
+  );
 }
 
 /** Home widget; the host loads it lazily, so it registers its own translations. */

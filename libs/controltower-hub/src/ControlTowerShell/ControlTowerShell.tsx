@@ -2,18 +2,7 @@ import { Suspense } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router';
 import { DASHBOARD_PATH, useHubHeader } from '@openjcockpit/hub-contract';
 import { useTranslation } from '@openjcockpit/i18n';
-import {
-  AppHeader,
-  AppShell,
-  Icon,
-  IconBox,
-  TabNav,
-  cx,
-  pageClass,
-  pageHeaderClass,
-  tabActiveClass,
-  tabClass,
-} from '@openjcockpit/ui';
+import { HubPage, Icon, TabNav, cx, tabActiveClass, tabClass } from '@openjcockpit/ui';
 import { pageUrl, pages } from '../pages';
 
 /** Page chrome shared by every ControlTower page: the host header, the title and the page tabs. */
@@ -23,17 +12,14 @@ export function ControlTowerShell() {
   const header = useHubHeader();
 
   return (
-    <AppShell>
-      {header ?? <AppHeader onBack={() => void navigate(DASHBOARD_PATH)} backTitle={t('back')} />}
-      <main className={pageClass}>
-        <div className={pageHeaderClass}>
-          <div>
-            <h1>
-              <IconBox label={<Icon name="controltower" />} compact /> {t('title')}
-            </h1>
-            <p>{t('subtitle')}</p>
-          </div>
-        </div>
+    <HubPage
+      icon={<Icon name="controltower" />}
+      title={t('title')}
+      subtitle={<p>{t('subtitle')}</p>}
+      header={header}
+      onBack={() => void navigate(DASHBOARD_PATH)}
+      backTitle={t('back')}
+      tabs={
         <TabNav secondary aria-label={t('tabs.label')}>
           {pages.map((page) => (
             <NavLink
@@ -46,10 +32,11 @@ export function ControlTowerShell() {
             </NavLink>
           ))}
         </TabNav>
-        <Suspense fallback={<p>{t('loading')}</p>}>
-          <Outlet />
-        </Suspense>
-      </main>
-    </AppShell>
+      }
+    >
+      <Suspense fallback={<p>{t('loading')}</p>}>
+        <Outlet />
+      </Suspense>
+    </HubPage>
   );
 }

@@ -19,6 +19,7 @@ export * from './motion/RevealGroup';
 export * from './motion/usePrefersReducedMotion';
 export * from './vendor/react-bits/DecipherText';
 export * from './AppShell/AppShell';
+export * from './HubPage/HubPage';
 export * from './FileImportButton/FileImportButton';
 export * from './FormFields/CheckboxField/CheckboxField';
 export * from './FormFields/SecretField/SecretField';
