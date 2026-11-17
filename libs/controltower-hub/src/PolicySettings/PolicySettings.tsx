@@ -16,7 +16,8 @@ import {
   type ControlTowerSettingsView,
 } from '@openjcockpit/api';
 import { ControlTowerQuery } from '../ControlTowerQuery';
-import { errorMessage } from '../errorMessage';
+import { ActionFeedback } from '../ActionFeedback';
+import { useAction } from '../useAction';
 import { useControlTowerSettings, useRepositoryMutation } from '../hooks';
 import { WithTranslations } from '../registerTranslations';
 
@@ -34,50 +35,42 @@ const STANDARD_POLICIES = [
 const OPA_URL_PLACEHOLDER = 'http://opa:8181';
 const DECISION_PATH_PLACEHOLDER = 'openjcontroltower/decision';
 
-interface Status {
-  ok: boolean;
-  message: string;
-  policies?: string[];
-}
-
 /** Open Policy Agent settings of the ControlTower backend. The backend lets only administrators save. */
 function PolicyForm({ data }: { data: ControlTowerSettingsView }) {
   const { t } = useTranslation('controltower');
   const [policy, setPolicy] = useState<ControlTowerPolicySettings>(data.policy);
-  const [status, setStatus] = useState<Status | null>(null);
-  const [testing, setTesting] = useState(false);
+  const { run, feedback, pending, clear } = useAction();
   const save = useRepositoryMutation(null, saveControlTowerPolicy);
 
   const editable = data.editable;
   const set = (patch: Partial<ControlTowerPolicySettings>) => {
     setPolicy((p) => ({ ...p, ...patch }));
-    setStatus(null);
+    clear();
   };
 
-  async function onSubmit(event: FormEvent) {
+  function onSubmit(event: FormEvent) {
     event.preventDefault();
-    setStatus(null);
-    try {
-      const saved = await save.mutateAsync(policy);
-      setPolicy(saved);
-      setStatus({ ok: true, message: saved.enabled ? t('policy.savedOn') : t('policy.savedOff') });
-    } catch (e) {
-      setStatus({ ok: false, message: errorMessage(e) });
-    }
+    return run(
+      () => save.mutateAsync(policy),
+      (saved) => {
+        setPolicy(saved);
+        return saved.enabled ? t('policy.savedOn') : t('policy.savedOff');
+      },
+    );
   }
 
-  async function onTest() {
-    setTesting(true);
-    setStatus(null);
-    try {
-      const result = await testControlTowerPolicy(policy);
-      setStatus({ ok: result.reachable, message: result.message, policies: result.policies });
-    } catch (e) {
-      setStatus({ ok: false, message: errorMessage(e) });
-    } finally {
-      setTesting(false);
-    }
-  }
+  const testing = pending && !save.isPending;
+  const onTest = () =>
+    run(
+      () => testControlTowerPolicy(policy),
+      (result) => ({
+        ok: result.reachable,
+        message: result.message,
+        detail: result.policies?.length
+          ? t('policy.loaded', { list: result.policies.join(', ') })
+          : undefined,
+      }),
+    );
 
   return (
     <>
@@ -126,17 +119,7 @@ function PolicyForm({ data }: { data: ControlTowerSettingsView }) {
             </Button>
           </div>
         )}
-        {status && (
-          <StatusMessage
-            role={status.ok ? 'status' : 'alert'}
-            variant={status.ok ? 'info' : 'error'}
-          >
-            {status.message}
-            {status.policies && status.policies.length > 0 && (
-              <small> {t('policy.loaded', { list: status.policies.join(', ') })}</small>
-            )}
-          </StatusMessage>
-        )}
+        <ActionFeedback feedback={feedback} />
       </form>
       <h3>{t('policy.standardTitle')}</h3>
       <StatusMessage>{t('policy.standardHint')}</StatusMessage>

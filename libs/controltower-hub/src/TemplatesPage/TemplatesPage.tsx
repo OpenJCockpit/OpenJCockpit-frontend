@@ -20,6 +20,8 @@ import {
 } from '@openjcockpit/api';
 import { ControlTowerQuery } from '../ControlTowerQuery';
 import { errorMessage } from '../errorMessage';
+import { ActionFeedback } from '../ActionFeedback';
+import { useAction } from '../useAction';
 import { useRepositoryMutation, useSpecTemplates, useTemplates } from '../hooks';
 import { useWriteAccess } from '../useWriteAccess';
 import { DEFAULT_SPEC_TEMPLATE, sampleQuestions } from '../sampleQuestions';
@@ -39,37 +41,36 @@ export function TemplatesPage() {
   const [questionJson, setQuestionJson] = useState(pretty('PROJECT'));
   const [specName, setSpecName] = useState('');
   const [specContent, setSpecContent] = useState(DEFAULT_SPEC_TEMPLATE);
-  const [message, setMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { run, feedback } = useAction();
   const createTemplate = useRepositoryMutation(null, createControlTowerTemplate);
   const createSpecTemplate = useRepositoryMutation(null, createControlTowerSpecTemplate);
 
-  async function run(action: () => Promise<void>, success: string) {
-    setMessage(null);
-    setError(null);
-    try {
-      await action();
-      setMessage(success);
-    } catch (e) {
-      setError(e instanceof SyntaxError ? t('templates.invalidJson') : errorMessage(e));
-    }
-  }
+  const invalidJson = (e: unknown) =>
+    e instanceof SyntaxError ? t('templates.invalidJson') : errorMessage(e);
 
   function saveTemplate(event: FormEvent) {
     event.preventDefault();
-    void run(async () => {
-      const questions = JSON.parse(questionJson) as ControlTowerQuestion[];
-      await createTemplate.mutateAsync({ name, kind, questions });
-      setName('');
-    }, t('templates.saved'));
+    void run(
+      async () => {
+        const questions = JSON.parse(questionJson) as ControlTowerQuestion[];
+        await createTemplate.mutateAsync({ name, kind, questions });
+        setName('');
+      },
+      () => t('templates.saved'),
+      { onError: invalidJson },
+    );
   }
 
   function saveSpecTemplate(event: FormEvent) {
     event.preventDefault();
-    void run(async () => {
-      await createSpecTemplate.mutateAsync({ name: specName, content: specContent });
-      setSpecName('');
-    }, t('templates.specSaved'));
+    void run(
+      async () => {
+        await createSpecTemplate.mutateAsync({ name: specName, content: specContent });
+        setSpecName('');
+      },
+      () => t('templates.specSaved'),
+      { onError: invalidJson },
+    );
   }
 
   function list<T extends { id: string }>(
@@ -91,12 +92,7 @@ export function TemplatesPage() {
 
   return (
     <>
-      {message && <StatusMessage role="status">{message}</StatusMessage>}
-      {error && (
-        <StatusMessage variant="error" role="alert">
-          {error}
-        </StatusMessage>
-      )}
+      <ActionFeedback feedback={feedback} />
       <div className={common.twoCol}>
         <Panel>
           <PanelHeader>

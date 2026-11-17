@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useTranslation } from '@openjcockpit/i18n';
 import {
   Button,
@@ -7,7 +6,6 @@ import {
   PanelHeader,
   PanelTitle,
   StatusChip,
-  StatusMessage,
   useConfirmDialog,
 } from '@openjcockpit/ui';
 import type { StatusKind } from '@openjcockpit/ui';
@@ -20,7 +18,8 @@ import {
 import { ControlTowerQuery } from '../ControlTowerQuery';
 import { useRepositoryMutation, useSpecs } from '../hooks';
 import { useRepository } from '../RepositoryGate/RepositoryGate';
-import { errorMessage } from '../errorMessage';
+import { ActionFeedback } from '../ActionFeedback';
+import { useAction } from '../useAction';
 import { useWriteAccess } from '../useWriteAccess';
 import common from '../shared.module.scss';
 import styles from './SpecsPage.module.scss';
@@ -39,21 +38,10 @@ export function SpecsPage() {
   const canWrite = useWriteAccess();
   const specs = useSpecs(repository.id);
   const data = specs.data;
-  const [message, setMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { run, feedback } = useAction();
   const { confirm, dialog } = useConfirmDialog();
   const approve = useRepositoryMutation(repository.id, approveControlTowerSpec);
   const complete = useRepositoryMutation(repository.id, completeControlTowerSpec);
-
-  async function run<T>(action: () => Promise<T>, success: (result: T) => string) {
-    setMessage(null);
-    setError(null);
-    try {
-      setMessage(success(await action()));
-    } catch (e) {
-      setError(errorMessage(e));
-    }
-  }
 
   const askApprove = (spec: ControlTowerSpec) =>
     confirm({
@@ -77,12 +65,7 @@ export function SpecsPage() {
         {data && <StatusChip label={t('specs.count', { count: data.length })} kind="neutral" />}
       </PanelHeader>
       <div className={common.body}>
-        {message && <StatusMessage role="status">{message}</StatusMessage>}
-        {error && (
-          <StatusMessage variant="error" role="alert">
-            {error}
-          </StatusMessage>
-        )}
+        <ActionFeedback feedback={feedback} />
         <ControlTowerQuery
           query={specs}
           loadFailed={t('specs.loadFailed')}

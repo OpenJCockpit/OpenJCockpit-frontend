@@ -23,7 +23,8 @@ import { ControlTowerQuery } from '../ControlTowerQuery';
 import { useInterviews, useRepositoryMutation, useSpecTemplates, useTemplates } from '../hooks';
 import { useRepository } from '../RepositoryGate/RepositoryGate';
 import { CONTROLTOWER_SPECS_PATH } from '../routePaths';
-import { errorMessage } from '../errorMessage';
+import { ActionFeedback } from '../ActionFeedback';
+import { useAction } from '../useAction';
 import { useWriteAccess } from '../useWriteAccess';
 import { SpeechButtons } from './SpeechButtons';
 import common from '../shared.module.scss';
@@ -43,7 +44,7 @@ export function InterviewsPage() {
   const [featureRequest, setFeatureRequest] = useState('');
   const [answer, setAnswer] = useState('');
   const [specTemplateId, setSpecTemplateId] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const { run, feedback } = useAction();
 
   const start = useRepositoryMutation(repository.id, startControlTowerInterview);
   const send = useRepositoryMutation(repository.id, (body: { id: string; answer: string }) =>
@@ -54,15 +55,6 @@ export function InterviewsPage() {
   );
   const busy = start.isPending || send.isPending || generate.isPending;
   const template = templates.find((candidate) => candidate.id === templateId);
-
-  async function run(action: () => Promise<void>) {
-    setError(null);
-    try {
-      await action();
-    } catch (e) {
-      setError(errorMessage(e));
-    }
-  }
 
   function onStart(event: FormEvent) {
     event.preventDefault();
@@ -188,11 +180,7 @@ export function InterviewsPage() {
           <PanelTitle>{t('interviews.session')}</PanelTitle>
         </PanelHeader>
         <div className={common.body}>
-          {error && (
-            <StatusMessage variant="error" role="alert">
-              {error}
-            </StatusMessage>
-          )}
+          <ActionFeedback feedback={feedback} />
           {session}
         </div>
       </Panel>

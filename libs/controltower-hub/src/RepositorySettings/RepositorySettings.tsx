@@ -21,7 +21,8 @@ import {
 } from '@openjcockpit/api';
 import { useControlTowerRepository, useRepositoryMutation } from '../hooks';
 import { ControlTowerQuery } from '../ControlTowerQuery';
-import { errorMessage } from '../errorMessage';
+import { ActionFeedback } from '../ActionFeedback';
+import { useAction } from '../useAction';
 import { useWriteAccess } from '../useWriteAccess';
 import { WithTranslations } from '../registerTranslations';
 
@@ -50,66 +51,55 @@ const fromRepository = (repository: ControlTowerProject): Form => ({
   workflowId: repository.workflowId,
 });
 
-interface Check {
-  ok: boolean;
-  message: string;
-}
-
 /** The one Git repository of the selected Cockpit project. The secret is write-only: empty on edit keeps the stored one. */
 function RepositoryForm({ data }: { data: ControlTowerProject | null }) {
   const { t } = useTranslation('controltower');
   const project = useSelectedProject();
   const canWrite = useWriteAccess();
   const [form, setForm] = useState<Form>(data ? fromRepository(data) : EMPTY);
-  const [check, setCheck] = useState<Check | null>(null);
-  const [message, setMessage] = useState<Check | null>(null);
-  const [checking, setChecking] = useState(false);
+  const check = useAction();
+  const submit = useAction();
   const save = useRepositoryMutation(null, (body: ControlTowerProjectRequest) =>
     data ? updateControlTowerProject(data.id, body) : createControlTowerProject(body),
   );
 
   const set = (patch: Partial<Form>) => {
     setForm((f) => ({ ...f, ...patch }));
-    setCheck(null);
+    check.clear();
   };
   const authenticated = form.credentialType !== 'NONE';
   const keepsSecret = !!data?.hasSecret && data.credentialType !== 'NONE';
 
-  async function onSubmit(event: FormEvent) {
+  function onSubmit(event: FormEvent) {
     event.preventDefault();
-    setMessage(null);
-    try {
-      await save.mutateAsync({
-        ...form,
-        gitUsername: form.gitUsername || undefined,
-        secret: form.secret || undefined,
-        cockpitProjectId: project.id,
-      });
-      setMessage({ ok: true, message: data ? t('repository.saved') : t('repository.registered') });
-      setForm((f) => ({ ...f, secret: '' }));
-    } catch (e) {
-      setMessage({ ok: false, message: errorMessage(e) });
-    }
+    return submit.run(
+      () =>
+        save.mutateAsync({
+          ...form,
+          gitUsername: form.gitUsername || undefined,
+          secret: form.secret || undefined,
+          cockpitProjectId: project.id,
+        }),
+      () => {
+        setForm((f) => ({ ...f, secret: '' }));
+        return data ? t('repository.saved') : t('repository.registered');
+      },
+    );
   }
 
-  async function onCheck() {
-    setChecking(true);
-    setCheck(null);
-    try {
-      const result = await checkControlTowerConnection({
-        gitUrl: form.gitUrl,
-        credentialType: form.credentialType,
-        gitUsername: form.gitUsername || undefined,
-        secret: form.secret || undefined,
-        projectId: data?.id,
-      });
-      setCheck({ ok: result.reachable, message: result.message });
-    } catch (e) {
-      setCheck({ ok: false, message: errorMessage(e) });
-    } finally {
-      setChecking(false);
-    }
-  }
+  const checking = check.pending;
+  const onCheck = () =>
+    check.run(
+      () =>
+        checkControlTowerConnection({
+          gitUrl: form.gitUrl,
+          credentialType: form.credentialType,
+          gitUsername: form.gitUsername || undefined,
+          secret: form.secret || undefined,
+          projectId: data?.id,
+        }),
+      (result) => ({ ok: result.reachable, message: result.message }),
+    );
 
   return (
     <form onSubmit={(event) => void onSubmit(event)}>
@@ -194,19 +184,8 @@ function RepositoryForm({ data }: { data: ControlTowerProject | null }) {
           </Button>
         </div>
       )}
-      {check && (
-        <StatusMessage role="status" variant={check.ok ? 'info' : 'error'}>
-          {check.message}
-        </StatusMessage>
-      )}
-      {message && (
-        <StatusMessage
-          role={message.ok ? 'status' : 'alert'}
-          variant={message.ok ? 'info' : 'error'}
-        >
-          {message.message}
-        </StatusMessage>
-      )}
+      <ActionFeedback feedback={check.feedback} />
+      <ActionFeedback feedback={submit.feedback} />
     </form>
   );
 }
