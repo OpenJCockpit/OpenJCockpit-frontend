@@ -65,7 +65,12 @@
       },
       "ideasTitle": "Van ideeën naar uitvoerbare specs.",
       "ideasText": "Houd elke wijziging klein, testbaar en traceerbaar. De afhankelijkhedengraaf voorkomt een onveilige uitvoervolgorde. AI helpt requirements te formuleren; de backend valideert de regels.",
-      "start": "Discovery starten"
+      "start": "Discovery starten",
+      "ctaTemplates": "Sjabloon maken",
+      "ctaReview_one": "{{count}} concept beoordelen",
+      "ctaReview_other": "{{count}} concepten beoordelen",
+      "ctaDispatch": "Naar dispatch",
+      "stepDone": "Klaar"
     },
     "interviews": {
       "session": "Discovery-sessie",
@@ -107,6 +112,9 @@
       "count_other": "{{count}} bestanden",
       "empty": "Rond een interview af en genereer je eerste spec-concepten.",
       "loadFailed": "De specificaties konden niet worden geladen.",
+      "draftsCreated_one": "{{count}} concept gemaakt. Beoordeel het en keur het goed om het naar Git te pushen.",
+      "draftsCreated_other": "{{count}} concepten gemaakt. Beoordeel ze en keur ze goed om ze naar Git te pushen.",
+      "toQueue": "Naar de dispatchwachtrij",
       "branch": "branch {{branch}}",
       "dependencies": "Afhankelijkheden: {{list}}",
       "noDependencies": "Geen",

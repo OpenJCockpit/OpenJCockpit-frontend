@@ -65,7 +65,12 @@
       },
       "ideasTitle": "Von Ideen zu ausführbaren Specs.",
       "ideasText": "Halte jede Änderung klein, testbar und nachvollziehbar. Der Abhängigkeitsgraph verhindert eine unsichere Ausführungsreihenfolge. KI hilft, Anforderungen zu formulieren; das Backend prüft die Regeln.",
-      "start": "Discovery starten"
+      "start": "Discovery starten",
+      "ctaTemplates": "Vorlage erstellen",
+      "ctaReview_one": "{{count}} Entwurf prüfen",
+      "ctaReview_other": "{{count}} Entwürfe prüfen",
+      "ctaDispatch": "Zum Dispatch",
+      "stepDone": "Erledigt"
     },
     "interviews": {
       "session": "Discovery-Sitzung",
@@ -107,6 +112,9 @@
       "count_other": "{{count}} Dateien",
       "empty": "Schließe ein Interview ab und generiere deine ersten Spec-Entwürfe.",
       "loadFailed": "Die Spezifikationen konnten nicht geladen werden.",
+      "draftsCreated_one": "{{count}} Entwurf erstellt. Prüfe ihn und gib ihn frei, um ihn nach Git zu pushen.",
+      "draftsCreated_other": "{{count}} Entwürfe erstellt. Prüfe sie und gib sie frei, um sie nach Git zu pushen.",
+      "toQueue": "Zur Dispatch-Warteschlange",
       "branch": "Branch {{branch}}",
       "dependencies": "Abhängigkeiten: {{list}}",
       "noDependencies": "Keine",

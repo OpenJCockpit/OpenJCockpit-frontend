@@ -32,9 +32,9 @@ describe('routing', () => {
     renderRoutes(controltowerRoutes, {
       path: '/controltower',
     });
-    fireEvent.click(await screen.findByRole('link', { name: 'Specifications' }));
+    fireEvent.click(await screen.findByRole('link', { name: /^Specifications/ }));
     expect(await screen.findByText('Specification registry')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Specifications' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /^Specifications/ })).toHaveAttribute(
       'aria-current',
       'page',
     );
@@ -58,6 +58,10 @@ describe('retrying a failed load', () => {
     ['/controltower/templates', 'listControlTowerSpecTemplates', 'Default'],
   ])('%s after %s fails', async (path, request, shown) => {
     ct[request]!.mockRejectedValueOnce(new Error('x'));
+    // The tab badge reads the queue as well and loads it first; the page then refetches the failed query.
+    if (request === 'getControlTowerQueueProposal') {
+      ct[request].mockRejectedValueOnce(new Error('x'));
+    }
     renderRoutes(controltowerRoutes, { path });
     fireEvent.click(await screen.findByRole('button', { name: 'Retry' }));
     expect(await screen.findByText(shown)).toBeInTheDocument();

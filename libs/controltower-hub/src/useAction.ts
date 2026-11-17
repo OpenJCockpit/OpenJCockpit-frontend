@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, type ReactNode } from 'react';
 import { errorMessage } from './errorMessage';
 
 /** The outcome of an action: `ok` picks the status or alert role, `detail` is an optional secondary line. */
@@ -6,6 +6,8 @@ export interface ActionOutcome {
   ok: boolean;
   message: string;
   detail?: string;
+  /** A follow-up link or button shown after the message. */
+  next?: ReactNode;
 }
 
 interface RunOptions {

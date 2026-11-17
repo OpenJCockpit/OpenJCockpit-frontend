@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { useTranslation } from '@openjcockpit/i18n';
 import {
   EmptyState,
@@ -6,6 +7,7 @@ import {
   PanelHeader,
   PanelTitle,
   StatusChip,
+  StatusMessage,
   useConfirmDialog,
 } from '@openjcockpit/ui';
 import {
@@ -15,9 +17,11 @@ import {
 } from '@openjcockpit/api';
 import { ControlTowerQuery } from '../ControlTowerQuery';
 import { useRepositoryMutation, useSpecs } from '../hooks';
+import { CONTROLTOWER_QUEUE_PATH } from '../routePaths';
 import { useRepository } from '../RepositoryGate/RepositoryGate';
 import { ActionFeedback } from '../ActionFeedback';
 import { useAction } from '../useAction';
+import { useHandoffNotice } from './handoff';
 import { SpecRow } from './SpecRow';
 
 /** The specification registry: review drafts, approve them (pushes a Git branch) and confirm finished work. */
@@ -28,6 +32,7 @@ export function SpecsPage() {
   const data = specs.data;
   const { run, feedback } = useAction();
   const { confirm, dialog } = useConfirmDialog();
+  const handoff = useHandoffNotice();
   const approve = useRepositoryMutation(repository.id, approveControlTowerSpec);
   const complete = useRepositoryMutation(repository.id, completeControlTowerSpec);
 
@@ -42,7 +47,11 @@ export function SpecsPage() {
       onConfirm: () =>
         run(
           () => approve.mutateAsync(spec.id),
-          (approved) => t('specs.approved', { branch: approved.branch ?? '' }),
+          (approved) => ({
+            ok: true,
+            message: t('specs.approved', { branch: approved.branch ?? '' }),
+            next: <Link to={CONTROLTOWER_QUEUE_PATH}>{t('specs.toQueue')}</Link>,
+          }),
         ),
     });
 
@@ -59,6 +68,11 @@ export function SpecsPage() {
         {data && <StatusChip label={t('specs.count', { count: data.length })} kind="neutral" />}
       </PanelHeader>
       <PanelBody>
+        {handoff !== null && (
+          <StatusMessage role="status" variant="info">
+            {t('specs.draftsCreated', { count: handoff })}
+          </StatusMessage>
+        )}
         <ActionFeedback feedback={feedback} />
         <ControlTowerQuery
           query={specs}

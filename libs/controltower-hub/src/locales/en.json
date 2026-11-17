@@ -65,7 +65,12 @@
       },
       "ideasTitle": "From ideas to executable specs.",
       "ideasText": "Keep each change small, testable and traceable. The dependency graph blocks unsafe execution order. AI helps articulate requirements; the backend validates the rules.",
-      "start": "Start discovery"
+      "start": "Start discovery",
+      "ctaTemplates": "Create a template",
+      "ctaReview_one": "Review {{count}} draft",
+      "ctaReview_other": "Review {{count}} drafts",
+      "ctaDispatch": "Go to dispatch",
+      "stepDone": "Done"
     },
     "interviews": {
       "session": "Discovery session",
@@ -107,6 +112,9 @@
       "count_other": "{{count}} files",
       "empty": "Complete an interview and generate your first spec drafts.",
       "loadFailed": "Failed to load the specifications.",
+      "draftsCreated_one": "{{count}} draft created. Review it and approve it to push it to Git.",
+      "draftsCreated_other": "{{count}} drafts created. Review them and approve them to push them to Git.",
+      "toQueue": "Go to the dispatch queue",
       "branch": "branch {{branch}}",
       "dependencies": "Dependencies: {{list}}",
       "noDependencies": "None",

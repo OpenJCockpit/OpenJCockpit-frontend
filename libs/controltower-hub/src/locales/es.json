@@ -65,7 +65,12 @@
       },
       "ideasTitle": "De las ideas a specs ejecutables.",
       "ideasText": "Mantén cada cambio pequeño, comprobable y trazable. El grafo de dependencias impide un orden de ejecución inseguro. La IA ayuda a formular los requisitos; el backend valida las reglas.",
-      "start": "Iniciar descubrimiento"
+      "start": "Iniciar descubrimiento",
+      "ctaTemplates": "Crear una plantilla",
+      "ctaReview_one": "Revisar {{count}} borrador",
+      "ctaReview_other": "Revisar {{count}} borradores",
+      "ctaDispatch": "Ir al despacho",
+      "stepDone": "Hecho"
     },
     "interviews": {
       "session": "Sesión de descubrimiento",
@@ -107,6 +112,9 @@
       "count_other": "{{count}} archivos",
       "empty": "Completa una entrevista y genera tus primeros borradores de spec.",
       "loadFailed": "No se pudieron cargar las especificaciones.",
+      "draftsCreated_one": "{{count}} borrador creado. Revísalo y apruébalo para enviarlo a Git.",
+      "draftsCreated_other": "{{count}} borradores creados. Revísalos y apruébalos para enviarlos a Git.",
+      "toQueue": "Ir a la cola de despacho",
       "branch": "rama {{branch}}",
       "dependencies": "Dependencias: {{list}}",
       "noDependencies": "Ninguna",

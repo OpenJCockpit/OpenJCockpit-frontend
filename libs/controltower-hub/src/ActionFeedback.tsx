@@ -8,6 +8,7 @@ export function ActionFeedback({ feedback }: { feedback: ActionOutcome | null })
     <StatusMessage role={feedback.ok ? 'status' : 'alert'} variant={feedback.ok ? 'info' : 'error'}>
       {feedback.message}
       {feedback.detail && <small> {feedback.detail}</small>}
+      {feedback.next && <> {feedback.next}</>}
     </StatusMessage>
   );
 }

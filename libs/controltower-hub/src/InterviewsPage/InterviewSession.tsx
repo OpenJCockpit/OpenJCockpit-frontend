@@ -18,6 +18,7 @@ import {
 } from '@openjcockpit/api';
 import { useRepositoryMutation, useSpecTemplates } from '../hooks';
 import { CONTROLTOWER_SPECS_PATH } from '../routePaths';
+import type { SpecsHandoff } from '../SpecsPage/handoff';
 import type { RunAction } from '../useAction';
 import { useWriteAccess } from '../useWriteAccess';
 import styles from './InterviewsPage.module.scss';
@@ -57,9 +58,10 @@ export function InterviewSession({ repositoryId, interview, run, onChange, onClo
 
   function onGenerate() {
     void run(async () => {
-      await generate.mutateAsync(interview.id);
+      const created = await generate.mutateAsync(interview.id);
       onClose();
-      void navigate(CONTROLTOWER_SPECS_PATH);
+      const state: SpecsHandoff = { draftsCreated: created.length };
+      void navigate(CONTROLTOWER_SPECS_PATH, { state });
     });
   }
 

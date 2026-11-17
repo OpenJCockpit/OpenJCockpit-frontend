@@ -18,6 +18,10 @@ describe('specifications', () => {
     fireEvent.click(await screen.findByTestId('confirm-action-confirm'));
     expect(await screen.findByText(/pushed to branch spec\/s1/)).toBeInTheDocument();
     expect(ct.approveControlTowerSpec).toHaveBeenCalledWith('s1');
+    expect(screen.getByRole('link', { name: 'Go to the dispatch queue' })).toHaveAttribute(
+      'href',
+      '/controltower/queue',
+    );
   });
 
   it('does not approve when the confirmation is cancelled', async () => {

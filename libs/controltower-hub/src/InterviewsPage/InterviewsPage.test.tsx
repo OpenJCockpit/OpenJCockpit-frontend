@@ -2,7 +2,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { chooseOption } from '@openjcockpit/ui/testing';
 import { controltowerRoutes } from '../controltowerRoutes';
-import { ct, INTERVIEW, renderRoutes } from '../testUtils';
+import { ct, INTERVIEW, renderRoutes, SPEC_DISPATCHED, SPEC_DRAFT } from '../testUtils';
 
 describe('interviews', () => {
   const path = '/controltower/interviews';
@@ -10,7 +10,7 @@ describe('interviews', () => {
   it('starts an interview, answers it and generates the specs', async () => {
     ct.startControlTowerInterview.mockResolvedValue(INTERVIEW);
     ct.answerControlTowerInterview.mockResolvedValue({ ...INTERVIEW, status: 'COMPLETE' });
-    ct.generateControlTowerSpecs.mockResolvedValue([]);
+    ct.generateControlTowerSpecs.mockResolvedValue([SPEC_DRAFT, SPEC_DISPATCHED]);
     renderRoutes(controltowerRoutes, { path });
     await screen.findByText('Kick-off');
     chooseOption(screen.getByRole('combobox', { name: /Interview template/ }), /Standard project/);
@@ -33,6 +33,7 @@ describe('interviews', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Generate spec drafts' }));
     expect(await screen.findByText('Specification registry')).toBeInTheDocument();
     expect(ct.generateControlTowerSpecs).toHaveBeenCalledWith('i1', { specTemplateId: 'st2' });
+    expect(await screen.findByText(/2 drafts created/)).toBeInTheDocument();
   });
 
   it('generates with the default template and can close the session', async () => {
