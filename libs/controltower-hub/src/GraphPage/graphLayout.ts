@@ -24,8 +24,9 @@ export function layoutGraph(graph: ControlTowerGraph): GraphLayout {
   const positions = new Map<string, { x: number; y: number }>();
   const levels = new Map<string, number>();
   const counts = new Map<number, number>();
+  const byId = new Map(graph.nodes.map((n) => [n.id, n]));
   for (const id of graph.topologicalOrder) {
-    const node = graph.nodes.find((n) => n.id === id);
+    const node = byId.get(id);
     const depth = Math.max(0, ...(node?.dependsOn ?? []).map((d) => (levels.get(d) ?? -1) + 1));
     levels.set(id, depth);
     const order = counts.get(depth) ?? 0;
