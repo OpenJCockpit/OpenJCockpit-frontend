@@ -116,7 +116,7 @@
       "draftsCreated_other": "{{count}} drafts created. Review them and approve them to push them to Git.",
       "toQueue": "Go to the dispatch queue",
       "branch": "branch {{branch}}",
-      "dependencies": "Dependencies: {{list}}",
+      "dependencies": "Dependencies:",
       "noDependencies": "None",
       "approveAndPush": "Approve and push branch",
       "approveTitle": "Approve this spec?",
@@ -131,7 +131,23 @@
         "APPROVED": "Approved",
         "DISPATCHED": "Dispatched",
         "DONE": "Done"
-      }
+      },
+      "filterAll": "All",
+      "filterLabel": "Filter by status",
+      "search": "Search by title or ID",
+      "noMatches": "No specifications match this filter.",
+      "blocks": "Blocks:",
+      "copy": "Copy",
+      "copied": "Copied",
+      "copyBranch": "Copy branch name",
+      "copyBody": "Copy spec body",
+      "approveAll": "Approve all drafts ({{count}})",
+      "approveAllTitle": "Approve all drafts?",
+      "approveAllMessage_one": "{{count}} draft is approved and pushed to its own Git branch.",
+      "approveAllMessage_other": "{{count}} drafts are approved one at a time, each pushed to its own Git branch. If one fails, the rest stay drafts.",
+      "approvedAll_one": "{{count}} spec pushed to its branch.",
+      "approvedAll_other": "{{count}} specs pushed to their branches.",
+      "approveAllFailed": "Approved {{done}} of {{total}}. \"{{title}}\" failed: {{error}} The remaining drafts were not approved."
     },
     "graph": {
       "title": "Dependency graph",
@@ -153,7 +169,10 @@
       "published": "The spec branches are merged into the branch that OpenJCockpit reads.",
       "dispatch": "Dispatch ready specs",
       "openSpecQueue": "Open the spec queue",
-      "result": { "DISPATCHED": "Dispatched", "UNKNOWN": "Unknown" },
+      "result": {
+        "DISPATCHED": "Dispatched",
+        "UNKNOWN": "Unknown"
+      },
       "unknownHint": "Uncertain HTTP outcomes are recorded as UNKNOWN, never automatically retried.",
       "waiting": "Waiting on predecessors",
       "blockedBy": "Blocked by",

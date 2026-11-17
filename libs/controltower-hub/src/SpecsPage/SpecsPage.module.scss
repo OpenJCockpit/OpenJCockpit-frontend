@@ -29,3 +29,16 @@
   gap: 10px;
   padding-bottom: 12px;
 }
+.filterBar {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.statusFilter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.spec code {
+  font-size: 12px;
+}

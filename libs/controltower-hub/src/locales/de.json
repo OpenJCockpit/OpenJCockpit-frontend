@@ -116,7 +116,7 @@
       "draftsCreated_other": "{{count}} Entwürfe erstellt. Prüfe sie und gib sie frei, um sie nach Git zu pushen.",
       "toQueue": "Zur Dispatch-Warteschlange",
       "branch": "Branch {{branch}}",
-      "dependencies": "Abhängigkeiten: {{list}}",
+      "dependencies": "Abhängigkeiten:",
       "noDependencies": "Keine",
       "approveAndPush": "Freigeben und Branch pushen",
       "approveTitle": "Diese Spec freigeben?",
@@ -131,7 +131,23 @@
         "APPROVED": "Freigegeben",
         "DISPATCHED": "Dispatcht",
         "DONE": "Erledigt"
-      }
+      },
+      "filterAll": "Alle",
+      "filterLabel": "Nach Status filtern",
+      "search": "Nach Titel oder ID suchen",
+      "noMatches": "Keine Spezifikation passt zu diesem Filter.",
+      "blocks": "Blockiert:",
+      "copy": "Kopieren",
+      "copied": "Kopiert",
+      "copyBranch": "Branch-Namen kopieren",
+      "copyBody": "Spec-Text kopieren",
+      "approveAll": "Alle Entwürfe freigeben ({{count}})",
+      "approveAllTitle": "Alle Entwürfe freigeben?",
+      "approveAllMessage_one": "{{count}} Entwurf wird freigegeben und in einen eigenen Git-Branch gepusht.",
+      "approveAllMessage_other": "{{count}} Entwürfe werden nacheinander freigegeben, jeder in einen eigenen Git-Branch gepusht. Schlägt einer fehl, bleiben die übrigen Entwürfe.",
+      "approvedAll_one": "{{count}} Spec in ihren Branch gepusht.",
+      "approvedAll_other": "{{count}} Specs in ihre Branches gepusht.",
+      "approveAllFailed": "{{done}} von {{total}} freigegeben. „{{title}}“ ist fehlgeschlagen: {{error}} Die übrigen Entwürfe wurden nicht freigegeben."
     },
     "graph": {
       "title": "Abhängigkeitsgraph",
@@ -153,7 +169,10 @@
       "published": "Die Spec-Branches sind in den Branch gemergt, den OpenJCockpit liest.",
       "dispatch": "Bereite Specs dispatchen",
       "openSpecQueue": "Spec-Queue öffnen",
-      "result": { "DISPATCHED": "Versendet", "UNKNOWN": "Unbekannt" },
+      "result": {
+        "DISPATCHED": "Versendet",
+        "UNKNOWN": "Unbekannt"
+      },
       "unknownHint": "Unsichere HTTP-Ergebnisse werden als UNKNOWN erfasst und nie automatisch wiederholt.",
       "waiting": "Wartet auf Vorgänger",
       "blockedBy": "Blockiert durch",

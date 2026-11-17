@@ -116,7 +116,7 @@
       "draftsCreated_other": "{{count}} concepten gemaakt. Beoordeel ze en keur ze goed om ze naar Git te pushen.",
       "toQueue": "Naar de dispatchwachtrij",
       "branch": "branch {{branch}}",
-      "dependencies": "Afhankelijkheden: {{list}}",
+      "dependencies": "Afhankelijkheden:",
       "noDependencies": "Geen",
       "approveAndPush": "Goedkeuren en branch pushen",
       "approveTitle": "Deze spec goedkeuren?",
@@ -131,7 +131,23 @@
         "APPROVED": "Goedgekeurd",
         "DISPATCHED": "Gedispatcht",
         "DONE": "Klaar"
-      }
+      },
+      "filterAll": "Alle",
+      "filterLabel": "Filter op status",
+      "search": "Zoek op titel of ID",
+      "noMatches": "Geen specificaties voldoen aan dit filter.",
+      "blocks": "Blokkeert:",
+      "copy": "Kopiëren",
+      "copied": "Gekopieerd",
+      "copyBranch": "Branchnaam kopiëren",
+      "copyBody": "Spec-tekst kopiëren",
+      "approveAll": "Alle concepten goedkeuren ({{count}})",
+      "approveAllTitle": "Alle concepten goedkeuren?",
+      "approveAllMessage_one": "{{count}} concept wordt goedgekeurd en naar een eigen Git-branch gepusht.",
+      "approveAllMessage_other": "{{count}} concepten worden één voor één goedgekeurd, elk naar een eigen Git-branch gepusht. Mislukt er één, dan blijven de overige concepten.",
+      "approvedAll_one": "{{count}} spec naar zijn branch gepusht.",
+      "approvedAll_other": "{{count}} specs naar hun branches gepusht.",
+      "approveAllFailed": "{{done}} van {{total}} goedgekeurd. \"{{title}}\" mislukte: {{error}} De overige concepten zijn niet goedgekeurd."
     },
     "graph": {
       "title": "Afhankelijkhedengraaf",
@@ -153,7 +169,10 @@
       "published": "De spec-branches zijn gemerged in de branch die OpenJCockpit leest.",
       "dispatch": "Klare specs dispatchen",
       "openSpecQueue": "Spec-wachtrij openen",
-      "result": { "DISPATCHED": "Verzonden", "UNKNOWN": "Onbekend" },
+      "result": {
+        "DISPATCHED": "Verzonden",
+        "UNKNOWN": "Onbekend"
+      },
       "unknownHint": "Onzekere HTTP-uitkomsten worden als UNKNOWN vastgelegd en nooit automatisch opnieuw geprobeerd.",
       "waiting": "Wacht op voorgangers",
       "blockedBy": "Geblokkeerd door",

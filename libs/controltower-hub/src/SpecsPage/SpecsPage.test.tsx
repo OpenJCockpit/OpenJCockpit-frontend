@@ -1,7 +1,9 @@
 import { fireEvent, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { controltowerRoutes } from '../controltowerRoutes';
 import { ct, renderRoutes, SPEC_DISPATCHED, SPEC_DRAFT } from '../testUtils';
+
+const SPEC_DRAFT_2 = { ...SPEC_DRAFT, id: 's3', title: 'Signup', dependsOn: [] };
 
 describe('specifications', () => {
   const path = '/controltower/specs';
@@ -86,5 +88,84 @@ describe('specifications', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Approve and push branch' }));
     fireEvent.click(await screen.findByTestId('confirm-action-confirm'));
     expect(await screen.findByText(/Spec pushed to branch \./)).toBeInTheDocument();
+  });
+
+  it('filters by status and search, and keeps the filter in the URL', async () => {
+    const { router } = renderRoutes(controltowerRoutes, { path });
+    await screen.findByText('Login page');
+    expect(screen.getByRole('button', { name: 'Draft (1)' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Dispatched (1)' }));
+    expect(screen.queryByText('Login page')).toBeNull();
+    expect(screen.getByText('Logout')).toBeInTheDocument();
+    expect(router.state.location.search).toBe('?status=DISPATCHED');
+    fireEvent.change(screen.getByLabelText('Search by title or ID'), { target: { value: 'zzz' } });
+    expect(screen.getByText('No specifications match this filter.')).toBeInTheDocument();
+    expect(router.state.location.search).toBe('?status=DISPATCHED&q=zzz');
+  });
+
+  it('restores the filter from the URL', async () => {
+    renderRoutes(controltowerRoutes, { path: `${path}?status=DRAFT&q=log` });
+    await screen.findByText('Login page');
+    expect(screen.queryByText('Logout')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Draft (1)' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+  });
+
+  it('links dependencies and dependents, and opens the linked spec', async () => {
+    const { router } = renderRoutes(controltowerRoutes, { path });
+    await screen.findByText('Logout');
+    fireEvent.click(screen.getByText('Logout'));
+    fireEvent.click(screen.getByRole('link', { name: 's1' }));
+    expect(router.state.location.search).toBe('?focus=s1');
+    expect(document.getElementById('spec-s1')).toHaveProperty('open', true);
+    expect(screen.getByText('Blocks:')).toBeInTheDocument();
+  });
+
+  it('copies the branch name', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.assign(navigator, { clipboard: { writeText } });
+    renderRoutes(controltowerRoutes, { path });
+    fireEvent.click(await screen.findByText('Logout'));
+    fireEvent.click(screen.getByRole('button', { name: 'Copy branch name' }));
+    expect(writeText).toHaveBeenCalledWith('spec/s2');
+    expect(await screen.findAllByText('Copied')).not.toHaveLength(0);
+  });
+
+  describe('approve all drafts', () => {
+    const bulk = () => {
+      ct.listControlTowerSpecs.mockResolvedValue([SPEC_DRAFT, SPEC_DRAFT_2]);
+      renderRoutes(controltowerRoutes, { path });
+    };
+
+    it('approves every draft in sequence after one confirmation', async () => {
+      ct.approveControlTowerSpec.mockResolvedValue({ ...SPEC_DRAFT, status: 'APPROVED' });
+      bulk();
+      fireEvent.click(await screen.findByRole('button', { name: 'Approve all drafts (2)' }));
+      expect(await screen.findByRole('dialog')).toHaveTextContent('Signup');
+      fireEvent.click(screen.getByTestId('confirm-action-confirm'));
+      expect(await screen.findByText('2 specs pushed to their branches.')).toBeInTheDocument();
+      expect(ct.approveControlTowerSpec.mock.calls).toEqual([['s1'], ['s3']]);
+    });
+
+    it('reports how many succeeded when one fails', async () => {
+      ct.approveControlTowerSpec
+        .mockResolvedValueOnce({ ...SPEC_DRAFT, status: 'APPROVED' })
+        .mockRejectedValueOnce(new Error('push rejected'));
+      bulk();
+      fireEvent.click(await screen.findByRole('button', { name: 'Approve all drafts (2)' }));
+      fireEvent.click(await screen.findByTestId('confirm-action-confirm'));
+      expect(await screen.findByRole('alert')).toHaveTextContent(
+        'Approved 1 of 2. "Signup" failed: push rejected',
+      );
+    });
+
+    it('is hidden from a viewer', async () => {
+      ct.listControlTowerSpecs.mockResolvedValue([SPEC_DRAFT, SPEC_DRAFT_2]);
+      renderRoutes(controltowerRoutes, { path, permissions: [] });
+      await screen.findByText('Login page');
+      expect(screen.queryByRole('button', { name: /Approve all drafts/ })).toBeNull();
+    });
   });
 });

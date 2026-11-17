@@ -116,7 +116,7 @@
       "draftsCreated_other": "{{count}} borradores creados. Revísalos y apruébalos para enviarlos a Git.",
       "toQueue": "Ir a la cola de despacho",
       "branch": "rama {{branch}}",
-      "dependencies": "Dependencias: {{list}}",
+      "dependencies": "Dependencias:",
       "noDependencies": "Ninguna",
       "approveAndPush": "Aprobar y enviar la rama",
       "approveTitle": "¿Aprobar esta spec?",
@@ -131,7 +131,23 @@
         "APPROVED": "Aprobada",
         "DISPATCHED": "Despachada",
         "DONE": "Hecha"
-      }
+      },
+      "filterAll": "Todas",
+      "filterLabel": "Filtrar por estado",
+      "search": "Buscar por título o ID",
+      "noMatches": "Ninguna especificación coincide con este filtro.",
+      "blocks": "Bloquea:",
+      "copy": "Copiar",
+      "copied": "Copiado",
+      "copyBranch": "Copiar nombre de la rama",
+      "copyBody": "Copiar texto de la spec",
+      "approveAll": "Aprobar todos los borradores ({{count}})",
+      "approveAllTitle": "¿Aprobar todos los borradores?",
+      "approveAllMessage_one": "{{count}} borrador se aprueba y se sube a su propia rama de Git.",
+      "approveAllMessage_other": "{{count}} borradores se aprueban uno a uno, cada uno subido a su propia rama de Git. Si uno falla, el resto sigue como borrador.",
+      "approvedAll_one": "{{count}} spec subida a su rama.",
+      "approvedAll_other": "{{count}} specs subidas a sus ramas.",
+      "approveAllFailed": "Aprobadas {{done}} de {{total}}. «{{title}}» falló: {{error}} Los borradores restantes no se aprobaron."
     },
     "graph": {
       "title": "Grafo de dependencias",
@@ -153,7 +169,10 @@
       "published": "Las ramas de las specs están fusionadas en la rama que lee OpenJCockpit.",
       "dispatch": "Despachar las specs listas",
       "openSpecQueue": "Abrir la cola de specs",
-      "result": { "DISPATCHED": "Enviado", "UNKNOWN": "Desconocido" },
+      "result": {
+        "DISPATCHED": "Enviado",
+        "UNKNOWN": "Desconocido"
+      },
       "unknownHint": "Los resultados HTTP inciertos se registran como UNKNOWN y nunca se reintentan automáticamente.",
       "waiting": "Esperando predecesores",
       "blockedBy": "Bloqueada por",
