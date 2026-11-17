@@ -30,7 +30,7 @@ import { useWriteAccess } from '../useWriteAccess';
 import { useAction } from '../useAction';
 import { useHandoffNotice } from './handoff';
 import { SpecFilterBar } from './SpecFilterBar';
-import { filterFromParams, filterSpecs } from './specFilter';
+import { filterFromParams, filterSpecs, newestFirst } from './specFilter';
 import { SpecRow } from './SpecRow';
 
 /** The specification registry: review drafts, approve them (pushes a Git branch) and confirm finished work. */
@@ -165,7 +165,7 @@ export function SpecsPage() {
           }
         >
           {(rows) => {
-            const shown = filterSpecs(rows, filter);
+            const shown = newestFirst(filterSpecs(rows, filter));
             return (
               <>
                 <SpecFilterBar

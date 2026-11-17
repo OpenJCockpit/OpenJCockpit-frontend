@@ -90,6 +90,19 @@ describe('specifications', () => {
     expect(await screen.findByText(/Spec pushed to branch \./)).toBeInTheDocument();
   });
 
+  it('lists the newest specification first', async () => {
+    ct.listControlTowerSpecs.mockResolvedValue([
+      { ...SPEC_DRAFT, id: 'a', title: 'First', specPath: '001-first/spec.md' },
+      { ...SPEC_DRAFT, id: 'b', title: 'Tenth', specPath: '010-tenth/spec.md' },
+      { ...SPEC_DRAFT, id: 'c', title: 'Second', specPath: '002-second/spec.md' },
+    ]);
+    renderRoutes(controltowerRoutes, { path });
+    await screen.findByText('Tenth');
+    const html = document.body.textContent ?? '';
+    expect(html.indexOf('Tenth')).toBeLessThan(html.indexOf('Second'));
+    expect(html.indexOf('Second')).toBeLessThan(html.indexOf('First'));
+  });
+
   it('filters by status and search, and keeps the filter in the URL', async () => {
     const { router } = renderRoutes(controltowerRoutes, { path });
     await screen.findByText('Login page');

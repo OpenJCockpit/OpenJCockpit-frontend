@@ -38,3 +38,10 @@ export function countByStatus(
   for (const s of specs) counts[s.status] += 1;
   return counts;
 }
+
+/** Newest first: spec paths start with a creation-order number (`001-…`), unlike the random IDs. */
+export function newestFirst(specs: readonly ControlTowerSpec[]): ControlTowerSpec[] {
+  return [...specs].sort((a, b) =>
+    b.specPath.localeCompare(a.specPath, undefined, { numeric: true }),
+  );
+}
