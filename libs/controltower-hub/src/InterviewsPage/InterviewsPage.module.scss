@@ -1,0 +1,17 @@
+.rowButton {
+  all: unset;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  &:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+  }
+}
+.session {
+  display: grid;
+  gap: 12px;
+}

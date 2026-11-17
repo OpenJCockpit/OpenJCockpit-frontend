@@ -44,6 +44,7 @@ jobs:
           - {name: remote-specs, dockerfile: deploy/remote/Dockerfile, remote: remote-specs}
           - {name: remote-evidence, dockerfile: deploy/remote/Dockerfile, remote: remote-evidence}
           - {name: remote-quality, dockerfile: deploy/remote/Dockerfile, remote: remote-quality}
+          - {name: remote-controltower, dockerfile: deploy/remote/Dockerfile, remote: remote-controltower}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
@@ -100,7 +101,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        name: [dashboard, remote-skills-hub, remote-specs, remote-evidence, remote-quality]
+        name: [dashboard, remote-skills-hub, remote-specs, remote-evidence, remote-quality, remote-controltower]
     steps:
       - name: Image name
         run: |

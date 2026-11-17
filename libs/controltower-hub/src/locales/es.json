@@ -1,0 +1,222 @@
+{
+  "controltower": {
+    "title": "Control Tower",
+    "subtitle": "Requisitos basados en entrevistas, specs con dependencias y entrega controlada.",
+    "back": "Volver al panel",
+    "loading": "Cargando…",
+    "retry": "Reintentar",
+    "cancel": "Cancelar",
+    "noProject": "Selecciona un proyecto para verlo.",
+    "notAvailable": "–",
+    "tabs": {
+      "label": "Páginas de Control Tower",
+      "overview": "Resumen",
+      "interviews": "Entrevistas de descubrimiento",
+      "specs": "Especificaciones",
+      "graph": "Grafo de dependencias",
+      "queue": "Cola de despacho",
+      "templates": "Plantillas"
+    },
+    "widget": {
+      "noRepository": "Este proyecto no tiene ningún repositorio vinculado.",
+      "ready_one": "spec lista para despachar",
+      "ready_other": "specs listas para despachar"
+    },
+    "repository": {
+      "loadFailed": "No se pudo cargar el repositorio.",
+      "noneTitle": "Este proyecto no tiene ningún repositorio vinculado",
+      "noneHint": "Conecta un repositorio Git a este proyecto en la configuración del proyecto para usar Control Tower.",
+      "connect": "Conectar un repositorio",
+      "hint": "El repositorio Git de {{project}}. Al aprobar una spec, sus archivos se envían a una rama nueva con el ID de la spec como nombre, desde un contenedor aislado que se elimina después. Los tokens y las contraseñas se guardan cifrados y no se vuelven a mostrar.",
+      "readOnly": "Solo los operadores y administradores pueden cambiar el repositorio. Puedes verlo.",
+      "name": "Nombre del repositorio",
+      "gitUrl": "URL del repositorio Git",
+      "branch": "Rama base",
+      "authentication": "Autenticación",
+      "credential": {
+        "NONE": "Ninguna (repositorio público)",
+        "HTTPS_TOKEN": "Token de acceso HTTPS",
+        "USERNAME_PASSWORD": "Usuario y contraseña"
+      },
+      "username": "Usuario de Git",
+      "usernameHint": "Opcional; por defecto \"token\".",
+      "token": "Token de acceso",
+      "password": "Contraseña",
+      "workflowId": "ID del workflow de OpenJCockpit",
+      "save": "Guardar repositorio",
+      "connectAction": "Conectar repositorio",
+      "check": "Comprobar conexión",
+      "checking": "Comprobando…",
+      "saved": "Repositorio guardado.",
+      "registered": "Repositorio conectado."
+    },
+    "overview": {
+      "repository": "Repositorio",
+      "interviews": "Entrevistas",
+      "specs": "Especificaciones",
+      "ready": "Listas para despachar",
+      "howTitle": "Cómo funciona",
+      "steps": {
+        "repository": "Conecta un repositorio y su workflow de OpenJCockpit",
+        "templates": "Crea plantillas de entrevista para proyectos y funcionalidades",
+        "interview": "Entrevista con preguntas adaptativas o por micrófono",
+        "specs": "Genera y revisa specs pequeñas y conectadas",
+        "dispatch": "Aprueba las specs, haz commit en Git y despacha los nodos listos"
+      },
+      "ideasTitle": "De las ideas a specs ejecutables.",
+      "ideasText": "Mantén cada cambio pequeño, comprobable y trazable. El grafo de dependencias impide un orden de ejecución inseguro. La IA ayuda a formular los requisitos; el backend valida las reglas.",
+      "start": "Iniciar descubrimiento"
+    },
+    "interviews": {
+      "session": "Sesión de descubrimiento",
+      "previous": "Entrevistas anteriores",
+      "template": "Plantilla de entrevista",
+      "selectTemplate": "Selecciona una plantilla",
+      "featureRequest": "Solicitud de nueva funcionalidad",
+      "featurePlaceholder": "Describe la funcionalidad que quieres crear…",
+      "start": "Iniciar entrevista",
+      "answer": "Tu respuesta",
+      "answerPlaceholder": "Da una respuesta concreta…",
+      "submit": "Enviar respuesta",
+      "completed": "Entrevista completada",
+      "enough": "La entrevista tiene información suficiente para una propuesta de spec.",
+      "specTemplate": "Plantilla de salida de la spec",
+      "defaultSpecTemplate": "Predeterminada de OpenJCockpit",
+      "generate": "Generar borradores de spec",
+      "close": "Cerrar sesión",
+      "none": "Aún no hay entrevistas registradas.",
+      "loadFailed": "No se pudieron cargar las entrevistas.",
+      "summary_one": "{{kind}} · {{status}} · {{count}} respuesta",
+      "summary_other": "{{kind}} · {{status}} · {{count}} respuestas",
+      "privacy": "El reconocimiento de voz del navegador puede usar un servicio de voz de terceros; consulta tu política de privacidad antes de usar datos sensibles.",
+      "status": {
+        "ACTIVE": "En curso",
+        "COMPLETE": "Completada",
+        "GENERATED": "Specs generadas"
+      }
+    },
+    "speech": {
+      "speak": "Hablar",
+      "listening": "Escuchando…",
+      "read": "Leer la pregunta",
+      "unsupported": "El reconocimiento de voz no está disponible en este navegador. Puedes escribir en su lugar."
+    },
+    "specs": {
+      "title": "Registro de especificaciones",
+      "count_one": "{{count}} archivo",
+      "count_other": "{{count}} archivos",
+      "empty": "Completa una entrevista y genera tus primeros borradores de spec.",
+      "loadFailed": "No se pudieron cargar las especificaciones.",
+      "branch": "rama {{branch}}",
+      "dependencies": "Dependencias: {{list}}",
+      "noDependencies": "Ninguna",
+      "approveAndPush": "Aprobar y enviar la rama",
+      "approveTitle": "¿Aprobar esta spec?",
+      "approveMessage": "«{{title}}» se envía a una rama Git nueva del repositorio.",
+      "approve": "Aprobar y enviar",
+      "approving": "Enviando…",
+      "approved": "Spec enviada a la rama {{branch}}. Fusiónala en la rama que lee OpenJCockpit antes de despachar.",
+      "confirmDone": "Confirmar completada externamente",
+      "completed": "Marcada como hecha. Compruébalo antes en OpenJCockpit.",
+      "status": {
+        "DRAFT": "Borrador",
+        "APPROVED": "Aprobada",
+        "DISPATCHED": "Despachada",
+        "DONE": "Hecha"
+      }
+    },
+    "graph": {
+      "title": "Grafo de dependencias",
+      "hint": "Las flechas indican que el predecesor debe completarse antes, no simples asociaciones.",
+      "label": "Grafo de dependencias de las specs",
+      "empty": "Aún no hay especificaciones. Inicia tu primera entrevista.",
+      "loadFailed": "No se pudo cargar el grafo de dependencias.",
+      "ready": "{{status}} · LISTA"
+    },
+    "queue": {
+      "ready": "Trabajo listo",
+      "count_one": "{{count}} lista",
+      "count_other": "{{count}} listas",
+      "empty": "Aprueba specs o termina sus dependencias para habilitar el despacho.",
+      "loadFailed": "No se pudo cargar la cola de despacho.",
+      "priority": "Prioridad {{priority}} · {{reason}}",
+      "dispatchTitle": "Despacho a OpenJCockpit",
+      "hint": "El despacho es opcional. Solo se envían las specs aprobadas y listas. Las specs dependientes siguen bloqueadas hasta que sus predecesoras estén hechas.",
+      "published": "Las ramas de las specs están fusionadas en la rama que lee OpenJCockpit.",
+      "dispatch": "Despachar las specs listas",
+      "openSpecQueue": "Abrir la cola de specs",
+      "result": { "DISPATCHED": "Enviado" },
+      "unknownHint": "Los resultados HTTP inciertos se registran como UNKNOWN y nunca se reintentan automáticamente."
+    },
+    "templates": {
+      "savedTitle": "Plantillas guardadas",
+      "none": "Aún no hay nada.",
+      "questions_one": "{{count}} pregunta configurable",
+      "questions_other": "{{count}} preguntas configurables",
+      "new": "Nueva plantilla de entrevista",
+      "name": "Nombre de la plantilla",
+      "kind": "Tipo de entrevista",
+      "kindProject": "Proyecto inicial",
+      "kindFeature": "Nueva funcionalidad",
+      "questionsJson": "Preguntas (JSON)",
+      "save": "Guardar plantilla",
+      "saved": "Plantilla guardada.",
+      "invalidJson": "Las preguntas no son un JSON válido.",
+      "loadFailed": "No se pudieron cargar las plantillas.",
+      "specTitle": "Plantillas de archivos de spec",
+      "markdown": "Markdown",
+      "specHint": "Estructuras Markdown reutilizables para los archivos de spec, separadas de los cuestionarios de entrevista. Marcadores: SPEC_ID, WORKFLOW_ID, TITLE, SUMMARY, DEPENDENCIES, ACCEPTANCE_CRITERIA.",
+      "builtIn": "Predeterminada integrada",
+      "custom": "Plantilla de spec propia",
+      "markdownTemplate": "Plantilla Markdown",
+      "saveSpec": "Guardar plantilla de spec",
+      "specSaved": "Plantilla de spec guardada."
+    },
+    "policy": {
+      "loadFailed": "No se pudo cargar la configuración de políticas.",
+      "hint": "Si está activado, el Open Policy Agent decide sobre guardar y comprobar repositorios, aprobar specs y despachar a OpenJCockpit. Una denegación muestra los motivos de la política.",
+      "readOnly": "Solo los administradores pueden cambiar esta configuración. Puedes verla.",
+      "enforce": "Aplicar políticas",
+      "url": "URL del agente",
+      "decisionPath": "Ruta de decisión",
+      "failOpen": "Permitir acciones mientras no se pueda alcanzar el agente (fail open). Desactivado: se deniegan.",
+      "save": "Guardar configuración de políticas",
+      "test": "Probar conexión",
+      "savedOn": "Guardado. Los cambios de repositorio, las aprobaciones y los despachos ahora los comprueban las políticas.",
+      "savedOff": "Guardado. Las comprobaciones de políticas están desactivadas.",
+      "loaded": "Cargadas: {{list}}",
+      "standardTitle": "Políticas estándar",
+      "standardHint": "Incluidas con Control Tower. Ajústalas en sus datos de política o sustitúyelas por las tuyas bajo la misma ruta de decisión.",
+      "standard": {
+        "writerRoles": {
+          "name": "Roles de escritura.",
+          "text": "Toda acción controlada necesita el rol de operador o administrador, aunque la comprobación de roles del backend esté mal configurada."
+        },
+        "gitHosts": {
+          "name": "Hosts Git permitidos.",
+          "text": "Los repositorios solo se pueden guardar o comprobar para hosts Git aprobados. Una lista vacía permite todos los hosts."
+        },
+        "fourEyes": {
+          "name": "Aprobación de cuatro ojos.",
+          "text": "Quien generó una spec no puede aprobarla. Desactivado por defecto."
+        },
+        "acceptance": {
+          "name": "Criterios de aceptación.",
+          "text": "Una spec necesita al menos dos criterios de aceptación antes de aprobarse."
+        },
+        "secrets": {
+          "name": "Detección de secretos.",
+          "text": "Las specs que contienen una clave privada o un token de acceso no se envían a Git."
+        },
+        "freeze": {
+          "name": "Congelación del despacho.",
+          "text": "Detiene todos los despachos a OpenJCockpit, por ejemplo durante un release. Desactivado por defecto."
+        },
+        "dispatchRoles": {
+          "name": "Roles de despacho.",
+          "text": "Solo estos roles pueden enviar specs a OpenJCockpit."
+        }
+      }
+    }
+  }
+}

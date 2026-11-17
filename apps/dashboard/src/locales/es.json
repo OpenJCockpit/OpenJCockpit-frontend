@@ -67,7 +67,8 @@
         "skillsHub": "Skills Hub",
         "skillsHubBadge": "Marketplaces conectados",
         "evidence": "Evidencia de ejecución",
-        "quality": "Estado de calidad"
+        "quality": "Estado de calidad",
+        "controltower": "Control Tower"
       },
       "groups": {
         "work": "Trabajo",
@@ -248,6 +249,14 @@
         "specQueue": {
           "title": "Cola de specs",
           "description": "Comportamiento de la cola de este proyecto, incluido el auto-merge."
+        },
+        "controltowerRepository": {
+          "title": "Repositorio Git",
+          "description": "Vincula un repositorio Git a este proyecto para Control Tower."
+        },
+        "controltowerPolicy": {
+          "title": "Políticas de Control Tower",
+          "description": "Comprobaciones del Open Policy Agent para las aprobaciones y despachos de Control Tower."
         }
       }
     },
@@ -269,6 +278,9 @@
       },
       "quality": {
         "widgetTitle": "Estado de calidad"
+      },
+      "controltower": {
+        "widgetTitle": "Listas para despachar"
       }
     }
   }

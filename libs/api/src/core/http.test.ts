@@ -263,6 +263,24 @@ describe('server error codes', () => {
     });
   });
 
+  it('reads the message of a ControlTower { error } body, without a code', async () => {
+    const translate = vi.fn();
+    setErrorTranslator(translate);
+    failWith({ error: 'Denied by policy: no approval' });
+    await expect(apiRequest('/x', { errorMessage: 'Failed' })).rejects.toMatchObject({
+      message: 'Denied by policy: no approval',
+      code: undefined,
+    });
+    expect(translate).not.toHaveBeenCalled();
+  });
+
+  it('ignores the generic Spring error body and uses the fallback', async () => {
+    failWith({ timestamp: 'now', status: 403, error: 'Forbidden', path: '/x' });
+    await expect(apiRequest('/x', { errorMessage: 'Failed' })).rejects.toMatchObject({
+      message: 'Failed: 409',
+    });
+  });
+
   it('keeps the server message when no translator is registered', async () => {
     failWith({ code: 'NAME_CONFLICT', message: 'A connection with this name already exists' });
 

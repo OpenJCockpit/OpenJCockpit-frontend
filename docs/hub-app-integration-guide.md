@@ -63,7 +63,9 @@ Host env, rendered by nginx at container start (all `no-store`):
 
 Keep the last two in step. Entries on the host's own origin (`/remotes/<name>/...`) need neither. The host's nginx proxies `/remotes/<name>/` to `http://<REMOTE_HOST_PREFIX><name>:<REMOTE_PORT>` (defaults `remote-` and `8080`), and the remote image is built with base `/remotes/<name>/` (`remote-specs` serves `/remotes/specs/`). The remote serves `mf-manifest.json` and `remoteEntry.js` as `no-store`, `/assets/` as immutable, and answers a missing file with a plain 404 (no HTML fallback).
 
-`docker-compose.yml` runs the host on port 4000 and the four remotes internally, reached through the host at `/remotes/<name>/`.
+`docker-compose.yml` runs the host on port 4000 and the five remotes internally, reached through the host at `/remotes/<name>/`.
+
+An app with its own backend (ControlTower) cannot share `/api`: give it a prefix, e.g. `/controltower-api/` in `nginx.conf.template` (variable upstream `CONTROLTOWER_UPSTREAM`, rewritten to the backend's `/api/`) and in the Vite dev proxy, and send its requests through `apiRequest` with that prefix so the host token and 401 handling still apply. Mock mode serves it from `apps/dashboard/mock/controltowerRoutes.ts`.
 
 Adding an app to a deployed hub: build its image with base `/remotes/<name>/`, run it as `remote-<name>` next to the host, then add `"<key>":"/remotes/<name>/mf-manifest.json"` to `FEDERATION_MANIFEST` and restart the host. No allow-list change and no host rebuild.
 

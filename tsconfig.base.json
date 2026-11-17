@@ -21,6 +21,7 @@
       "@openjcockpit/api": ["./libs/api/src/index.ts"],
       "@openjcockpit/api/testing": ["./libs/api/src/testing/index.ts"],
       "@openjcockpit/auth": ["./libs/auth/src/index.ts"],
+      "@openjcockpit/controltower-hub": ["./libs/controltower-hub/src/index.ts"],
       "@openjcockpit/evidence-hub": ["./libs/evidence-hub/src/index.ts"],
       "@openjcockpit/hub-contract": ["./libs/hub-contract/src/index.ts"],
       "@openjcockpit/hub-contract/testing": ["./libs/hub-contract/src/testing/index.ts"],

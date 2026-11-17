@@ -1,0 +1,31 @@
+.spec {
+  border-bottom: 1px solid rgb(var(--accent-rgb) / 0.075);
+  & summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 0;
+    cursor: pointer;
+    overflow-wrap: anywhere;
+  }
+  & small {
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+  }
+  & pre {
+    margin: 0;
+    padding: 10px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    border-radius: 8px;
+    background: rgb(var(--accent-rgb) / 0.05);
+    font-size: 12px;
+  }
+}
+.specDetails {
+  display: grid;
+  gap: 10px;
+  padding-bottom: 12px;
+}

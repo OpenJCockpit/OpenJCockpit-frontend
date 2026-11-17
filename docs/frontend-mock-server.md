@@ -10,13 +10,13 @@ From ``:
 npm run start:hub:mock
 ```
 
-This starts the same four dev servers as `start:hub` (dashboard on 4000, remotes on 4403 and 4404) with `MOCK_API=1`. To run the dashboard alone:
+This starts the same dev servers as `start:hub` (dashboard on 4000, remotes on 4403 to 4407) with `MOCK_API=1`. To run the dashboard alone:
 
 ```
 npm run dev:mock -w @openjcockpit/dashboard
 ```
 
-You are signed in as `dev` with the `openjcockpit-admin` role. Open http://localhost:4000, pick a project on the projects page and work as usual.
+You are signed in as `dev` with the `openjcockpit-admin` role. `/controltower-api/*` is mocked too (`mock/controltowerRoutes.ts`). Open http://localhost:4000, pick a project on the projects page and work as usual.
 
 ## How it works
 

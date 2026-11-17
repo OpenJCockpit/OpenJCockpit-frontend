@@ -65,3 +65,44 @@ export function ErrorState({ children, onRetry, retryLabel, className }: ErrorSt
     </div>
   );
 }
+
+interface QueryStateProps<T> {
+  /** The slice of a TanStack query this needs; `data === undefined` means "not loaded yet". */
+  query: { data?: T | null; isError: boolean; refetch: () => unknown };
+  /** Translated copy for a failed load. */
+  loadFailed: ReactNode;
+  retryLabel: string;
+  loadingLabel: ReactNode;
+  /** When it returns true for loaded data, `empty` is shown instead of `children`. */
+  isEmpty?: (data: T) => boolean;
+  empty?: ReactNode;
+  /** Shown when the load succeeded with `null` ("nothing linked"); without it `null` keeps loading. */
+  none?: ReactNode;
+  children: (data: T) => ReactNode;
+}
+
+/** The load-state branch every query-backed panel repeats: data, else error with retry, else loading. */
+export function QueryState<T>({
+  query,
+  loadFailed,
+  retryLabel,
+  loadingLabel,
+  isEmpty,
+  empty,
+  none,
+  children,
+}: QueryStateProps<T>) {
+  const { data, isError, refetch } = query;
+  if (data !== undefined && data !== null) {
+    return <>{isEmpty?.(data) ? empty : children(data)}</>;
+  }
+  if (isError) {
+    return (
+      <ErrorState onRetry={() => void refetch()} retryLabel={retryLabel}>
+        {loadFailed}
+      </ErrorState>
+    );
+  }
+  if (data === null && none !== undefined) return <>{none}</>;
+  return <LoadingState>{loadingLabel}</LoadingState>;
+}

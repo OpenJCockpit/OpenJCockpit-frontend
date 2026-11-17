@@ -11,7 +11,34 @@ import { defineConfig } from 'orval';
 const contract =
   process.env.OPENAPI_CONTRACT ?? '../../../OpenJCockpit/shared/contracts/openapi.yaml';
 
+// The ControlTower contract is owned by the OpenJControlTower repository (contracts/openapi.yaml).
+// Locally this reads the sibling checkout `../OpenJControlTower`; OPENAPI_CONTROLTOWER_CONTRACT
+// overrides the path. Generated with `nx run api:generate-controltower`.
+const controltowerContract =
+  process.env.OPENAPI_CONTROLTOWER_CONTRACT ?? '../../../OpenJControlTower/contracts/openapi.yaml';
+
+// A no-op client: types only, no endpoint functions.
+const typesOnly = () => ({
+  client: () => ({ implementation: '', imports: [] }),
+  header: () => '',
+  dependencies: () => [],
+  footer: () => '',
+  title: () => '',
+});
+
 export default defineConfig({
+  controltower: {
+    input: {
+      target: controltowerContract,
+      parserOptions: { externalRefs: { allow: ['*'], strategy: 'always' } },
+    },
+    output: {
+      mode: 'single',
+      client: typesOnly,
+      target: './src/generated/controltower-contract.ts',
+      prettier: true,
+    },
+  },
   api: {
     input: {
       target: contract,
@@ -19,15 +46,8 @@ export default defineConfig({
     },
     output: {
       mode: 'single',
-      client: () => ({
-        client: () => ({ implementation: '', imports: [] }),
-        header: () => '',
-        dependencies: () => [],
-        footer: () => '',
-        title: () => '',
-      }),
+      client: typesOnly,
       target: './src/generated/contract.ts',
-      clean: true,
       prettier: true,
     },
   },

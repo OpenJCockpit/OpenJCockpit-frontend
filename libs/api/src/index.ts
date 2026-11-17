@@ -13,5 +13,7 @@ export * from './workflow/runStatus';
 export * from './workflow/referenceLabel';
 export * from './spec-queue/specQueueApi';
 export * from './spec-queue/specQueueTypes';
+export * from './controltower/controltowerApi';
+export * from './controltower/controltowerTypes';
 export * from './queryKeys';
 export { apiResources } from './i18n';

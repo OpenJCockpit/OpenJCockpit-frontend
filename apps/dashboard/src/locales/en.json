@@ -67,7 +67,8 @@
         "skillsHub": "Skills Hub",
         "skillsHubBadge": "Connected marketplaces",
         "evidence": "Execution evidence",
-        "quality": "Quality status"
+        "quality": "Quality status",
+        "controltower": "Control Tower"
       },
       "groups": {
         "work": "Work",
@@ -248,6 +249,14 @@
         "specQueue": {
           "title": "Spec queue",
           "description": "Queue behaviour for this project, including auto-merge."
+        },
+        "controltowerRepository": {
+          "title": "Git repository",
+          "description": "Link a Git repository to this project for Control Tower."
+        },
+        "controltowerPolicy": {
+          "title": "Control Tower policy",
+          "description": "Open Policy Agent checks for Control Tower approvals and dispatches."
         }
       }
     },
@@ -269,6 +278,9 @@
       },
       "quality": {
         "widgetTitle": "Quality status"
+      },
+      "controltower": {
+        "widgetTitle": "Ready to dispatch"
       }
     }
   }

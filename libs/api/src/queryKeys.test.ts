@@ -21,6 +21,19 @@ describe('queryKeys', () => {
     expect(queryKeys.workflow('w1')).toEqual(['workflow', 'w1']);
   });
 
+  it('builds ControlTower keys under one prefix', () => {
+    expect(queryKeys.controlTowerProjects).toEqual(['controltower', 'projects']);
+    expect(queryKeys.controlTowerProject('c1')).toEqual(['controltower', 'projects', 'c1']);
+    expect(queryKeys.controlTowerTemplates).toEqual(['controltower', 'templates']);
+    expect(queryKeys.controlTowerSpecTemplates).toEqual(['controltower', 'spec-templates']);
+    expect(queryKeys.controlTowerInterviews('p1')).toEqual(['controltower', 'p1', 'interviews']);
+    expect(queryKeys.controlTowerInterview('i1')).toEqual(['controltower', 'interview', 'i1']);
+    expect(queryKeys.controlTowerSpecs('p1')).toEqual(['controltower', 'p1', 'specs']);
+    expect(queryKeys.controlTowerGraph('p1')).toEqual(['controltower', 'p1', 'graph']);
+    expect(queryKeys.controlTowerQueue('p1')).toEqual(['controltower', 'p1', 'queue']);
+    expect(queryKeys.controlTowerSettings).toEqual(['controltower', 'settings']);
+  });
+
   it('keeps a missing project in the key', () => {
     expect(queryKeys.specQueue(null)).toEqual(['spec-queue', null, 'queue']);
   });

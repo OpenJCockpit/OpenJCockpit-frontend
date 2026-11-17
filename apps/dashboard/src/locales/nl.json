@@ -67,7 +67,8 @@
         "skillsHub": "Skills Hub",
         "skillsHubBadge": "Gekoppelde marketplaces",
         "evidence": "Uitvoeringsbewijs",
-        "quality": "Kwaliteitsstatus"
+        "quality": "Kwaliteitsstatus",
+        "controltower": "Control Tower"
       },
       "groups": {
         "work": "Werk",
@@ -248,6 +249,14 @@
         "specQueue": {
           "title": "Spec-wachtrij",
           "description": "Wachtrijgedrag voor dit project, inclusief automatisch samenvoegen."
+        },
+        "controltowerRepository": {
+          "title": "Git-repository",
+          "description": "Koppel een Git-repository aan dit project voor Control Tower."
+        },
+        "controltowerPolicy": {
+          "title": "Control Tower-beleid",
+          "description": "Open Policy Agent-controles voor goedkeuringen en dispatches in Control Tower."
         }
       }
     },
@@ -269,6 +278,9 @@
       },
       "quality": {
         "widgetTitle": "Kwaliteitsstatus"
+      },
+      "controltower": {
+        "widgetTitle": "Klaar om te dispatchen"
       }
     }
   }

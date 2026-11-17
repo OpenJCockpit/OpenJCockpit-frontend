@@ -57,6 +57,10 @@ import { DownloadSimpleIcon as DownloadSimple } from '@phosphor-icons/react/dist
 import { UploadSimpleIcon as UploadSimple } from '@phosphor-icons/react/dist/csr/UploadSimple';
 import { CircleIcon as Circle } from '@phosphor-icons/react/dist/csr/Circle';
 import { CloudIcon as Cloud } from '@phosphor-icons/react/dist/csr/Cloud';
+import { BroadcastIcon as Broadcast } from '@phosphor-icons/react/dist/csr/Broadcast';
+import { MicrophoneIcon as Microphone } from '@phosphor-icons/react/dist/csr/Microphone';
+import { PaperPlaneTiltIcon as PaperPlaneTilt } from '@phosphor-icons/react/dist/csr/PaperPlaneTilt';
+import { SpeakerHighIcon as SpeakerHigh } from '@phosphor-icons/react/dist/csr/SpeakerHigh';
 import { cx } from '../cx';
 
 import styles from './Icon.module.scss';
@@ -125,6 +129,10 @@ const ICONS = {
   upload: UploadSimple,
   circle: Circle,
   cloud: Cloud,
+  controltower: Broadcast,
+  microphone: Microphone,
+  send: PaperPlaneTilt,
+  speaker: SpeakerHigh,
 } as const satisfies Record<string, ComponentType<PhosphorIconProps>>;
 
 export type IconName = keyof typeof ICONS;

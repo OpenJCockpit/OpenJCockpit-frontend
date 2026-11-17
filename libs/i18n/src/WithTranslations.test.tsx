@@ -60,3 +60,18 @@ describe('WithTranslations', () => {
     expect(i18n.hasResourceBundle('de', 'demo')).toBe(false);
   });
 });
+
+describe('WithTranslations on the server', () => {
+  it('renders nothing until the namespace is registered', async () => {
+    const { renderToString } = await import('react-dom/server');
+    const i18n = createI18n({ locale: 'en', resources: {} });
+    const html = renderToString(
+      <I18nProvider i18n={i18n}>
+        <WithTranslations namespace="demo" english={english} locales={locales}>
+          <p>child</p>
+        </WithTranslations>
+      </I18nProvider>,
+    );
+    expect(html).not.toContain('child');
+  });
+});

@@ -1,10 +1,11 @@
 import type { IncomingMessage } from 'node:http';
 import type { Plugin } from 'vite';
+import { controltowerRoutes } from './controltowerRoutes';
 import { faultControl, faultFor } from './faults';
 import { routes, type Ctx } from './routes';
 import { MockError } from './store';
 
-// Dev-only: answers /api/* from an in-memory store so the UI runs without the backend. Enabled by
+// Dev-only: answers /api/* and /controltower-api/* from an in-memory store so the UI runs without the backend. Enabled by
 // MOCK_API=1 in vite.config.ts (`npm run start:hub:mock` starts the whole hub that way) and never
 // registered for builds. Endpoints live in routes.ts, state and seed data in store.ts.
 async function readBody(req: IncomingMessage): Promise<Ctx['body']> {
@@ -25,7 +26,12 @@ export function mockApi(): Plugin {
       server.middlewares.use(async (req, res, next) => {
         const { pathname, searchParams } = new URL(req.url ?? '/', 'http://localhost');
         const isControl = pathname.startsWith('/__mock/');
-        if (!isControl && !pathname.startsWith('/api/')) return next();
+        if (
+          !isControl &&
+          !pathname.startsWith('/api/') &&
+          !pathname.startsWith('/controltower-api/')
+        )
+          return next();
         res.setHeader('Content-Type', 'application/json');
         const send = (status: number, body: unknown) => {
           res.statusCode = status;
@@ -38,7 +44,7 @@ export function mockApi(): Plugin {
         const fault = faultFor(req.method, pathname);
         if (fault?.delayMs) await new Promise((resolve) => setTimeout(resolve, fault.delayMs));
         if (fault?.status) return send(fault.status, { message: fault.message, code: fault.code });
-        for (const [method, pattern, handler] of routes) {
+        for (const [method, pattern, handler] of [...routes, ...controltowerRoutes]) {
           const match = method === req.method ? pattern.exec(pathname) : null;
           if (!match) continue;
           try {

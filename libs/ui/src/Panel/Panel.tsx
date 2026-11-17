@@ -31,3 +31,23 @@ export function PanelTitle({ className, ...rest }: HTMLAttributes<HTMLDivElement
 export function Eyebrow({ className, ...rest }: HTMLAttributes<HTMLSpanElement>) {
   return <span className={cx(styles.eyebrow, className)} {...rest} />;
 }
+
+/** Padded, gridded content area of a panel. Also styles the labels and controls of plain form fields inside it. */
+export function PanelBody({ as: Tag = 'div', className, ...rest }: PanelProps) {
+  return <Tag className={cx(styles.body, className)} {...rest} />;
+}
+
+/** Side-by-side panels that stack when narrow. */
+export function TwoColumn({ className, ...rest }: HTMLAttributes<HTMLDivElement>) {
+  return <div className={cx(styles.twoColumn, className)} {...rest} />;
+}
+
+/** One list item: content on the left, actions on the right; a nested `<small>` is a muted second line. */
+export function ListRow({ className, ...rest }: HTMLAttributes<HTMLDivElement>) {
+  return <div className={cx(styles.listRow, className)} {...rest} />;
+}
+
+/** A wrapping row of buttons. */
+export function ActionRow({ className, ...rest }: HTMLAttributes<HTMLDivElement>) {
+  return <div className={cx(styles.actionRow, className)} {...rest} />;
+}

@@ -5,6 +5,9 @@ import styles from './Tabs.module.scss';
 /** Class applied to the selected tab; exposed so tests can assert the selection. */
 export const tabActiveClass = styles.tabActive;
 
+/** Base tab class, for tabs rendered as router links instead of `Tab` buttons. */
+export const tabClass = styles.tab;
+
 interface TabNavProps extends HTMLAttributes<HTMLElement> {
   /** Adds the bottom margin used when the nav sits above panel content. */
   secondary?: boolean;

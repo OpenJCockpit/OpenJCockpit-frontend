@@ -1,0 +1,222 @@
+{
+  "controltower": {
+    "title": "Control Tower",
+    "subtitle": "Interviewbasierte Anforderungen, abhängigkeitsbewusste Specs und kontrollierte Auslieferung.",
+    "back": "Zurück zum Dashboard",
+    "loading": "Lädt…",
+    "retry": "Erneut versuchen",
+    "cancel": "Abbrechen",
+    "noProject": "Wähle ein Projekt, um dies zu sehen.",
+    "notAvailable": "–",
+    "tabs": {
+      "label": "Seiten von Control Tower",
+      "overview": "Übersicht",
+      "interviews": "Discovery-Interviews",
+      "specs": "Spezifikationen",
+      "graph": "Abhängigkeitsgraph",
+      "queue": "Dispatch-Queue",
+      "templates": "Vorlagen"
+    },
+    "widget": {
+      "noRepository": "Mit diesem Projekt ist kein Repository verknüpft.",
+      "ready_one": "Spec bereit zum Dispatch",
+      "ready_other": "Specs bereit zum Dispatch"
+    },
+    "repository": {
+      "loadFailed": "Das Repository konnte nicht geladen werden.",
+      "noneTitle": "Mit diesem Projekt ist kein Repository verknüpft",
+      "noneHint": "Verbinde in den Projekteinstellungen ein Git-Repository mit diesem Projekt, um Control Tower zu nutzen.",
+      "connect": "Repository verbinden",
+      "hint": "Das Git-Repository von {{project}}. Beim Freigeben einer Spec werden ihre Dateien aus einem isolierten Container, der danach entfernt wird, in einen neuen Branch mit der Spec-ID als Namen gepusht. Tokens und Passwörter werden verschlüsselt gespeichert und nie wieder angezeigt.",
+      "readOnly": "Nur Operatoren und Administratoren können das Repository ändern. Du kannst es ansehen.",
+      "name": "Repository-Name",
+      "gitUrl": "Git-Repository-URL",
+      "branch": "Basis-Branch",
+      "authentication": "Authentifizierung",
+      "credential": {
+        "NONE": "Keine (öffentliches Repository)",
+        "HTTPS_TOKEN": "HTTPS-Zugriffstoken",
+        "USERNAME_PASSWORD": "Benutzername und Passwort"
+      },
+      "username": "Git-Benutzername",
+      "usernameHint": "Optional, Standard ist \"token\".",
+      "token": "Zugriffstoken",
+      "password": "Passwort",
+      "workflowId": "OpenJCockpit-Workflow-ID",
+      "save": "Repository speichern",
+      "connectAction": "Repository verbinden",
+      "check": "Verbindung prüfen",
+      "checking": "Prüft…",
+      "saved": "Repository gespeichert.",
+      "registered": "Repository verbunden."
+    },
+    "overview": {
+      "repository": "Repository",
+      "interviews": "Interviews",
+      "specs": "Spezifikationen",
+      "ready": "Bereit zum Dispatch",
+      "howTitle": "So funktioniert es",
+      "steps": {
+        "repository": "Repository und zugehörigen OpenJCockpit-Workflow verbinden",
+        "templates": "Interviewvorlagen für Projekte und Features erstellen",
+        "interview": "Interview mit adaptiven Fragen oder per Mikrofon führen",
+        "specs": "Kleine, verbundene Specs generieren und prüfen",
+        "dispatch": "Specs freigeben, in Git committen, dann bereite Knoten dispatchen"
+      },
+      "ideasTitle": "Von Ideen zu ausführbaren Specs.",
+      "ideasText": "Halte jede Änderung klein, testbar und nachvollziehbar. Der Abhängigkeitsgraph verhindert eine unsichere Ausführungsreihenfolge. KI hilft, Anforderungen zu formulieren; das Backend prüft die Regeln.",
+      "start": "Discovery starten"
+    },
+    "interviews": {
+      "session": "Discovery-Sitzung",
+      "previous": "Frühere Interviews",
+      "template": "Interviewvorlage",
+      "selectTemplate": "Vorlage wählen",
+      "featureRequest": "Neue Feature-Anfrage",
+      "featurePlaceholder": "Beschreibe das Feature, das du erstellen möchtest…",
+      "start": "Interview starten",
+      "answer": "Deine Antwort",
+      "answerPlaceholder": "Gib eine konkrete Antwort…",
+      "submit": "Antwort senden",
+      "completed": "Interview abgeschlossen",
+      "enough": "Das Interview enthält genug Informationen für einen Spec-Vorschlag.",
+      "specTemplate": "Vorlage für die Spec-Ausgabe",
+      "defaultSpecTemplate": "OpenJCockpit-Standard",
+      "generate": "Spec-Entwürfe generieren",
+      "close": "Sitzung schließen",
+      "none": "Noch keine Interviews erfasst.",
+      "loadFailed": "Die Interviews konnten nicht geladen werden.",
+      "summary_one": "{{kind}} · {{status}} · {{count}} Antwort",
+      "summary_other": "{{kind}} · {{status}} · {{count}} Antworten",
+      "privacy": "Die Spracherkennung des Browsers nutzt möglicherweise einen Sprachdienst eines Drittanbieters; prüfe die Datenschutzrichtlinie, bevor du sensible Daten verwendest.",
+      "status": {
+        "ACTIVE": "Läuft",
+        "COMPLETE": "Abgeschlossen",
+        "GENERATED": "Specs generiert"
+      }
+    },
+    "speech": {
+      "speak": "Sprechen",
+      "listening": "Hört zu…",
+      "read": "Frage vorlesen",
+      "unsupported": "Spracherkennung ist in diesem Browser nicht verfügbar. Du kannst stattdessen tippen."
+    },
+    "specs": {
+      "title": "Spezifikationsregister",
+      "count_one": "{{count}} Datei",
+      "count_other": "{{count}} Dateien",
+      "empty": "Schließe ein Interview ab und generiere deine ersten Spec-Entwürfe.",
+      "loadFailed": "Die Spezifikationen konnten nicht geladen werden.",
+      "branch": "Branch {{branch}}",
+      "dependencies": "Abhängigkeiten: {{list}}",
+      "noDependencies": "Keine",
+      "approveAndPush": "Freigeben und Branch pushen",
+      "approveTitle": "Diese Spec freigeben?",
+      "approveMessage": "„{{title}}“ wird in einen neuen Git-Branch des Repositorys gepusht.",
+      "approve": "Freigeben und pushen",
+      "approving": "Pusht…",
+      "approved": "Spec in Branch {{branch}} gepusht. Merge ihn vor dem Dispatch in den Branch, den OpenJCockpit liest.",
+      "confirmDone": "Extern abgeschlossen bestätigen",
+      "completed": "Als erledigt markiert. Prüfe das zuerst in OpenJCockpit.",
+      "status": {
+        "DRAFT": "Entwurf",
+        "APPROVED": "Freigegeben",
+        "DISPATCHED": "Dispatcht",
+        "DONE": "Erledigt"
+      }
+    },
+    "graph": {
+      "title": "Abhängigkeitsgraph",
+      "hint": "Pfeile stehen für den erforderlichen Abschluss des Vorgängers, nicht für einfache Zuordnungen.",
+      "label": "Abhängigkeitsgraph der Specs",
+      "empty": "Noch keine Spezifikationen. Starte dein erstes Interview.",
+      "loadFailed": "Der Abhängigkeitsgraph konnte nicht geladen werden.",
+      "ready": "{{status}} · BEREIT"
+    },
+    "queue": {
+      "ready": "Bereite Arbeit",
+      "count_one": "{{count}} bereit",
+      "count_other": "{{count}} bereit",
+      "empty": "Gib Specs frei oder schließe ihre Abhängigkeiten ab, um den Dispatch zu ermöglichen.",
+      "loadFailed": "Die Dispatch-Queue konnte nicht geladen werden.",
+      "priority": "Priorität {{priority}} · {{reason}}",
+      "dispatchTitle": "OpenJCockpit-Dispatch",
+      "hint": "Der Dispatch ist Opt-in. Es werden nur bereite, freigegebene Specs gesendet. Abhängige Specs bleiben blockiert, bis ihre Vorgänger erledigt sind.",
+      "published": "Die Spec-Branches sind in den Branch gemergt, den OpenJCockpit liest.",
+      "dispatch": "Bereite Specs dispatchen",
+      "openSpecQueue": "Spec-Queue öffnen",
+      "result": { "DISPATCHED": "Versendet" },
+      "unknownHint": "Unsichere HTTP-Ergebnisse werden als UNKNOWN erfasst und nie automatisch wiederholt."
+    },
+    "templates": {
+      "savedTitle": "Gespeicherte Vorlagen",
+      "none": "Noch nichts vorhanden.",
+      "questions_one": "{{count}} konfigurierbare Frage",
+      "questions_other": "{{count}} konfigurierbare Fragen",
+      "new": "Neue Interviewvorlage",
+      "name": "Name der Vorlage",
+      "kind": "Interviewtyp",
+      "kindProject": "Erstes Projekt",
+      "kindFeature": "Neues Feature",
+      "questionsJson": "Fragen (JSON)",
+      "save": "Vorlage speichern",
+      "saved": "Vorlage gespeichert.",
+      "invalidJson": "Die Fragen sind kein gültiges JSON.",
+      "loadFailed": "Die Vorlagen konnten nicht geladen werden.",
+      "specTitle": "Vorlagen für Spec-Dateien",
+      "markdown": "Markdown",
+      "specHint": "Wiederverwendbare Markdown-Strukturen für Spec-Dateien, getrennt von den Interviewfragebögen. Platzhalter: SPEC_ID, WORKFLOW_ID, TITLE, SUMMARY, DEPENDENCIES, ACCEPTANCE_CRITERIA.",
+      "builtIn": "Eingebauter Standard",
+      "custom": "Eigene Spec-Vorlage",
+      "markdownTemplate": "Markdown-Vorlage",
+      "saveSpec": "Spec-Vorlage speichern",
+      "specSaved": "Spec-Vorlage gespeichert."
+    },
+    "policy": {
+      "loadFailed": "Die Richtlinien-Einstellungen konnten nicht geladen werden.",
+      "hint": "Wenn aktiviert, entscheidet der Open Policy Agent über das Speichern und Prüfen von Repositories, das Freigeben von Specs und den Dispatch an OpenJCockpit. Bei einer Ablehnung werden die Gründe der Richtlinie angezeigt.",
+      "readOnly": "Nur Administratoren können diese Einstellungen ändern. Du kannst sie ansehen.",
+      "enforce": "Richtlinien durchsetzen",
+      "url": "Agent-URL",
+      "decisionPath": "Entscheidungspfad",
+      "failOpen": "Aktionen erlauben, solange der Agent nicht erreichbar ist (Fail-open). Aus: Sie werden abgelehnt.",
+      "save": "Richtlinien-Einstellungen speichern",
+      "test": "Verbindung testen",
+      "savedOn": "Gespeichert. Repository-Änderungen, Freigaben und Dispatches werden jetzt von den Richtlinien geprüft.",
+      "savedOff": "Gespeichert. Richtlinienprüfungen sind aus.",
+      "loaded": "Geladen: {{list}}",
+      "standardTitle": "Standardrichtlinien",
+      "standardHint": "Mit Control Tower ausgeliefert. Passe sie in den Richtliniendaten an oder ersetze sie durch eigene Richtlinien unter demselben Entscheidungspfad.",
+      "standard": {
+        "writerRoles": {
+          "name": "Schreibrollen.",
+          "text": "Jede kontrollierte Aktion braucht die Rolle Operator oder Admin, auch wenn die Rollenprüfung im Backend falsch konfiguriert ist."
+        },
+        "gitHosts": {
+          "name": "Erlaubte Git-Hosts.",
+          "text": "Repositories können nur für freigegebene Git-Hosts gespeichert oder geprüft werden. Eine leere Liste erlaubt jeden Host."
+        },
+        "fourEyes": {
+          "name": "Vier-Augen-Freigabe.",
+          "text": "Wer eine Spec generiert hat, darf sie nicht freigeben. Standardmäßig aus."
+        },
+        "acceptance": {
+          "name": "Akzeptanzkriterien.",
+          "text": "Eine Spec braucht vor der Freigabe mindestens zwei Akzeptanzkriterien."
+        },
+        "secrets": {
+          "name": "Geheimniserkennung.",
+          "text": "Specs mit einem privaten Schlüssel oder Zugriffstoken werden nicht nach Git gepusht."
+        },
+        "freeze": {
+          "name": "Dispatch-Stopp.",
+          "text": "Stoppt alle Dispatches an OpenJCockpit, zum Beispiel während eines Releases. Standardmäßig aus."
+        },
+        "dispatchRoles": {
+          "name": "Dispatch-Rollen.",
+          "text": "Nur diese Rollen dürfen Specs an OpenJCockpit senden."
+        }
+      }
+    }
+  }
+}

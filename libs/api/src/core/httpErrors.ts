@@ -16,6 +16,17 @@ export async function parseApiError(response: Response, fallback: string): Promi
         code: typeof body.code === 'string' && body.code ? body.code : undefined,
       };
     }
+    // The ControlTower backend answers `{ "error": "<reason>" }`, which includes the reasons of an
+    // OPA denial. Spring's own error body also has an `error` (the HTTP reason phrase) but always
+    // a numeric `status`; that one is no better than the fallback.
+    if (
+      body &&
+      typeof body.error === 'string' &&
+      body.error.trim() &&
+      typeof body.status !== 'number'
+    ) {
+      return { message: body.error };
+    }
   } catch {
     // response body wasn't JSON (or was empty) — fall back below
   }
