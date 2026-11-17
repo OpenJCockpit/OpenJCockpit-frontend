@@ -81,6 +81,7 @@ export const TEMPLATE: ControlTowerTemplate = {
   name: 'Standard project',
   kind: 'PROJECT',
   questions: [],
+  builtIn: false,
 };
 
 export const FEATURE_TEMPLATE: ControlTowerTemplate = {
