@@ -129,3 +129,34 @@ export function useGlobalMutation<TData, TVariables>(
 ): UseMutationResult<TData, Error, TVariables> {
   return useControlTowerMutation(['controltower'], mutationFn);
 }
+
+export interface ControlTowerCounts {
+  drafts: number;
+  approved: number;
+  dispatched: number;
+  done: number;
+  /** Specs the queue proposes for dispatch. */
+  ready: number;
+  interviews: number;
+  templates: number;
+}
+
+/** Counts for badges and the overview. Each field is `undefined` until its query has loaded. Reuses the page queries, so it adds no requests. */
+export function useControlTowerCounts(repositoryId: string): {
+  [K in keyof ControlTowerCounts]: ControlTowerCounts[K] | undefined;
+} {
+  const specs = useSpecs(repositoryId).data;
+  const ready = useQueueProposal(repositoryId).data;
+  const interviews = useInterviews(repositoryId).data;
+  const templates = useTemplates().data;
+  const countStatus = (status: string) => specs?.filter((s) => s.status === status).length;
+  return {
+    drafts: countStatus('DRAFT'),
+    approved: countStatus('APPROVED'),
+    dispatched: countStatus('DISPATCHED'),
+    done: countStatus('DONE'),
+    ready: ready?.length,
+    interviews: interviews?.length,
+    templates: templates?.length,
+  };
+}

@@ -24,3 +24,17 @@ interface TabProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export function Tab({ active, className, ...rest }: TabProps) {
   return <button className={cx(styles.tab, active && styles.tabActive, className)} {...rest} />;
 }
+
+interface TabBadgeProps {
+  /** Hidden while `undefined` (still loading) or `0` unless `showZero` is set. */
+  count: number | undefined;
+  /** Draws attention, e.g. drafts waiting for review. */
+  accent?: boolean;
+  showZero?: boolean;
+}
+
+/** Small count next to a tab label. Render it inside the tab link. */
+export function TabBadge({ count, accent, showZero }: TabBadgeProps) {
+  if (count === undefined || (count === 0 && !showZero)) return null;
+  return <span className={cx(styles.badge, accent && styles.badgeAccent)}>{count}</span>;
+}
