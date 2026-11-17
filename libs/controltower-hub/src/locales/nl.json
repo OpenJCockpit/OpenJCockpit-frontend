@@ -1,0 +1,220 @@
+{
+  "controltower": {
+    "title": "Control Tower",
+    "subtitle": "Interviewgestuurde requirements, specs met afhankelijkheden en beheerste oplevering.",
+    "back": "Terug naar het dashboard",
+    "loading": "Laden…",
+    "retry": "Opnieuw proberen",
+    "cancel": "Annuleren",
+    "noProject": "Selecteer een project om dit te zien.",
+    "notAvailable": "–",
+    "tabs": {
+      "label": "Pagina's van Control Tower",
+      "overview": "Overzicht",
+      "interviews": "Discovery-interviews",
+      "specs": "Specificaties",
+      "graph": "Afhankelijkhedengraaf",
+      "queue": "Dispatch-wachtrij",
+      "templates": "Sjablonen"
+    },
+    "widget": {
+      "noRepository": "Aan dit project is geen repository gekoppeld.",
+      "ready_one": "spec klaar om te dispatchen",
+      "ready_other": "specs klaar om te dispatchen"
+    },
+    "repository": {
+      "loadFailed": "De repository kon niet worden geladen.",
+      "noneTitle": "Aan dit project is geen repository gekoppeld",
+      "noneHint": "Koppel in de projectinstellingen een Git-repository aan dit project om Control Tower te gebruiken.",
+      "connect": "Repository koppelen",
+      "hint": "De Git-repository van {{project}}. Bij het goedkeuren van een spec worden de bestanden vanuit een geïsoleerde container, die daarna wordt verwijderd, gepusht naar een nieuwe branch met de spec-ID als naam. Tokens en wachtwoorden worden versleuteld opgeslagen en nooit meer getoond.",
+      "readOnly": "Alleen operators en beheerders kunnen de repository wijzigen. Je kunt hem bekijken.",
+      "name": "Naam van de repository",
+      "gitUrl": "URL van de Git-repository",
+      "branch": "Basisbranch",
+      "authentication": "Authenticatie",
+      "credential": {
+        "NONE": "Geen (openbare repository)",
+        "HTTPS_TOKEN": "HTTPS-toegangstoken",
+        "USERNAME_PASSWORD": "Gebruikersnaam en wachtwoord"
+      },
+      "username": "Git-gebruikersnaam",
+      "usernameHint": "Optioneel, standaard \"token\".",
+      "token": "Toegangstoken",
+      "password": "Wachtwoord",
+      "workflowId": "OpenJCockpit-workflow-ID",
+      "save": "Repository opslaan",
+      "connectAction": "Repository koppelen",
+      "check": "Verbinding controleren",
+      "checking": "Controleren…",
+      "saved": "Repository opgeslagen.",
+      "registered": "Repository gekoppeld."
+    },
+    "overview": {
+      "repository": "Repository",
+      "interviews": "Interviews",
+      "specs": "Specificaties",
+      "ready": "Klaar om te dispatchen",
+      "howTitle": "Zo werkt het",
+      "steps": {
+        "repository": "Koppel een repository en de bijbehorende OpenJCockpit-workflow",
+        "templates": "Maak interviewsjablonen voor projecten en features",
+        "interview": "Interview met adaptieve vragen of via de microfoon",
+        "specs": "Genereer en beoordeel kleine, verbonden specs",
+        "dispatch": "Keur specs goed, commit naar Git en dispatch dan de klare knooppunten"
+      },
+      "ideasTitle": "Van ideeën naar uitvoerbare specs.",
+      "ideasText": "Houd elke wijziging klein, testbaar en traceerbaar. De afhankelijkhedengraaf voorkomt een onveilige uitvoervolgorde. AI helpt requirements te formuleren; de backend valideert de regels.",
+      "start": "Discovery starten"
+    },
+    "interviews": {
+      "session": "Discovery-sessie",
+      "previous": "Eerdere interviews",
+      "template": "Interviewsjabloon",
+      "selectTemplate": "Kies een sjabloon",
+      "featureRequest": "Nieuw featureverzoek",
+      "featurePlaceholder": "Beschrijf de feature die je wilt maken…",
+      "start": "Interview starten",
+      "answer": "Jouw antwoord",
+      "answerPlaceholder": "Geef een concreet antwoord…",
+      "submit": "Antwoord versturen",
+      "completed": "Interview voltooid",
+      "enough": "Het interview bevat genoeg informatie voor een spec-voorstel.",
+      "specTemplate": "Sjabloon voor de spec-uitvoer",
+      "defaultSpecTemplate": "OpenJCockpit-standaard",
+      "generate": "Spec-concepten genereren",
+      "close": "Sessie sluiten",
+      "none": "Nog geen interviews vastgelegd.",
+      "loadFailed": "De interviews konden niet worden geladen.",
+      "summary": "{{kind}} · {{status}} · {{count}} antwoorden",
+      "privacy": "Spraakherkenning in de browser kan een spraakdienst van een derde gebruiken; raadpleeg je privacybeleid voordat je gevoelige gegevens gebruikt.",
+      "status": {
+        "ACTIVE": "Bezig",
+        "COMPLETE": "Voltooid",
+        "GENERATED": "Specs gegenereerd"
+      }
+    },
+    "speech": {
+      "speak": "Spreken",
+      "listening": "Luistert…",
+      "read": "Vraag voorlezen",
+      "unsupported": "Spraakherkenning is niet beschikbaar in deze browser. Je kunt in plaats daarvan typen."
+    },
+    "specs": {
+      "title": "Specificatieregister",
+      "count_one": "{{count}} bestand",
+      "count_other": "{{count}} bestanden",
+      "empty": "Rond een interview af en genereer je eerste spec-concepten.",
+      "loadFailed": "De specificaties konden niet worden geladen.",
+      "branch": "branch {{branch}}",
+      "dependencies": "Afhankelijkheden: {{list}}",
+      "noDependencies": "Geen",
+      "approveAndPush": "Goedkeuren en branch pushen",
+      "approveTitle": "Deze spec goedkeuren?",
+      "approveMessage": "\"{{title}}\" wordt gepusht naar een nieuwe Git-branch van de repository.",
+      "approve": "Goedkeuren en pushen",
+      "approving": "Pushen…",
+      "approved": "Spec gepusht naar branch {{branch}}. Merge die vóór het dispatchen in de branch die OpenJCockpit leest.",
+      "confirmDone": "Extern afgerond bevestigen",
+      "completed": "Als klaar gemarkeerd. Controleer dit eerst in OpenJCockpit.",
+      "status": {
+        "DRAFT": "Concept",
+        "APPROVED": "Goedgekeurd",
+        "DISPATCHED": "Gedispatcht",
+        "DONE": "Klaar"
+      }
+    },
+    "graph": {
+      "title": "Afhankelijkhedengraaf",
+      "hint": "Pijlen betekenen dat de voorganger eerst klaar moet zijn, geen eenvoudige koppelingen.",
+      "label": "Afhankelijkhedengraaf van de specs",
+      "empty": "Nog geen specificaties. Start je eerste interview.",
+      "loadFailed": "De afhankelijkhedengraaf kon niet worden geladen.",
+      "ready": "{{status}} · KLAAR"
+    },
+    "queue": {
+      "ready": "Klaar werk",
+      "count_one": "{{count}} klaar",
+      "count_other": "{{count}} klaar",
+      "empty": "Keur specs goed of rond hun afhankelijkheden af om dispatchen mogelijk te maken.",
+      "loadFailed": "De dispatch-wachtrij kon niet worden geladen.",
+      "priority": "Prioriteit {{priority}} · {{reason}}",
+      "dispatchTitle": "Dispatch naar OpenJCockpit",
+      "hint": "Dispatchen is opt-in. Alleen klare, goedgekeurde specs worden verstuurd. Afhankelijke specs blijven geblokkeerd tot hun voorgangers klaar zijn.",
+      "published": "De spec-branches zijn gemerged in de branch die OpenJCockpit leest.",
+      "dispatch": "Klare specs dispatchen",
+      "openSpecQueue": "Spec-wachtrij openen",
+      "unknownHint": "Onzekere HTTP-uitkomsten worden als UNKNOWN vastgelegd en nooit automatisch opnieuw geprobeerd."
+    },
+    "templates": {
+      "savedTitle": "Opgeslagen sjablonen",
+      "none": "Nog niets aanwezig.",
+      "questions_one": "{{count}} configureerbare vraag",
+      "questions_other": "{{count}} configureerbare vragen",
+      "new": "Nieuw interviewsjabloon",
+      "name": "Naam van het sjabloon",
+      "kind": "Soort interview",
+      "kindProject": "Eerste project",
+      "kindFeature": "Nieuwe feature",
+      "questionsJson": "Vragen (JSON)",
+      "save": "Sjabloon opslaan",
+      "saved": "Sjabloon opgeslagen.",
+      "invalidJson": "De vragen zijn geen geldige JSON.",
+      "loadFailed": "De sjablonen konden niet worden geladen.",
+      "specTitle": "Sjablonen voor spec-bestanden",
+      "markdown": "Markdown",
+      "specHint": "Herbruikbare Markdown-structuren voor spec-bestanden, los van de interviewvragenlijsten. Plaatshouders: SPEC_ID, WORKFLOW_ID, TITLE, SUMMARY, DEPENDENCIES, ACCEPTANCE_CRITERIA.",
+      "builtIn": "Ingebouwde standaard",
+      "custom": "Eigen spec-sjabloon",
+      "markdownTemplate": "Markdown-sjabloon",
+      "saveSpec": "Spec-sjabloon opslaan",
+      "specSaved": "Spec-sjabloon opgeslagen."
+    },
+    "policy": {
+      "loadFailed": "De beleidsinstellingen konden niet worden geladen.",
+      "hint": "Indien ingeschakeld beslist de Open Policy Agent over het opslaan en controleren van repositories, het goedkeuren van specs en het dispatchen naar OpenJCockpit. Bij een weigering worden de redenen van het beleid getoond.",
+      "readOnly": "Alleen beheerders kunnen deze instellingen wijzigen. Je kunt ze bekijken.",
+      "enforce": "Beleid afdwingen",
+      "url": "Agent-URL",
+      "decisionPath": "Beslissingspad",
+      "failOpen": "Acties toestaan zolang de agent niet bereikbaar is (fail open). Uit: ze worden geweigerd.",
+      "save": "Beleidsinstellingen opslaan",
+      "test": "Verbinding testen",
+      "savedOn": "Opgeslagen. Repositorywijzigingen, goedkeuringen en dispatches worden nu door het beleid gecontroleerd.",
+      "savedOff": "Opgeslagen. Beleidscontroles staan uit.",
+      "loaded": "Geladen: {{list}}",
+      "standardTitle": "Standaardbeleid",
+      "standardHint": "Meegeleverd met Control Tower. Pas het aan in de beleidsgegevens of vervang het door eigen beleid onder hetzelfde beslissingspad.",
+      "standard": {
+        "writerRoles": {
+          "name": "Schrijfrollen.",
+          "text": "Elke beheerste actie vereist de rol operator of admin, ook als de rolcontrole van de backend verkeerd is geconfigureerd."
+        },
+        "gitHosts": {
+          "name": "Toegestane Git-hosts.",
+          "text": "Repositories kunnen alleen worden opgeslagen of gecontroleerd voor goedgekeurde Git-hosts. Een lege lijst staat elke host toe."
+        },
+        "fourEyes": {
+          "name": "Vier-ogen-goedkeuring.",
+          "text": "Wie een spec heeft gegenereerd, mag hem niet goedkeuren. Standaard uit."
+        },
+        "acceptance": {
+          "name": "Acceptatiecriteria.",
+          "text": "Een spec heeft minstens twee acceptatiecriteria nodig voordat hij wordt goedgekeurd."
+        },
+        "secrets": {
+          "name": "Geheimdetectie.",
+          "text": "Specs met een privésleutel of toegangstoken worden niet naar Git gepusht."
+        },
+        "freeze": {
+          "name": "Dispatchstop.",
+          "text": "Stopt alle dispatches naar OpenJCockpit, bijvoorbeeld tijdens een release. Standaard uit."
+        },
+        "dispatchRoles": {
+          "name": "Dispatchrollen.",
+          "text": "Alleen deze rollen mogen specs naar OpenJCockpit sturen."
+        }
+      }
+    }
+  }
+}

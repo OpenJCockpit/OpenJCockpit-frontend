@@ -39,6 +39,11 @@ export default mergeConfig(base, {
     port: 4000,
     proxy: {
       '/api': 'http://localhost:9080',
+      // ControlTower backend; it also serves /api, so the prefix is rewritten.
+      '/controltower-api': {
+        target: 'http://localhost:9180',
+        rewrite: (path: string) => path.replace(/^\/controltower-api/, '/api'),
+      },
     },
   },
   test: {

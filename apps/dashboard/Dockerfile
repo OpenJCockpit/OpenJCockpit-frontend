@@ -29,6 +29,7 @@ USER 101
 ARG BUILD_SHA=unknown
 ENV BUILD_SHA=$BUILD_SHA \
     API_UPSTREAM=http://ai-control-service:8080 \
+    CONTROLTOWER_UPSTREAM=http://host.docker.internal:9180 \
     KEYCLOAK_URL=http://localhost:8080 \
     KEYCLOAK_REALM=openjcockpit \
     KEYCLOAK_CLIENT_ID=openjcockpit \
@@ -38,7 +39,7 @@ ENV BUILD_SHA=$BUILD_SHA \
     FEDERATION_MANIFEST={} \
     FEDERATION_ALLOWED_ORIGINS_JSON=[] \
     FEDERATION_ALLOWED_ORIGINS= \
-    NGINX_ENVSUBST_FILTER=^(KEYCLOAK_|FEDERATION_|REMOTE_|NGINX_LOCAL_RESOLVERS$|API_UPSTREAM$|BUILD_SHA$)
+    NGINX_ENVSUBST_FILTER=^(KEYCLOAK_|FEDERATION_|REMOTE_|NGINX_LOCAL_RESOLVERS$|API_UPSTREAM$|CONTROLTOWER_UPSTREAM$|BUILD_SHA$)
 COPY --from=build /app/apps/dashboard/dist /usr/share/nginx/html
 COPY apps/dashboard/nginx.conf.template /etc/nginx/templates/default.conf.template
 COPY apps/dashboard/security-headers.inc.template /etc/nginx/templates/security-headers.inc.template

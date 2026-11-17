@@ -1,0 +1,27 @@
+.edge {
+  stroke: var(--muted);
+  fill: none;
+}
+.arrow {
+  stroke: var(--muted);
+  fill: none;
+}
+.node {
+  fill: var(--surface);
+  stroke: rgb(var(--accent-rgb) / 0.35);
+}
+.nodeReady {
+  stroke: var(--teal);
+}
+.nodeId {
+  fill: var(--teal);
+  font-size: 10px;
+}
+.nodeTitle {
+  fill: var(--text);
+  font-size: 12px;
+}
+.nodeStatus {
+  fill: var(--muted);
+  font-size: 10px;
+}

@@ -32,11 +32,13 @@ The stacks are separate Compose projects that reach each other through ports pub
 | From | To | How |
 | --- | --- | --- |
 | dashboard container | `ai-control-service` | nginx proxies `/api` to `API_UPSTREAM` (default `http://host.docker.internal:9080`) |
+| dashboard container | ControlTower backend | nginx proxies `/controltower-api/x` to `CONTROLTOWER_UPSTREAM` (default `http://host.docker.internal:9180`) as `/api/x`; the prefix avoids a clash with `/api/projects` |
 | browser | Keycloak | `KEYCLOAK_URL` (default `http://localhost:8080`) |
 | Vite dev server | `ai-control-service` | proxy `/api` to `http://localhost:9080` |
+| Vite dev server | ControlTower backend | proxy `/controltower-api` to `http://localhost:9180`, rewritten to `/api` |
 | browser | dashboard and remotes | `localhost:4000` (remotes under `/remotes/<name>/`, proxied to the remote containers) |
 
-Backend somewhere else? Copy `.env.example` to `.env` and override `API_UPSTREAM` / `KEYCLOAK_URL`.
+Backend somewhere else? Copy `.env.example` to `.env` and override `API_UPSTREAM` / `CONTROLTOWER_UPSTREAM` / `KEYCLOAK_URL`.
 
 ## Running
 

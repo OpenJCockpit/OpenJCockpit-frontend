@@ -1,0 +1,103 @@
+import { useMemo } from 'react';
+import { useTranslation } from '@openjcockpit/i18n';
+import {
+  cx,
+  EmptyState,
+  ErrorState,
+  LoadingState,
+  Panel,
+  PanelHeader,
+  PanelTitle,
+} from '@openjcockpit/ui';
+import { useGraph } from '../hooks';
+import { useRepository } from '../RepositoryGate';
+import { layoutGraph, NODE_HEIGHT, NODE_WIDTH } from './graphLayout';
+import svgStyles from './Graph.module.scss';
+import styles from './pages.module.scss';
+
+const ELLIPSIS = '…';
+const ID_LENGTH = 18;
+const TITLE_LENGTH = 27;
+
+function clip(text: string, max: number): string {
+  return text.length > max ? `${text.substring(0, max - 1)}${ELLIPSIS}` : text;
+}
+
+/** The spec dependency graph: an arrow means "the predecessor must be done first". */
+export function GraphPage() {
+  const { t } = useTranslation('controltower');
+  const repository = useRepository();
+  const { data, isError, refetch } = useGraph(repository.id);
+  const layout = useMemo(() => (data ? layoutGraph(data) : null), [data]);
+
+  let content;
+  if (data && layout) {
+    content = data.nodes.length ? (
+      <div className={styles.graphScroll}>
+        <svg
+          width={layout.width}
+          height={layout.height}
+          viewBox={`0 0 ${layout.width} ${layout.height}`}
+          role="img"
+          aria-label={t('graph.label')}
+        >
+          <defs>
+            <marker id="ct-arrow" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto">
+              <path d="M0 0 L6 3 L0 6" className={svgStyles.arrow} />
+            </marker>
+          </defs>
+          {layout.edges.map((edge) => (
+            <path
+              key={edge.key}
+              className={svgStyles.edge}
+              d={edge.path}
+              markerEnd="url(#ct-arrow)"
+            />
+          ))}
+          {layout.nodes.map((node) => {
+            const p = layout.positions.get(node.id) as { x: number; y: number };
+            return (
+              <g key={node.id} transform={`translate(${p.x},${p.y})`}>
+                <rect
+                  className={cx(svgStyles.node, node.ready && svgStyles.nodeReady)}
+                  width={NODE_WIDTH}
+                  height={NODE_HEIGHT}
+                  rx="9"
+                />
+                <text className={svgStyles.nodeId} x="12" y="19">
+                  {node.id.substring(0, ID_LENGTH)}
+                </text>
+                <text className={svgStyles.nodeTitle} x="12" y="36">
+                  {clip(node.title, TITLE_LENGTH)}
+                </text>
+                <text className={svgStyles.nodeStatus} x="12" y="53">
+                  {node.ready ? t('graph.ready', { status: node.status }) : node.status}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+    ) : (
+      <EmptyState title={t('graph.empty')} />
+    );
+  } else if (isError) {
+    content = (
+      <ErrorState onRetry={() => void refetch()} retryLabel={t('retry')}>
+        {t('graph.loadFailed')}
+      </ErrorState>
+    );
+  } else {
+    content = <LoadingState>{t('loading')}</LoadingState>;
+  }
+
+  return (
+    <Panel>
+      <PanelHeader>
+        <PanelTitle>{t('graph.title')}</PanelTitle>
+      </PanelHeader>
+      <p className={styles.body}>{t('graph.hint')}</p>
+      {content}
+    </Panel>
+  );
+}

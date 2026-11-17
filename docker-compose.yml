@@ -1,11 +1,12 @@
-# Frontend stack: the dashboard (host app) and the four federated remotes.
+# Frontend stack: the dashboard (host app) and the five federated remotes.
 #
 # This repository is deliberately independent of the backend repository (OpenJCockpit/OpenJCockpit).
 # The two run as separate Compose projects and talk over the ports the backend publishes on the host:
 #
 #   backend  -> http://localhost:9080  ai-control-service (the /api the dashboard proxies to)
 #   backend  -> http://localhost:8080  Keycloak (the browser logs in here)
-#   frontend -> http://localhost:4000  dashboard; it also serves the four remotes under /remotes/<name>/
+#   controltower -> http://localhost:9180  ControlTower backend (the /controltower-api the dashboard proxies to)
+#   frontend -> http://localhost:4000  dashboard; it also serves the five remotes under /remotes/<name>/
 #
 # Start the backend first (`docker compose up -d` in the backend checkout), then `docker compose up -d --build`
 # here. The dashboard's nginx resolves its API and remote upstreams per request, so a backend that is not up yet
@@ -33,13 +34,15 @@ services:
     environment:
       # Server-side: nginx proxies /api here. The backend publishes ai-control-service on host port 9080.
       API_UPSTREAM: ${API_UPSTREAM:-http://host.docker.internal:9080}
+      # Server-side: nginx proxies /controltower-api here (as /api). The ControlTower backend publishes host port 9180.
+      CONTROLTOWER_UPSTREAM: ${CONTROLTOWER_UPSTREAM:-http://host.docker.internal:9180}
       # Browser-side: where the user logs in. The backend publishes Keycloak on host port 8080.
       KEYCLOAK_URL: ${KEYCLOAK_URL:-http://localhost:8080}
       KEYCLOAK_REALM: ${KEYCLOAK_REALM:-openjcockpit}
       KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID:-openjcockpit}
       # Same-origin: the dashboard's nginx proxies /remotes/<name>/ to the remote containers (host remote-<name>,
       # port 8080: REMOTE_HOST_PREFIX / REMOTE_PORT), so no extra origin, CORS or allow-list is needed.
-      FEDERATION_MANIFEST: '{"skillsHub":"/remotes/skills-hub/mf-manifest.json","specs":"/remotes/specs/mf-manifest.json","evidence":"/remotes/evidence/mf-manifest.json","quality":"/remotes/quality/mf-manifest.json"}'
+      FEDERATION_MANIFEST: '{"skillsHub":"/remotes/skills-hub/mf-manifest.json","specs":"/remotes/specs/mf-manifest.json","evidence":"/remotes/evidence/mf-manifest.json","quality":"/remotes/quality/mf-manifest.json","controltower":"/remotes/controltower/mf-manifest.json"}'
       FEDERATION_ALLOWED_ORIGINS_JSON: '[]'
       FEDERATION_ALLOWED_ORIGINS: ""
 
@@ -84,5 +87,16 @@ services:
         REMOTE: remote-quality
         BUILD_SHA: ${BUILD_SHA:-dev}
     container_name: openjcockpit-remote-quality
+    restart: unless-stopped
+    # Internal only: reached through the dashboard at /remotes/<name>/.
+
+  remote-controltower:
+    build:
+      context: .
+      dockerfile: deploy/remote/Dockerfile
+      args:
+        REMOTE: remote-controltower
+        BUILD_SHA: ${BUILD_SHA:-dev}
+    container_name: openjcockpit-remote-controltower
     restart: unless-stopped
     # Internal only: reached through the dashboard at /remotes/<name>/.

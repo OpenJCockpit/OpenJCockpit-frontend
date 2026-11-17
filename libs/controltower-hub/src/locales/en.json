@@ -1,0 +1,220 @@
+{
+  "controltower": {
+    "title": "Control Tower",
+    "subtitle": "Interview-first requirements, dependency-aware specs and governed delivery.",
+    "back": "Back to dashboard",
+    "loading": "Loading…",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "noProject": "Select a project to see this.",
+    "notAvailable": "–",
+    "tabs": {
+      "label": "Control Tower pages",
+      "overview": "Overview",
+      "interviews": "Discovery interviews",
+      "specs": "Specifications",
+      "graph": "Dependency graph",
+      "queue": "Dispatch queue",
+      "templates": "Templates"
+    },
+    "widget": {
+      "noRepository": "No repository is linked to this project.",
+      "ready_one": "spec ready to dispatch",
+      "ready_other": "specs ready to dispatch"
+    },
+    "repository": {
+      "loadFailed": "Failed to load the repository.",
+      "noneTitle": "No repository is linked to this project",
+      "noneHint": "Connect a Git repository to this project in the project settings to use Control Tower.",
+      "connect": "Connect a repository",
+      "hint": "The Git repository of {{project}}. Approving a spec pushes its files to a new branch named after the spec ID, from an isolated container that is removed afterwards. Tokens and passwords are stored encrypted and are never shown again.",
+      "readOnly": "Only operators and administrators can change the repository. You can view it.",
+      "name": "Repository name",
+      "gitUrl": "Git repository URL",
+      "branch": "Base branch",
+      "authentication": "Authentication",
+      "credential": {
+        "NONE": "None (public repository)",
+        "HTTPS_TOKEN": "HTTPS access token",
+        "USERNAME_PASSWORD": "Username and password"
+      },
+      "username": "Git username",
+      "usernameHint": "Optional, defaults to \"token\".",
+      "token": "Access token",
+      "password": "Password",
+      "workflowId": "OpenJCockpit workflow ID",
+      "save": "Save repository",
+      "connectAction": "Connect repository",
+      "check": "Check connection",
+      "checking": "Checking…",
+      "saved": "Repository saved.",
+      "registered": "Repository connected."
+    },
+    "overview": {
+      "repository": "Repository",
+      "interviews": "Interviews",
+      "specs": "Specifications",
+      "ready": "Ready to dispatch",
+      "howTitle": "How it works",
+      "steps": {
+        "repository": "Connect a repository and its OpenJCockpit workflow",
+        "templates": "Create project and feature interview templates",
+        "interview": "Interview with adaptive questions or microphone",
+        "specs": "Generate and review small connected specs",
+        "dispatch": "Approve specs, commit to Git, then dispatch ready nodes"
+      },
+      "ideasTitle": "From ideas to executable specs.",
+      "ideasText": "Keep each change small, testable and traceable. The dependency graph blocks unsafe execution order. AI helps articulate requirements; the backend validates the rules.",
+      "start": "Start discovery"
+    },
+    "interviews": {
+      "session": "Discovery session",
+      "previous": "Previous interviews",
+      "template": "Interview template",
+      "selectTemplate": "Select template",
+      "featureRequest": "New feature request",
+      "featurePlaceholder": "Describe the feature you'd like to create…",
+      "start": "Start interview",
+      "answer": "Your answer",
+      "answerPlaceholder": "Give a concrete answer…",
+      "submit": "Submit answer",
+      "completed": "Interview completed",
+      "enough": "The interview has enough information for a spec proposal.",
+      "specTemplate": "Spec output template",
+      "defaultSpecTemplate": "OpenJCockpit default",
+      "generate": "Generate spec drafts",
+      "close": "Close session",
+      "none": "No interviews recorded yet.",
+      "loadFailed": "Failed to load the interviews.",
+      "summary": "{{kind}} · {{status}} · {{count}} answers",
+      "privacy": "Browser speech recognition may use a third-party speech service; consult your privacy policy before using sensitive data.",
+      "status": {
+        "ACTIVE": "In progress",
+        "COMPLETE": "Complete",
+        "GENERATED": "Specs generated"
+      }
+    },
+    "speech": {
+      "speak": "Speak",
+      "listening": "Listening…",
+      "read": "Read question",
+      "unsupported": "Speech recognition is not available in this browser. You can type instead."
+    },
+    "specs": {
+      "title": "Specification registry",
+      "count_one": "{{count}} file",
+      "count_other": "{{count}} files",
+      "empty": "Complete an interview and generate your first spec drafts.",
+      "loadFailed": "Failed to load the specifications.",
+      "branch": "branch {{branch}}",
+      "dependencies": "Dependencies: {{list}}",
+      "noDependencies": "None",
+      "approveAndPush": "Approve and push branch",
+      "approveTitle": "Approve this spec?",
+      "approveMessage": "\"{{title}}\" is pushed to a new Git branch of the repository.",
+      "approve": "Approve and push",
+      "approving": "Pushing…",
+      "approved": "Spec pushed to branch {{branch}}. Merge it into the branch OpenJCockpit reads before dispatch.",
+      "confirmDone": "Confirm externally completed",
+      "completed": "Marked as done. Verify in OpenJCockpit first.",
+      "status": {
+        "DRAFT": "Draft",
+        "APPROVED": "Approved",
+        "DISPATCHED": "Dispatched",
+        "DONE": "Done"
+      }
+    },
+    "graph": {
+      "title": "Dependency graph",
+      "hint": "Arrows represent required predecessor completion, not simple associations.",
+      "label": "Spec dependency graph",
+      "empty": "No specifications yet. Generate your first interview.",
+      "loadFailed": "Failed to load the dependency graph.",
+      "ready": "{{status}} · READY"
+    },
+    "queue": {
+      "ready": "Ready work",
+      "count_one": "{{count}} ready",
+      "count_other": "{{count}} ready",
+      "empty": "Approve specs or finish their dependencies to enable dispatch.",
+      "loadFailed": "Failed to load the dispatch queue.",
+      "priority": "Priority {{priority}} · {{reason}}",
+      "dispatchTitle": "OpenJCockpit dispatch",
+      "hint": "Dispatch is opt-in. Only ready, approved specs are sent. Dependent specs stay blocked until predecessors are done.",
+      "published": "The spec branches are merged into the branch that OpenJCockpit reads.",
+      "dispatch": "Dispatch ready specs",
+      "openSpecQueue": "Open the spec queue",
+      "unknownHint": "Uncertain HTTP outcomes are recorded as UNKNOWN, never automatically retried."
+    },
+    "templates": {
+      "savedTitle": "Saved templates",
+      "none": "Nothing here yet.",
+      "questions_one": "{{count}} configurable question",
+      "questions_other": "{{count}} configurable questions",
+      "new": "New interview template",
+      "name": "Template name",
+      "kind": "Interview type",
+      "kindProject": "Initial project",
+      "kindFeature": "New feature",
+      "questionsJson": "Questions (JSON)",
+      "save": "Save template",
+      "saved": "Template saved.",
+      "invalidJson": "The questions are not valid JSON.",
+      "loadFailed": "Failed to load the templates.",
+      "specTitle": "Spec file templates",
+      "markdown": "Markdown",
+      "specHint": "Reusable Markdown structures for spec files, separate from the interview questionnaires. Placeholders: SPEC_ID, WORKFLOW_ID, TITLE, SUMMARY, DEPENDENCIES, ACCEPTANCE_CRITERIA.",
+      "builtIn": "Built-in default",
+      "custom": "Custom spec template",
+      "markdownTemplate": "Markdown template",
+      "saveSpec": "Save spec template",
+      "specSaved": "Spec template saved."
+    },
+    "policy": {
+      "loadFailed": "Failed to load the policy settings.",
+      "hint": "When enabled, the Open Policy Agent decides on saving and checking repositories, approving specs and dispatching to OpenJCockpit. A denial shows the policy's reasons.",
+      "readOnly": "Only administrators can change these settings. You can view them.",
+      "enforce": "Enforce policies",
+      "url": "Agent URL",
+      "decisionPath": "Decision path",
+      "failOpen": "Allow actions while the agent cannot be reached (fail open). Off: they are denied.",
+      "save": "Save policy settings",
+      "test": "Test connection",
+      "savedOn": "Saved. Repository changes, approvals and dispatches are now checked by the policies.",
+      "savedOff": "Saved. Policy checks are off.",
+      "loaded": "Loaded: {{list}}",
+      "standardTitle": "Standard policies",
+      "standardHint": "Shipped with Control Tower. Tune them in its policy data, or replace them with your own policies under the same decision path.",
+      "standard": {
+        "writerRoles": {
+          "name": "Writer roles.",
+          "text": "Every governed action needs the operator or admin role, even if the backend role check is misconfigured."
+        },
+        "gitHosts": {
+          "name": "Allowed Git hosts.",
+          "text": "Repositories can only be saved or checked for approved Git hosts. An empty list allows every host."
+        },
+        "fourEyes": {
+          "name": "Four-eyes approval.",
+          "text": "The person who generated a spec may not approve it. Off by default."
+        },
+        "acceptance": {
+          "name": "Acceptance criteria.",
+          "text": "A spec needs at least two acceptance criteria before it is approved."
+        },
+        "secrets": {
+          "name": "Secret detection.",
+          "text": "Specs that contain a private key or an access token are not pushed to Git."
+        },
+        "freeze": {
+          "name": "Dispatch freeze.",
+          "text": "Stops all dispatches to OpenJCockpit, for example during a release. Off by default."
+        },
+        "dispatchRoles": {
+          "name": "Dispatch roles.",
+          "text": "Only these roles may send specs to OpenJCockpit."
+        }
+      }
+    }
+  }
+}

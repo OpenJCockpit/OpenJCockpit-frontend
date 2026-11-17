@@ -1,0 +1,139 @@
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.stat {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  & span {
+    color: var(--muted);
+    font-size: 12px;
+  }
+  & strong {
+    font-size: 22px;
+    font-weight: 600;
+  }
+}
+.twoCol {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+.body {
+  display: grid;
+  gap: 12px;
+  padding: 4px 16px 16px;
+}
+.steps {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+  & li {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    counter-increment: step;
+    &::before {
+      content: counter(step);
+      display: grid;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1px solid rgb(var(--accent-rgb) / 0.4);
+      color: var(--teal);
+      font-size: 12px;
+    }
+  }
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgb(var(--accent-rgb) / 0.075);
+  overflow-wrap: anywhere;
+  & small {
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+  }
+}
+.rowButton {
+  all: unset;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  &:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+  }
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.spec {
+  border-bottom: 1px solid rgb(var(--accent-rgb) / 0.075);
+  & summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 0;
+    cursor: pointer;
+    overflow-wrap: anywhere;
+  }
+  & small {
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+  }
+  & pre {
+    margin: 0;
+    padding: 10px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    border-radius: 8px;
+    background: rgb(var(--accent-rgb) / 0.05);
+    font-size: 12px;
+  }
+}
+.specDetails {
+  display: grid;
+  gap: 10px;
+  padding-bottom: 12px;
+}
+.session {
+  display: grid;
+  gap: 12px;
+}
+.code {
+  font-family: monospace;
+  font-size: 12px;
+}
+.graphScroll {
+  overflow-x: auto;
+  padding: 8px 16px 16px;
+}
+.queueIndex {
+  min-width: 24px;
+  color: var(--teal);
+}
+.grow {
+  flex: 1;
+}
