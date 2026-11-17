@@ -3,8 +3,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { controltowerRoutes } from '../controltowerRoutes';
 import { ct, renderRoutes, SPEC_DISPATCHED, SPEC_DRAFT } from '../testUtils';
 
-const SPEC_DRAFT_2 = { ...SPEC_DRAFT, id: 's3', title: 'Signup', dependsOn: [] };
-
 describe('specifications', () => {
   const path = '/controltower/specs';
 
@@ -16,7 +14,7 @@ describe('specifications', () => {
     });
     renderRoutes(controltowerRoutes, { path });
     fireEvent.click(await screen.findByText('Login page'));
-    fireEvent.click(screen.getByRole('button', { name: 'Approve and push branch' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Approve and push branch' }));
     fireEvent.click(await screen.findByTestId('confirm-action-confirm'));
     expect(await screen.findByText(/pushed to branch spec\/s1/)).toBeInTheDocument();
     expect(ct.approveControlTowerSpec).toHaveBeenCalledWith('s1');
@@ -28,8 +26,8 @@ describe('specifications', () => {
 
   it('does not approve when the confirmation is cancelled', async () => {
     renderRoutes(controltowerRoutes, { path });
-    await screen.findByText('Login page');
-    fireEvent.click(screen.getByRole('button', { name: 'Approve and push branch' }));
+    fireEvent.click(await screen.findByText('Login page'));
+    fireEvent.click(await screen.findByRole('button', { name: 'Approve and push branch' }));
     fireEvent.click(await screen.findByTestId('confirm-action-cancel'));
     expect(ct.approveControlTowerSpec).not.toHaveBeenCalled();
   });
@@ -37,8 +35,8 @@ describe('specifications', () => {
   it('shows why an approval failed', async () => {
     ct.approveControlTowerSpec.mockRejectedValue(new Error('Policy denied: four eyes'));
     renderRoutes(controltowerRoutes, { path });
-    await screen.findByText('Login page');
-    fireEvent.click(screen.getByRole('button', { name: 'Approve and push branch' }));
+    fireEvent.click(await screen.findByText('Login page'));
+    fireEvent.click(await screen.findByRole('button', { name: 'Approve and push branch' }));
     fireEvent.click(await screen.findByTestId('confirm-action-confirm'));
     expect(await screen.findByRole('alert')).toHaveTextContent('Policy denied: four eyes');
   });
@@ -46,8 +44,8 @@ describe('specifications', () => {
   it('marks a dispatched spec as done', async () => {
     ct.completeControlTowerSpec.mockResolvedValue({ ...SPEC_DISPATCHED, status: 'DONE' });
     renderRoutes(controltowerRoutes, { path });
-    await screen.findByText('Logout');
-    fireEvent.click(screen.getByRole('button', { name: 'Confirm externally completed' }));
+    fireEvent.click(await screen.findByText('Logout'));
+    fireEvent.click(await screen.findByRole('button', { name: 'Confirm externally completed' }));
     expect(await screen.findByText(/Marked as done/)).toBeInTheDocument();
     expect(ct.completeControlTowerSpec).toHaveBeenCalledWith('s2');
   });
@@ -55,14 +53,15 @@ describe('specifications', () => {
   it('reports a non-Error failure as text', async () => {
     ct.completeControlTowerSpec.mockRejectedValue('plain failure');
     renderRoutes(controltowerRoutes, { path });
-    await screen.findByText('Logout');
-    fireEvent.click(screen.getByRole('button', { name: 'Confirm externally completed' }));
+    fireEvent.click(await screen.findByText('Logout'));
+    fireEvent.click(await screen.findByRole('button', { name: 'Confirm externally completed' }));
     expect(await screen.findByRole('alert')).toHaveTextContent('plain failure');
   });
 
   it('hides the write actions from a viewer', async () => {
     renderRoutes(controltowerRoutes, { path, permissions: [] });
-    await screen.findByText('Login page');
+    fireEvent.click(await screen.findByText('Login page'));
+    expect(await screen.findByText('# Login')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Approve and push branch' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'Confirm externally completed' })).toBeNull();
   });
@@ -85,7 +84,7 @@ describe('specifications', () => {
     });
     renderRoutes(controltowerRoutes, { path });
     fireEvent.click(await screen.findByText('Login page'));
-    fireEvent.click(screen.getByRole('button', { name: 'Approve and push branch' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Approve and push branch' }));
     fireEvent.click(await screen.findByTestId('confirm-action-confirm'));
     expect(await screen.findByText(/Spec pushed to branch \./)).toBeInTheDocument();
   });
@@ -101,6 +100,20 @@ describe('specifications', () => {
     const html = document.body.textContent ?? '';
     expect(html.indexOf('Tenth')).toBeLessThan(html.indexOf('Second'));
     expect(html.indexOf('Second')).toBeLessThan(html.indexOf('First'));
+  });
+
+  it('groups specifications by status: draft, approved, dispatched, done', async () => {
+    ct.listControlTowerSpecs.mockResolvedValue([
+      { ...SPEC_DRAFT, id: 'a', title: 'Alpha', status: 'DONE', specPath: '004-a/spec.md' },
+      { ...SPEC_DRAFT, id: 'b', title: 'Bravo', status: 'DISPATCHED', specPath: '003-b/spec.md' },
+      { ...SPEC_DRAFT, id: 'c', title: 'Charlie', status: 'APPROVED', specPath: '002-c/spec.md' },
+      { ...SPEC_DRAFT, id: 'd', title: 'Delta', status: 'DRAFT', specPath: '001-d/spec.md' },
+    ]);
+    renderRoutes(controltowerRoutes, { path });
+    await screen.findByText('Delta');
+    const text = document.body.textContent ?? '';
+    const order = ['Delta', 'Charlie', 'Bravo', 'Alpha'].map((t) => text.indexOf(t));
+    expect(order).toEqual([...order].sort((x, y) => x - y));
   });
 
   it('filters by status and search, and keeps the filter in the URL', async () => {
@@ -126,14 +139,26 @@ describe('specifications', () => {
     );
   });
 
-  it('links dependencies and dependents, and opens the linked spec', async () => {
+  it('opens a detail screen with a link back to the list', async () => {
     const { router } = renderRoutes(controltowerRoutes, { path });
-    await screen.findByText('Logout');
-    fireEvent.click(screen.getByText('Logout'));
-    fireEvent.click(screen.getByRole('link', { name: 's1' }));
-    expect(router.state.location.search).toBe('?focus=s1');
-    expect(document.getElementById('spec-s1')).toHaveProperty('open', true);
-    expect(screen.getByText('Blocks:')).toBeInTheDocument();
+    fireEvent.click(await screen.findByText('Login page'));
+    expect(router.state.location.pathname).toBe('/controltower/specs/s1');
+    expect(await screen.findByText('# Login')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('link', { name: 'Back to specifications' }));
+    expect(router.state.location.pathname).toBe('/controltower/specs');
+  });
+
+  it('links dependencies and dependents between detail screens', async () => {
+    const { router } = renderRoutes(controltowerRoutes, { path });
+    fireEvent.click(await screen.findByText('Logout'));
+    fireEvent.click(await screen.findByRole('link', { name: 'Login page' }));
+    expect(router.state.location.pathname).toBe('/controltower/specs/s1');
+    expect(await screen.findByText('Blocks:')).toBeInTheDocument();
+  });
+
+  it('says so when the specification does not exist', async () => {
+    renderRoutes(controltowerRoutes, { path: `${path}/nope` });
+    expect(await screen.findByText('This specification no longer exists.')).toBeInTheDocument();
   });
 
   it('copies the branch name', async () => {
@@ -141,44 +166,8 @@ describe('specifications', () => {
     Object.assign(navigator, { clipboard: { writeText } });
     renderRoutes(controltowerRoutes, { path });
     fireEvent.click(await screen.findByText('Logout'));
-    fireEvent.click(screen.getByRole('button', { name: 'Copy branch name' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Copy branch name' }));
     expect(writeText).toHaveBeenCalledWith('spec/s2');
     expect(await screen.findAllByText('Copied')).not.toHaveLength(0);
-  });
-
-  describe('approve all drafts', () => {
-    const bulk = () => {
-      ct.listControlTowerSpecs.mockResolvedValue([SPEC_DRAFT, SPEC_DRAFT_2]);
-      renderRoutes(controltowerRoutes, { path });
-    };
-
-    it('approves every draft in sequence after one confirmation', async () => {
-      ct.approveControlTowerSpec.mockResolvedValue({ ...SPEC_DRAFT, status: 'APPROVED' });
-      bulk();
-      fireEvent.click(await screen.findByRole('button', { name: 'Approve all drafts (2)' }));
-      expect(await screen.findByRole('dialog')).toHaveTextContent('Signup');
-      fireEvent.click(screen.getByTestId('confirm-action-confirm'));
-      expect(await screen.findByText('2 specs pushed to their branches.')).toBeInTheDocument();
-      expect(ct.approveControlTowerSpec.mock.calls).toEqual([['s1'], ['s3']]);
-    });
-
-    it('reports how many succeeded when one fails', async () => {
-      ct.approveControlTowerSpec
-        .mockResolvedValueOnce({ ...SPEC_DRAFT, status: 'APPROVED' })
-        .mockRejectedValueOnce(new Error('push rejected'));
-      bulk();
-      fireEvent.click(await screen.findByRole('button', { name: 'Approve all drafts (2)' }));
-      fireEvent.click(await screen.findByTestId('confirm-action-confirm'));
-      expect(await screen.findByRole('alert')).toHaveTextContent(
-        'Approved 1 of 2. "Signup" failed: push rejected',
-      );
-    });
-
-    it('is hidden from a viewer', async () => {
-      ct.listControlTowerSpecs.mockResolvedValue([SPEC_DRAFT, SPEC_DRAFT_2]);
-      renderRoutes(controltowerRoutes, { path, permissions: [] });
-      await screen.findByText('Login page');
-      expect(screen.queryByRole('button', { name: /Approve all drafts/ })).toBeNull();
-    });
   });
 });

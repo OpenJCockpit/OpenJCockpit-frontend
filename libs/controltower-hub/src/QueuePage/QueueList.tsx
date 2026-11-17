@@ -12,7 +12,7 @@ import {
 } from '@openjcockpit/ui';
 import type { ControlTowerQueueCandidate, ControlTowerSpec } from '@openjcockpit/api';
 import { ControlTowerQuery } from '../ControlTowerQuery';
-import { CONTROLTOWER_SPECS_PATH } from '../routePaths';
+import { CONTROLTOWER_SPECS_PATH, specPath } from '../routePaths';
 import { deriveBlockers } from '../specGraph';
 import styles from './QueuePage.module.scss';
 
@@ -98,7 +98,7 @@ export function QueueList({ query, specs }: Props) {
                       {predecessors.map((p, i) => (
                         <span key={p.id}>
                           {i > 0 && ', '}
-                          <Link to={`${CONTROLTOWER_SPECS_PATH}?focus=${encodeURIComponent(p.id)}`}>
+                          <Link to={specPath(p.id)}>
                             {p.title}
                           </Link>
                         </span>

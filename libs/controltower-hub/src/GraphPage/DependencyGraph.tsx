@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router';
 import { useTranslation } from '@openjcockpit/i18n';
 import type { ControlTowerGraph, ControlTowerSpecStatus } from '@openjcockpit/api';
 import { Button, cx, Tooltip } from '@openjcockpit/ui';
-import { CONTROLTOWER_SPECS_PATH } from '../routePaths';
+import { specPath } from '../routePaths';
 import { layoutGraph, NODE_HEIGHT, NODE_WIDTH } from './graphLayout';
 import styles from './Graph.module.scss';
 
@@ -28,7 +28,7 @@ function clip(text: string, max: number): string {
 }
 
 export function specLink(id: string): string {
-  return `${CONTROLTOWER_SPECS_PATH}?focus=${encodeURIComponent(id)}`;
+  return specPath(id);
 }
 
 /** Pure SVG drawing of a spec graph; an arrow means "the predecessor must be done first". */

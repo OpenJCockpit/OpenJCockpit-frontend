@@ -45,3 +45,10 @@ export function newestFirst(specs: readonly ControlTowerSpec[]): ControlTowerSpe
     b.specPath.localeCompare(a.specPath, undefined, { numeric: true }),
   );
 }
+
+/** Draft, approved, dispatched, then done; newest first within each status. */
+export function byStatusThenNewest(specs: readonly ControlTowerSpec[]): ControlTowerSpec[] {
+  return [...newestFirst(specs)].sort(
+    (a, b) => SPEC_STATUSES.indexOf(a.status) - SPEC_STATUSES.indexOf(b.status),
+  );
+}

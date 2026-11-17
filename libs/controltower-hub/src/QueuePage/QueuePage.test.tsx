@@ -115,7 +115,7 @@ describe('dispatch queue', () => {
     expect(within(section).queryByText('Logout')).toBeNull();
     expect(within(section).getByRole('link', { name: 'Login page' })).toHaveAttribute(
       'href',
-      '/controltower/specs?focus=s1',
+      '/controltower/specs/s1',
     );
   });
 });

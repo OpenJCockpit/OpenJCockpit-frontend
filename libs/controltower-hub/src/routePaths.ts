@@ -11,3 +11,6 @@ export const SPEC_QUEUE_PATH = '/spec-queue';
 /** The detail screen of one interview. */
 export const interviewPath = (interviewId: string) =>
   `${CONTROLTOWER_INTERVIEWS_PATH}/${encodeURIComponent(interviewId)}`;
+/** The detail screen of one specification. */
+export const specPath = (specId: string) =>
+  `${CONTROLTOWER_SPECS_PATH}/${encodeURIComponent(specId)}`;

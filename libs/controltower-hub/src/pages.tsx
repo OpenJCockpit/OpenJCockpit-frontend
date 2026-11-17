@@ -80,8 +80,16 @@ export function pageRoute(page: ControlTowerPage): RouteObject {
   return page.path ? { path: page.path, element } : { index: true, element };
 }
 
+const SpecDetailPage = lazyNamed(() => import('./SpecsPage/SpecDetailPage'), 'SpecDetailPage');
+
 /** The interview detail screen: a project page without a tab, so the Interviews tab stays active. */
 export const interviewDetailRoute: RouteObject = {
   path: 'interviews/:interviewId',
   element: <InterviewDetailPage />,
+};
+
+/** The specification detail screen: a project page without a tab, so the Specs tab stays active. */
+export const specDetailRoute: RouteObject = {
+  path: 'specs/:specId',
+  element: <SpecDetailPage />,
 };

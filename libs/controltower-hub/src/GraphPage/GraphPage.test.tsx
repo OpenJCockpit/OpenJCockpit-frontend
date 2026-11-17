@@ -91,8 +91,7 @@ describe('graph', () => {
     const { router } = renderRoutes(controltowerRoutes, { path });
     const svg = await screen.findByRole('group', { name: 'Spec dependency graph' });
     fireEvent.keyDown(within(svg).getByRole('link', { name: /^Login page/ }), { key: 'Enter' });
-    expect(router.state.location.pathname).toBe('/controltower/specs');
-    expect(router.state.location.search).toBe('?focus=s1');
+    expect(router.state.location.pathname).toBe('/controltower/specs/s1');
   });
 
   it('shows the legend, zooms, and lists every dependency as text', async () => {
@@ -128,7 +127,7 @@ describe('graph', () => {
     expect(screen.queryByText(/Selected:/)).toBeNull();
     fireEvent.click(node);
     fireEvent.click(node);
-    expect(router.state.location.search).toBe('?focus=s1');
+    expect(router.state.location.pathname).toBe('/controltower/specs/s1');
   });
 
   it('fits the drawing to the available width and keeps unknown statuses readable', async () => {

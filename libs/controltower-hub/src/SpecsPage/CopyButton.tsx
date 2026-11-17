@@ -20,12 +20,11 @@ export function CopyButton({ text, label }: Props) {
     <Button
       variant="secondary"
       size="sm"
-      aria-label={label}
       onClick={() => {
         void navigator.clipboard?.writeText(text).then(() => setCopied(true));
       }}
     >
-      {copied ? t('specs.copied') : t('specs.copy')}
+      {copied ? t('specs.copied') : label}
     </Button>
   );
 }
