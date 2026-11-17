@@ -155,7 +155,21 @@
       "label": "Grafo de dependencias de las specs",
       "empty": "Aún no hay especificaciones. Inicia tu primera entrevista.",
       "loadFailed": "No se pudo cargar el grafo de dependencias.",
-      "ready": "{{status}} · LISTA"
+      "ready": "{{status}} · LISTA",
+      "legend": "Estado",
+      "zoomIn": "Acercar",
+      "zoomOut": "Alejar",
+      "fit": "Ajustar a la vista",
+      "showList": "Mostrar como lista",
+      "showGraph": "Mostrar como grafo",
+      "open": "Abrir especificación",
+      "selected": "Seleccionada: {{title}}",
+      "clearSelection": "Quitar selección",
+      "dependsOn": "{{title}} depende de {{dependencies}}",
+      "noDependencies": "{{title}} no tiene dependencias",
+      "tooltip": "{{id}} · {{title}}",
+      "listLabel": "Dependencias de especificaciones",
+      "openHint": "Pulsa Intro para abrir"
     },
     "queue": {
       "ready": "Trabajo listo",

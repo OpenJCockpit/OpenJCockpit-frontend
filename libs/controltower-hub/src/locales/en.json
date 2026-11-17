@@ -155,7 +155,21 @@
       "label": "Spec dependency graph",
       "empty": "No specifications yet. Generate your first interview.",
       "loadFailed": "Failed to load the dependency graph.",
-      "ready": "{{status}} · READY"
+      "ready": "{{status}} · READY",
+      "legend": "Status",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "fit": "Fit to view",
+      "showList": "Show as list",
+      "showGraph": "Show as graph",
+      "open": "Open specification",
+      "selected": "Selected: {{title}}",
+      "clearSelection": "Clear selection",
+      "dependsOn": "{{title}} depends on {{dependencies}}",
+      "noDependencies": "{{title}} has no dependencies",
+      "tooltip": "{{id}} · {{title}}",
+      "listLabel": "Spec dependencies",
+      "openHint": "Press Enter to open"
     },
     "queue": {
       "ready": "Ready work",

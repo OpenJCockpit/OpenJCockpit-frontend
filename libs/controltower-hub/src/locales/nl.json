@@ -155,7 +155,21 @@
       "label": "Afhankelijkhedengraaf van de specs",
       "empty": "Nog geen specificaties. Start je eerste interview.",
       "loadFailed": "De afhankelijkhedengraaf kon niet worden geladen.",
-      "ready": "{{status}} · KLAAR"
+      "ready": "{{status}} · KLAAR",
+      "legend": "Status",
+      "zoomIn": "Inzoomen",
+      "zoomOut": "Uitzoomen",
+      "fit": "Passend maken",
+      "showList": "Als lijst tonen",
+      "showGraph": "Als grafiek tonen",
+      "open": "Specificatie openen",
+      "selected": "Geselecteerd: {{title}}",
+      "clearSelection": "Selectie wissen",
+      "dependsOn": "{{title}} hangt af van {{dependencies}}",
+      "noDependencies": "{{title}} heeft geen afhankelijkheden",
+      "tooltip": "{{id}} · {{title}}",
+      "listLabel": "Specificatie-afhankelijkheden",
+      "openHint": "Druk op Enter om te openen"
     },
     "queue": {
       "ready": "Klaar werk",

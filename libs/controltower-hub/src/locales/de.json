@@ -155,7 +155,21 @@
       "label": "Abhängigkeitsgraph der Specs",
       "empty": "Noch keine Spezifikationen. Starte dein erstes Interview.",
       "loadFailed": "Der Abhängigkeitsgraph konnte nicht geladen werden.",
-      "ready": "{{status}} · BEREIT"
+      "ready": "{{status}} · BEREIT",
+      "legend": "Status",
+      "zoomIn": "Vergrößern",
+      "zoomOut": "Verkleinern",
+      "fit": "An Ansicht anpassen",
+      "showList": "Als Liste anzeigen",
+      "showGraph": "Als Graph anzeigen",
+      "open": "Spezifikation öffnen",
+      "selected": "Ausgewählt: {{title}}",
+      "clearSelection": "Auswahl aufheben",
+      "dependsOn": "{{title}} hängt ab von {{dependencies}}",
+      "noDependencies": "{{title}} hat keine Abhängigkeiten",
+      "tooltip": "{{id}} · {{title}}",
+      "listLabel": "Spezifikationsabhängigkeiten",
+      "openHint": "Eingabetaste zum Öffnen"
     },
     "queue": {
       "ready": "Bereite Arbeit",
