@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-query';
 import {
   getControlTowerGraph,
+  getControlTowerInterview,
   getControlTowerProjectByCockpitProject,
   getControlTowerQueueProposal,
   getControlTowerSettings,
@@ -67,6 +68,13 @@ export function useInterviews(repositoryId: string): UseQueryResult<ControlTower
   return useQuery({
     queryKey: queryKeys.controlTowerInterviews(repositoryId),
     queryFn: ({ signal }) => listControlTowerInterviews(repositoryId, signal),
+  });
+}
+
+export function useInterview(interviewId: string): UseQueryResult<ControlTowerInterview> {
+  return useQuery({
+    queryKey: queryKeys.controlTowerInterview(interviewId),
+    queryFn: ({ signal }) => getControlTowerInterview(interviewId, signal),
   });
 }
 

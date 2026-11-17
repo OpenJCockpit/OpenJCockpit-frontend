@@ -1,7 +1,7 @@
 import type { RouteObject } from 'react-router';
 import { RequireProject } from '@openjcockpit/hub-contract';
 import { ControlTowerShell } from './ControlTowerShell/ControlTowerShell';
-import { pageRoute, pages } from './pages';
+import { interviewDetailRoute, pageRoute, pages } from './pages';
 import { WithTranslations } from './registerTranslations';
 import { RepositoryGate } from './RepositoryGate/RepositoryGate';
 
@@ -21,7 +21,10 @@ export const controltowerRoutes: RouteObject[] = [
             <RepositoryGate />
           </RequireProject>
         ),
-        children: pages.filter((page) => page.scope === 'project').map(pageRoute),
+        children: [
+          ...pages.filter((page) => page.scope === 'project').map(pageRoute),
+          interviewDetailRoute,
+        ],
       },
     ],
   },

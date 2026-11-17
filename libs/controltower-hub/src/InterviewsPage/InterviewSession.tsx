@@ -6,17 +6,21 @@ import {
   Button,
   Icon,
   SelectField,
+  Shortcut,
   SpeechInputButtons,
   StatusChip,
   StatusMessage,
   TextAreaField,
+  cx,
+  usesCommandKey,
 } from '@openjcockpit/ui';
 import {
   answerControlTowerInterview,
   generateControlTowerSpecs,
   type ControlTowerInterview,
+  type ControlTowerQuestion,
 } from '@openjcockpit/api';
-import { useRepositoryMutation, useSpecTemplates } from '../hooks';
+import { useRepositoryMutation, useSpecTemplates, useTemplates } from '../hooks';
 import { CONTROLTOWER_SPECS_PATH } from '../routePaths';
 import type { SpecsHandoff } from '../SpecsPage/handoff';
 import type { RunAction } from '../useAction';
@@ -50,12 +54,57 @@ function writeDraft(interviewId: string, text: string) {
   }
 }
 
+/** Where the interview stands: the template's questions are the fixed part; follow-ups may add more. */
+function InterviewProgress({
+  interview,
+  questions,
+}: {
+  interview: ControlTowerInterview;
+  questions: ControlTowerQuestion[];
+}) {
+  const { t } = useTranslation('controltower');
+  const total = questions.length;
+  const left = Math.max(0, total - interview.questionIndex - 1);
+  const maxFollowUps = questions[interview.questionIndex]?.maxFollowUps ?? 0;
+  return (
+    <div className={styles.progress}>
+      <div
+        className={styles.segments}
+        role="progressbar"
+        aria-label={t('interviews.progressLabel')}
+        aria-valuemin={0}
+        aria-valuemax={total}
+        aria-valuenow={Math.min(interview.questionIndex, total)}
+      >
+        {questions.map((question, index) => (
+          <span
+            key={question.id}
+            className={cx(
+              styles.segment,
+              index < interview.questionIndex && styles.segmentDone,
+              index === interview.questionIndex && styles.segmentCurrent,
+            )}
+          />
+        ))}
+      </div>
+      <small>
+        {t('interviews.progress', { current: interview.questionIndex + 1, total })}
+        {' · '}
+        {left === 0 ? t('interviews.progressLast') : t('interviews.progressLeft', { count: left })}
+        {interview.followUps > 0 &&
+          ` · ${t('interviews.progressFollow', { number: interview.followUps, max: maxFollowUps })}`}
+      </small>
+    </div>
+  );
+}
+
 /** One interview: the current question with its answer form, or, once complete, the spec generation step. */
 export function InterviewSession({ repositoryId, interview, run, onChange, onClose }: Props) {
   const { t } = useTranslation('controltower');
   const navigate = useNavigate();
   const canWrite = useWriteAccess();
   const specTemplates = useSpecTemplates().data ?? [];
+  const questions = useTemplates().data?.find((c) => c.id === interview.templateId)?.questions;
   const [answer, setAnswer] = useState(() => readDraft(interview.id));
   const [specTemplateId, setSpecTemplateId] = useState('');
   const send = useRepositoryMutation(repositoryId, (body: { id: string; answer: string }) =>
@@ -66,6 +115,7 @@ export function InterviewSession({ repositoryId, interview, run, onChange, onClo
   );
   const busy = send.isPending || generate.isPending;
   const active = interview.status === 'ACTIVE';
+  const generated = interview.status === 'GENERATED';
 
   useEffect(() => writeDraft(interview.id, answer), [interview.id, answer]);
 
@@ -87,7 +137,6 @@ export function InterviewSession({ repositoryId, interview, run, onChange, onClo
   function onGenerate() {
     void run(async () => {
       const created = await generate.mutateAsync(interview.id);
-      onClose();
       const state: SpecsHandoff = { draftsCreated: created.length };
       void navigate(CONTROLTOWER_SPECS_PATH, { state });
     });
@@ -99,6 +148,7 @@ export function InterviewSession({ repositoryId, interview, run, onChange, onClo
         label={`${t(`interviews.status.${interview.status}`)} · ${t(`kind.${interview.kind}`)} · ${t('interviews.answered', { count: interview.answers.length })}`}
         kind={active ? 'active' : 'done'}
       />
+      {active && questions && <InterviewProgress interview={interview} questions={questions} />}
       <h3>{active ? interview.currentQuestion : t('interviews.completed')}</h3>
       {interview.answers.length > 0 && (
         <section aria-label={t('interviews.transcript')}>
@@ -139,30 +189,41 @@ export function InterviewSession({ repositoryId, interview, run, onChange, onClo
             <Button variant="primary" type="submit" disabled={busy || !canWrite}>
               {send.isPending ? t('interviews.submitting') : t('interviews.submit')}
             </Button>
-            <small>{t('interviews.submitShortcut')}</small>
+            <small className={styles.shortcutHint}>
+              <Shortcut
+                keys={
+                  usesCommandKey()
+                    ? ['\u2318', '\u23CE']
+                    : [t('interviews.shortcutCtrl'), t('interviews.shortcutEnter')]
+                }
+              />
+              <span>{t('interviews.submitShortcut')}</span>
+            </small>
           </ActionRow>
         </form>
       ) : (
         <div className={styles.session}>
-          <StatusMessage>{t('interviews.enough')}</StatusMessage>
-          <SelectField
-            label={t('interviews.specTemplate')}
-            value={specTemplateId}
-            onChange={setSpecTemplateId}
-            options={[
-              { value: '', label: t('interviews.defaultSpecTemplate') },
-              ...specTemplates.map((s) => ({ value: s.id, label: s.name })),
-            ]}
-          />
+          {!generated && (
+            <>
+              <StatusMessage>{t('interviews.enough')}</StatusMessage>
+              <SelectField
+                label={t('interviews.specTemplate')}
+                value={specTemplateId}
+                onChange={setSpecTemplateId}
+                options={[
+                  { value: '', label: t('interviews.defaultSpecTemplate') },
+                  ...specTemplates.map((s) => ({ value: s.id, label: s.name })),
+                ]}
+              />
+            </>
+          )}
           <ActionRow>
-            <Button
-              variant="primary"
-              disabled={busy || !canWrite || interview.status !== 'COMPLETE'}
-              onClick={onGenerate}
-            >
-              <Icon name={generate.isPending ? 'spinner' : 'sparkle'} />{' '}
-              {generate.isPending ? t('interviews.generating') : t('interviews.generate')}
-            </Button>
+            {!generated && (
+              <Button variant="primary" disabled={busy || !canWrite} onClick={onGenerate}>
+                <Icon name={generate.isPending ? 'spinner' : 'sparkle'} />{' '}
+                {generate.isPending ? t('interviews.generating') : t('interviews.generate')}
+              </Button>
+            )}
             <Button variant="secondary" onClick={onClose}>
               {t('interviews.close')}
             </Button>

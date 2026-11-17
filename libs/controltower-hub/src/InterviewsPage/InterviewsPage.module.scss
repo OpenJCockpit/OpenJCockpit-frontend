@@ -15,6 +15,15 @@
   display: grid;
   gap: 12px;
 }
+.shortcutHint {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+
+  > span {
+    align-self: center;
+  }
+}
 .transcript {
   display: grid;
   gap: 12px;
@@ -28,4 +37,34 @@
     margin: 4px 0 0;
     white-space: pre-wrap;
   }
+}
+
+.progress {
+  display: grid;
+  gap: 8px;
+  small {
+    color: var(--muted);
+    font-size: var(--text-sm);
+  }
+}
+.segments {
+  display: flex;
+  gap: 4px;
+}
+.segment {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  border: 1px solid var(--line);
+  background: var(--cyan-a05);
+}
+.segmentDone {
+  border-color: rgb(var(--teal-rgb) / 0.5);
+  background: var(--teal);
+  box-shadow: 0 0 8px rgb(var(--teal-rgb) / 0.45);
+}
+.segmentCurrent {
+  border-color: var(--line-strong);
+  background: var(--cyan-a30);
+  box-shadow: 0 0 8px var(--cyan-a35);
 }

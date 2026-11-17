@@ -64,6 +64,11 @@ export const pages: readonly ControlTowerPage[] = [
   },
 ];
 
+const InterviewDetailPage = lazyNamed(
+  () => import('./InterviewsPage/InterviewDetailPage'),
+  'InterviewDetailPage',
+);
+
 /** Absolute URL of a page, e.g. `/controltower/graph`. */
 export function pageUrl({ path }: ControlTowerPage): string {
   return path ? `${CONTROLTOWER_ROUTE}/${path}` : CONTROLTOWER_ROUTE;
@@ -74,3 +79,9 @@ export function pageRoute(page: ControlTowerPage): RouteObject {
   const element = <page.Component />;
   return page.path ? { path: page.path, element } : { index: true, element };
 }
+
+/** The interview detail screen: a project page without a tab, so the Interviews tab stays active. */
+export const interviewDetailRoute: RouteObject = {
+  path: 'interviews/:interviewId',
+  element: <InterviewDetailPage />,
+};

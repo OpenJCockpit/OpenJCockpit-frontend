@@ -57,7 +57,7 @@ export function ControlTowerShell() {
             <NavLink
               key={page.tabKey}
               to={pageUrl(page)}
-              end
+              end={page.path === ''}
               className={({ isActive }) =>
                 cx(
                   tabClass,

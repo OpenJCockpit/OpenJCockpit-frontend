@@ -1,20 +1,21 @@
-import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import { useTranslation } from '@openjcockpit/i18n';
 import { Panel, PanelBody, PanelHeader, PanelTitle, TwoColumn } from '@openjcockpit/ui';
 import type { ControlTowerInterview } from '@openjcockpit/api';
 import { useRepository } from '../RepositoryGate/RepositoryGate';
 import { ActionFeedback } from '../ActionFeedback';
+import { interviewPath } from '../routePaths';
 import { useAction } from '../useAction';
 import { InterviewHistory } from './InterviewHistory';
-import { InterviewSession } from './InterviewSession';
 import { StartInterviewForm } from './StartInterviewForm';
 
-/** Adaptive discovery interviews, typed or dictated; a completed one generates spec drafts. */
+/** Adaptive discovery interviews, typed or dictated: start one or open an earlier one on its own screen. */
 export function InterviewsPage() {
   const { t } = useTranslation('controltower');
   const repository = useRepository();
-  const [active, setActive] = useState<ControlTowerInterview | null>(null);
+  const navigate = useNavigate();
   const { run, feedback, clear } = useAction();
+  const open = (interview: ControlTowerInterview) => void navigate(interviewPath(interview.id));
 
   return (
     <TwoColumn>
@@ -24,18 +25,7 @@ export function InterviewsPage() {
         </PanelHeader>
         <PanelBody>
           <ActionFeedback feedback={feedback} onDismiss={clear} />
-          {active ? (
-            <InterviewSession
-              key={active.id}
-              repositoryId={repository.id}
-              interview={active}
-              run={run}
-              onChange={setActive}
-              onClose={() => setActive(null)}
-            />
-          ) : (
-            <StartInterviewForm repositoryId={repository.id} run={run} onStarted={setActive} />
-          )}
+          <StartInterviewForm repositoryId={repository.id} run={run} onStarted={open} />
         </PanelBody>
       </Panel>
       <Panel>
@@ -43,7 +33,7 @@ export function InterviewsPage() {
           <PanelTitle>{t('interviews.previous')}</PanelTitle>
         </PanelHeader>
         <PanelBody>
-          <InterviewHistory repositoryId={repository.id} onSelect={setActive} />
+          <InterviewHistory repositoryId={repository.id} onSelect={open} />
         </PanelBody>
       </Panel>
     </TwoColumn>

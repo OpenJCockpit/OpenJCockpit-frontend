@@ -1,0 +1,27 @@
+.shortcut {
+  display: inline-flex;
+  align-items: stretch; // key caps grow to the height of the row they sit in
+  gap: var(--space-1);
+  color: var(--muted);
+
+  > span {
+    align-self: center;
+  }
+}
+
+.key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  padding: 0 8px;
+  border: 1px solid var(--line-strong);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: var(--surface-soft);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  text-align: center;
+}

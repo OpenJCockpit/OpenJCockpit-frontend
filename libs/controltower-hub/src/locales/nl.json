@@ -84,6 +84,13 @@
       "submit": "Antwoord versturen",
       "completed": "Interview voltooid",
       "enough": "Het interview bevat genoeg informatie voor een spec-voorstel.",
+      "progress": "Vraag {{current}} van {{total}}",
+      "progressLast": "Laatste vraag",
+      "progressLeft_one": "Nog {{count}} vraag na deze",
+      "progressLeft_other": "Nog {{count}} vragen na deze",
+      "progressFollow": "Vervolgvraag {{number}} van maximaal {{max}}",
+      "progressLabel": "Voortgang van het interview",
+      "backToList": "Terug naar de interviews",
       "transcript": "Vragen en antwoorden",
       "specTemplate": "Sjabloon voor de spec-uitvoer",
       "defaultSpecTemplate": "OpenJCockpit-standaard",
@@ -104,7 +111,9 @@
       "generating": "Genereren…",
       "answered_one": "{{count}} beantwoord",
       "answered_other": "{{count}} beantwoord",
-      "submitShortcut": "Ctrl/Cmd+Enter om te verzenden"
+      "submitShortcut": "om te verzenden",
+      "shortcutCtrl": "Ctrl",
+      "shortcutEnter": "Enter"
     },
     "speech": {
       "speak": "Spreken",

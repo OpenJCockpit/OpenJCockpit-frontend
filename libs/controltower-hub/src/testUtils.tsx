@@ -121,6 +121,14 @@ export function stubApi() {
   for (const fn of Object.values(ct)) if (vi.isMockFunction(fn)) fn.mockReset();
   ct.getControlTowerProjectByCockpitProject.mockResolvedValue(REPOSITORY);
   ct.listControlTowerInterviews.mockResolvedValue([INTERVIEW]);
+  // The detail screen loads one interview; serve it from whatever the list mock currently holds.
+  vi.mocked(api.getControlTowerInterview).mockImplementation((interviewId: string) =>
+    api.listControlTowerInterviews('r1').then((rows) => {
+      const found = rows.find((i) => i.id === interviewId);
+      if (!found) throw new Error(`no interview ${interviewId}`);
+      return found;
+    }),
+  );
   ct.listControlTowerSpecs.mockResolvedValue([SPEC_DRAFT, SPEC_DISPATCHED]);
   ct.getControlTowerGraph.mockResolvedValue(GRAPH);
   ct.getControlTowerQueueProposal.mockResolvedValue(QUEUE);

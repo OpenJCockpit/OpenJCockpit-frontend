@@ -84,6 +84,13 @@
       "submit": "Submit answer",
       "completed": "Interview completed",
       "enough": "The interview has enough information for a spec proposal.",
+      "progress": "Question {{current}} of {{total}}",
+      "progressLast": "Last question",
+      "progressLeft_one": "{{count}} question left after this one",
+      "progressLeft_other": "{{count}} questions left after this one",
+      "progressFollow": "Follow-up {{number}} of up to {{max}}",
+      "progressLabel": "Interview progress",
+      "backToList": "Back to interviews",
       "transcript": "Questions and answers",
       "specTemplate": "Spec output template",
       "defaultSpecTemplate": "OpenJCockpit default",
@@ -104,7 +111,9 @@
       "generating": "Generating…",
       "answered_one": "{{count}} answered",
       "answered_other": "{{count}} answered",
-      "submitShortcut": "Ctrl/Cmd+Enter to submit"
+      "submitShortcut": "to submit",
+      "shortcutCtrl": "Ctrl",
+      "shortcutEnter": "Enter"
     },
     "speech": {
       "speak": "Speak",

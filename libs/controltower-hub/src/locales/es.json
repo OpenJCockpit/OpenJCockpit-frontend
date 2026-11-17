@@ -84,6 +84,13 @@
       "submit": "Enviar respuesta",
       "completed": "Entrevista completada",
       "enough": "La entrevista tiene información suficiente para una propuesta de spec.",
+      "progress": "Pregunta {{current}} de {{total}}",
+      "progressLast": "Última pregunta",
+      "progressLeft_one": "Queda {{count}} pregunta después de esta",
+      "progressLeft_other": "Quedan {{count}} preguntas después de esta",
+      "progressFollow": "Pregunta de seguimiento {{number}} de hasta {{max}}",
+      "progressLabel": "Progreso de la entrevista",
+      "backToList": "Volver a las entrevistas",
       "transcript": "Preguntas y respuestas",
       "specTemplate": "Plantilla de salida de la spec",
       "defaultSpecTemplate": "Predeterminada de OpenJCockpit",
@@ -104,7 +111,9 @@
       "generating": "Generando…",
       "answered_one": "{{count}} respondida",
       "answered_other": "{{count}} respondidas",
-      "submitShortcut": "Ctrl/Cmd+Intro para enviar"
+      "submitShortcut": "para enviar",
+      "shortcutCtrl": "Ctrl",
+      "shortcutEnter": "Intro"
     },
     "speech": {
       "speak": "Hablar",
