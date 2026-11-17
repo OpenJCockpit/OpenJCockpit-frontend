@@ -32,9 +32,9 @@ describe('routing', () => {
     renderRoutes(controltowerRoutes, {
       path: '/controltower',
     });
-    fireEvent.click(await screen.findByRole('button', { name: 'Specifications' }));
+    fireEvent.click(await screen.findByRole('link', { name: 'Specifications' }));
     expect(await screen.findByText('Specification registry')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Specifications' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Specifications' })).toHaveAttribute(
       'aria-current',
       'page',
     );

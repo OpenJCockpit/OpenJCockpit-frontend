@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router';
+import { NavLink, Outlet, useNavigate } from 'react-router';
 import { DASHBOARD_PATH, useHubHeader } from '@openjcockpit/hub-contract';
 import { useTranslation } from '@openjcockpit/i18n';
 import {
@@ -7,10 +7,12 @@ import {
   AppShell,
   Icon,
   IconBox,
-  Tab,
   TabNav,
+  cx,
   pageClass,
   pageHeaderClass,
+  tabActiveClass,
+  tabClass,
 } from '@openjcockpit/ui';
 import { pageUrl, pages } from '../pages';
 
@@ -19,7 +21,6 @@ export function ControlTowerShell() {
   const { t } = useTranslation('controltower');
   const navigate = useNavigate();
   const header = useHubHeader();
-  const pathname = useLocation().pathname.replace(/\/+$/, '');
 
   return (
     <AppShell>
@@ -34,20 +35,16 @@ export function ControlTowerShell() {
           </div>
         </div>
         <TabNav secondary aria-label={t('tabs.label')}>
-          {pages.map((page) => {
-            const path = pageUrl(page);
-            return (
-              <Tab
-                key={page.tabKey}
-                type="button"
-                active={pathname === path}
-                aria-current={pathname === path ? 'page' : undefined}
-                onClick={() => void navigate(path)}
-              >
-                {t(`tabs.${page.tabKey}`)}
-              </Tab>
-            );
-          })}
+          {pages.map((page) => (
+            <NavLink
+              key={page.tabKey}
+              to={pageUrl(page)}
+              end
+              className={({ isActive }) => cx(tabClass, isActive && tabActiveClass)}
+            >
+              {t(`tabs.${page.tabKey}`)}
+            </NavLink>
+          ))}
         </TabNav>
         <Suspense fallback={<p>{t('loading')}</p>}>
           <Outlet />

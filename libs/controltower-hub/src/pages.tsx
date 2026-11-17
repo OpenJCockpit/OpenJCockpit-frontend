@@ -1,6 +1,14 @@
-import { lazy, type ComponentType } from 'react';
+import { lazy, type ComponentType, type LazyExoticComponent } from 'react';
 import type { RouteObject } from 'react-router';
 import { CONTROLTOWER_ROUTE } from './routePaths';
+
+/** `lazy` for a named export, so pages need no default export. */
+function lazyNamed<K extends string>(
+  load: () => Promise<Record<K, ComponentType>>,
+  name: K,
+): LazyExoticComponent<ComponentType> {
+  return lazy(async () => ({ default: (await load())[name] }));
+}
 
 /** `global` pages work without a project; `project` pages need a selected project and its linked repository. */
 export type TabKey = 'overview' | 'interviews' | 'specs' | 'graph' | 'queue' | 'templates';
@@ -22,43 +30,37 @@ export const pages: readonly ControlTowerPage[] = [
     path: '',
     tabKey: 'overview',
     scope: 'project',
-    Component: lazy(async () => ({
-      default: (await import('./OverviewPage/OverviewPage')).OverviewPage,
-    })),
+    Component: lazyNamed(() => import('./OverviewPage/OverviewPage'), 'OverviewPage'),
   },
   {
     path: 'interviews',
     tabKey: 'interviews',
     scope: 'project',
-    Component: lazy(async () => ({
-      default: (await import('./InterviewsPage/InterviewsPage')).InterviewsPage,
-    })),
+    Component: lazyNamed(() => import('./InterviewsPage/InterviewsPage'), 'InterviewsPage'),
   },
   {
     path: 'specs',
     tabKey: 'specs',
     scope: 'project',
-    Component: lazy(async () => ({ default: (await import('./SpecsPage/SpecsPage')).SpecsPage })),
+    Component: lazyNamed(() => import('./SpecsPage/SpecsPage'), 'SpecsPage'),
   },
   {
     path: 'graph',
     tabKey: 'graph',
     scope: 'project',
-    Component: lazy(async () => ({ default: (await import('./GraphPage/GraphPage')).GraphPage })),
+    Component: lazyNamed(() => import('./GraphPage/GraphPage'), 'GraphPage'),
   },
   {
     path: 'queue',
     tabKey: 'queue',
     scope: 'project',
-    Component: lazy(async () => ({ default: (await import('./QueuePage/QueuePage')).QueuePage })),
+    Component: lazyNamed(() => import('./QueuePage/QueuePage'), 'QueuePage'),
   },
   {
     path: 'templates',
     tabKey: 'templates',
     scope: 'global',
-    Component: lazy(async () => ({
-      default: (await import('./TemplatesPage/TemplatesPage')).TemplatesPage,
-    })),
+    Component: lazyNamed(() => import('./TemplatesPage/TemplatesPage'), 'TemplatesPage'),
   },
 ];
 
