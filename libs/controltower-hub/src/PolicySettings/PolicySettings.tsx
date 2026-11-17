@@ -3,9 +3,7 @@ import { useTranslation } from '@openjcockpit/i18n';
 import {
   Button,
   CheckboxField,
-  ErrorState,
   Icon,
-  LoadingState,
   StatusMessage,
   TextField,
   formActionsClass,
@@ -17,6 +15,7 @@ import {
   type ControlTowerPolicySettings,
   type ControlTowerSettingsView,
 } from '@openjcockpit/api';
+import { ControlTowerQuery } from '../ControlTowerQuery';
 import { errorMessage } from '../errorMessage';
 import { useControlTowerSettings, useRepositoryMutation } from '../hooks';
 import { WithTranslations } from '../registerTranslations';
@@ -154,16 +153,12 @@ function PolicyForm({ data }: { data: ControlTowerSettingsView }) {
 
 function LoadedPolicyForm() {
   const { t } = useTranslation('controltower');
-  const { data, isError, refetch } = useControlTowerSettings();
-  if (isError) {
-    return (
-      <ErrorState onRetry={() => void refetch()} retryLabel={t('retry')}>
-        {t('policy.loadFailed')}
-      </ErrorState>
-    );
-  }
-  if (!data) return <LoadingState>{t('loading')}</LoadingState>;
-  return <PolicyForm data={data} />;
+  const settings = useControlTowerSettings();
+  return (
+    <ControlTowerQuery query={settings} loadFailed={t('policy.loadFailed')}>
+      {(data) => <PolicyForm data={data} />}
+    </ControlTowerQuery>
+  );
 }
 
 /** Settings section; the host loads it lazily, so it registers its own translations. */

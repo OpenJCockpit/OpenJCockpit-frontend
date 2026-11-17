@@ -4,9 +4,7 @@ import { useTranslation } from '@openjcockpit/i18n';
 import {
   Button,
   EmptyState,
-  ErrorState,
   Icon,
-  LoadingState,
   Panel,
   PanelHeader,
   PanelTitle,
@@ -21,6 +19,7 @@ import {
   startControlTowerInterview,
   type ControlTowerInterview,
 } from '@openjcockpit/api';
+import { ControlTowerQuery } from '../ControlTowerQuery';
 import { useInterviews, useRepositoryMutation, useSpecTemplates, useTemplates } from '../hooks';
 import { useRepository } from '../RepositoryGate/RepositoryGate';
 import { CONTROLTOWER_SPECS_PATH } from '../routePaths';
@@ -182,46 +181,6 @@ export function InterviewsPage() {
     );
   }
 
-  let previous;
-  if (interviews.data) {
-    previous = interviews.data.length ? (
-      interviews.data.map((interview) => (
-        <div className={common.row} key={interview.id}>
-          <button
-            type="button"
-            className={styles.rowButton}
-            onClick={() => {
-              setActive(interview);
-              setAnswer('');
-            }}
-          >
-            <span>
-              <b>{interview.title}</b>
-              <small>
-                {t('interviews.summary', {
-                  kind: interview.kind,
-                  status: t(`interviews.status.${interview.status}`),
-                  count: interview.answers.length,
-                })}
-              </small>
-            </span>
-            <Icon name="arrow-right" />
-          </button>
-        </div>
-      ))
-    ) : (
-      <EmptyState title={t('interviews.none')} />
-    );
-  } else if (interviews.isError) {
-    previous = (
-      <ErrorState onRetry={() => void interviews.refetch()} retryLabel={t('retry')}>
-        {t('interviews.loadFailed')}
-      </ErrorState>
-    );
-  } else {
-    previous = <LoadingState>{t('loading')}</LoadingState>;
-  }
-
   return (
     <div className={common.twoCol}>
       <Panel>
@@ -242,7 +201,39 @@ export function InterviewsPage() {
           <PanelTitle>{t('interviews.previous')}</PanelTitle>
         </PanelHeader>
         <div className={common.body}>
-          {previous}
+          <ControlTowerQuery
+            query={interviews}
+            loadFailed={t('interviews.loadFailed')}
+            isEmpty={(rows) => rows.length === 0}
+            empty={<EmptyState title={t('interviews.none')} />}
+          >
+            {(rows) =>
+              rows.map((interview) => (
+                <div className={common.row} key={interview.id}>
+                  <button
+                    type="button"
+                    className={styles.rowButton}
+                    onClick={() => {
+                      setActive(interview);
+                      setAnswer('');
+                    }}
+                  >
+                    <span>
+                      <b>{interview.title}</b>
+                      <small>
+                        {t('interviews.summary', {
+                          kind: interview.kind,
+                          status: t(`interviews.status.${interview.status}`),
+                          count: interview.answers.length,
+                        })}
+                      </small>
+                    </span>
+                    <Icon name="arrow-right" />
+                  </button>
+                </div>
+              ))
+            }
+          </ControlTowerQuery>
           <StatusMessage>{t('interviews.privacy')}</StatusMessage>
         </div>
       </Panel>

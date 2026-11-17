@@ -1,7 +1,8 @@
 import { Link, Outlet, useOutletContext } from 'react-router';
 import { useTranslation } from '@openjcockpit/i18n';
 import type { ControlTowerProject } from '@openjcockpit/api';
-import { buttonClass, EmptyState, ErrorState, LoadingState } from '@openjcockpit/ui';
+import { buttonClass, EmptyState } from '@openjcockpit/ui';
+import { ControlTowerQuery } from '../ControlTowerQuery';
 import { useControlTowerRepository } from '../hooks';
 import { CONTROLTOWER_REPOSITORY_SETTINGS_PATH } from '../routePaths';
 
@@ -13,31 +14,28 @@ export function useRepository(): ControlTowerProject {
 /** Renders its child routes once the selected Cockpit project has a linked ControlTower repository. */
 export function RepositoryGate() {
   const { t } = useTranslation('controltower');
-  const { data, isError, refetch } = useControlTowerRepository();
+  const repository = useControlTowerRepository();
 
-  if (data) return <Outlet context={data} />;
-  if (isError) {
-    return (
-      <ErrorState onRetry={() => void refetch()} retryLabel={t('retry')}>
-        {t('repository.loadFailed')}
-      </ErrorState>
-    );
-  }
-  if (data === null) {
-    return (
-      <EmptyState
-        title={t('repository.noneTitle')}
-        hint={t('repository.noneHint')}
-        action={
-          <Link
-            className={buttonClass({ variant: 'primary' })}
-            to={CONTROLTOWER_REPOSITORY_SETTINGS_PATH}
-          >
-            {t('repository.connect')}
-          </Link>
-        }
-      />
-    );
-  }
-  return <LoadingState>{t('loading')}</LoadingState>;
+  return (
+    <ControlTowerQuery
+      query={repository}
+      loadFailed={t('repository.loadFailed')}
+      none={
+        <EmptyState
+          title={t('repository.noneTitle')}
+          hint={t('repository.noneHint')}
+          action={
+            <Link
+              className={buttonClass({ variant: 'primary' })}
+              to={CONTROLTOWER_REPOSITORY_SETTINGS_PATH}
+            >
+              {t('repository.connect')}
+            </Link>
+          }
+        />
+      }
+    >
+      {(data) => <Outlet context={data} />}
+    </ControlTowerQuery>
+  );
 }

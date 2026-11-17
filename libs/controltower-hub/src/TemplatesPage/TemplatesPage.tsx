@@ -3,8 +3,6 @@ import { useTranslation } from '@openjcockpit/i18n';
 import {
   Button,
   EmptyState,
-  ErrorState,
-  LoadingState,
   Panel,
   PanelHeader,
   PanelTitle,
@@ -20,6 +18,7 @@ import {
   type ControlTowerQuestion,
   type ControlTowerTemplateKind,
 } from '@openjcockpit/api';
+import { ControlTowerQuery } from '../ControlTowerQuery';
 import { errorMessage } from '../errorMessage';
 import { useRepositoryMutation, useSpecTemplates, useTemplates } from '../hooks';
 import { useWriteAccess } from '../useWriteAccess';
@@ -78,17 +77,16 @@ export function TemplatesPage() {
     empty: string,
     row: (item: T) => ReactNode,
   ) {
-    if (query.data) {
-      return query.data.length ? query.data.map(row) : <EmptyState title={empty} />;
-    }
-    if (query.isError) {
-      return (
-        <ErrorState onRetry={() => void query.refetch()} retryLabel={t('retry')}>
-          {t('templates.loadFailed')}
-        </ErrorState>
-      );
-    }
-    return <LoadingState>{t('loading')}</LoadingState>;
+    return (
+      <ControlTowerQuery
+        query={query}
+        loadFailed={t('templates.loadFailed')}
+        isEmpty={(rows) => rows.length === 0}
+        empty={<EmptyState title={empty} />}
+      >
+        {(rows) => rows.map(row)}
+      </ControlTowerQuery>
+    );
   }
 
   return (

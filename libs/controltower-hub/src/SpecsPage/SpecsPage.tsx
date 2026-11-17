@@ -3,8 +3,6 @@ import { useTranslation } from '@openjcockpit/i18n';
 import {
   Button,
   EmptyState,
-  ErrorState,
-  LoadingState,
   Panel,
   PanelHeader,
   PanelTitle,
@@ -19,6 +17,7 @@ import {
   type ControlTowerSpec,
   type ControlTowerSpecStatus,
 } from '@openjcockpit/api';
+import { ControlTowerQuery } from '../ControlTowerQuery';
 import { useRepositoryMutation, useSpecs } from '../hooks';
 import { useRepository } from '../RepositoryGate/RepositoryGate';
 import { errorMessage } from '../errorMessage';
@@ -38,7 +37,8 @@ export function SpecsPage() {
   const { t } = useTranslation('controltower');
   const repository = useRepository();
   const canWrite = useWriteAccess();
-  const { data, isError, refetch } = useSpecs(repository.id);
+  const specs = useSpecs(repository.id);
+  const data = specs.data;
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { confirm, dialog } = useConfirmDialog();
@@ -70,71 +70,6 @@ export function SpecsPage() {
         ),
     });
 
-  let content;
-  if (data) {
-    content = data.length ? (
-      data.map((spec) => (
-        <details className={styles.spec} key={spec.id}>
-          <summary>
-            <div>
-              <b>{spec.title}</b>
-              <small>
-                {[
-                  `${spec.id} · specs/${spec.specPath}`,
-                  spec.branch && t('specs.branch', { branch: spec.branch }),
-                ]
-                  .filter(Boolean)
-                  .join(' · ')}
-              </small>
-            </div>
-            <StatusChip label={t(`specs.status.${spec.status}`)} kind={STATUS_KIND[spec.status]} />
-          </summary>
-          <div className={styles.specDetails}>
-            <p>
-              {t('specs.dependencies', {
-                list: spec.dependsOn.join(', ') || t('specs.noDependencies'),
-              })}
-            </p>
-            <pre>{spec.body}</pre>
-            {canWrite && (
-              <div className={common.actions}>
-                {spec.status === 'DRAFT' && (
-                  <Button variant="primary" onClick={() => askApprove(spec)}>
-                    {t('specs.approveAndPush')}
-                  </Button>
-                )}
-                {spec.status === 'DISPATCHED' && (
-                  <Button
-                    variant="secondary"
-                    disabled={complete.isPending}
-                    onClick={() =>
-                      void run(
-                        () => complete.mutateAsync(spec.id),
-                        () => t('specs.completed'),
-                      )
-                    }
-                  >
-                    {t('specs.confirmDone')}
-                  </Button>
-                )}
-              </div>
-            )}
-          </div>
-        </details>
-      ))
-    ) : (
-      <EmptyState title={t('specs.empty')} />
-    );
-  } else if (isError) {
-    content = (
-      <ErrorState onRetry={() => void refetch()} retryLabel={t('retry')}>
-        {t('specs.loadFailed')}
-      </ErrorState>
-    );
-  } else {
-    content = <LoadingState>{t('loading')}</LoadingState>;
-  }
-
   return (
     <Panel>
       <PanelHeader>
@@ -148,7 +83,67 @@ export function SpecsPage() {
             {error}
           </StatusMessage>
         )}
-        {content}
+        <ControlTowerQuery
+          query={specs}
+          loadFailed={t('specs.loadFailed')}
+          isEmpty={(rows) => rows.length === 0}
+          empty={<EmptyState title={t('specs.empty')} />}
+        >
+          {(rows) =>
+            rows.map((spec) => (
+              <details className={styles.spec} key={spec.id}>
+                <summary>
+                  <div>
+                    <b>{spec.title}</b>
+                    <small>
+                      {[
+                        `${spec.id} · specs/${spec.specPath}`,
+                        spec.branch && t('specs.branch', { branch: spec.branch }),
+                      ]
+                        .filter(Boolean)
+                        .join(' · ')}
+                    </small>
+                  </div>
+                  <StatusChip
+                    label={t(`specs.status.${spec.status}`)}
+                    kind={STATUS_KIND[spec.status]}
+                  />
+                </summary>
+                <div className={styles.specDetails}>
+                  <p>
+                    {t('specs.dependencies', {
+                      list: spec.dependsOn.join(', ') || t('specs.noDependencies'),
+                    })}
+                  </p>
+                  <pre>{spec.body}</pre>
+                  {canWrite && (
+                    <div className={common.actions}>
+                      {spec.status === 'DRAFT' && (
+                        <Button variant="primary" onClick={() => askApprove(spec)}>
+                          {t('specs.approveAndPush')}
+                        </Button>
+                      )}
+                      {spec.status === 'DISPATCHED' && (
+                        <Button
+                          variant="secondary"
+                          disabled={complete.isPending}
+                          onClick={() =>
+                            void run(
+                              () => complete.mutateAsync(spec.id),
+                              () => t('specs.completed'),
+                            )
+                          }
+                        >
+                          {t('specs.confirmDone')}
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </details>
+            ))
+          }
+        </ControlTowerQuery>
       </div>
       {dialog}
     </Panel>

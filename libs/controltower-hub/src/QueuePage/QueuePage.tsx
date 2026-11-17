@@ -6,8 +6,6 @@ import {
   buttonClass,
   CheckboxField,
   EmptyState,
-  ErrorState,
-  LoadingState,
   Panel,
   PanelHeader,
   PanelTitle,
@@ -15,6 +13,7 @@ import {
   StatusMessage,
 } from '@openjcockpit/ui';
 import { dispatchControlTowerSpecs, type ControlTowerDispatchOutcome } from '@openjcockpit/api';
+import { ControlTowerQuery } from '../ControlTowerQuery';
 import { useQueueProposal, useRepositoryMutation } from '../hooks';
 import { useRepository } from '../RepositoryGate/RepositoryGate';
 import { SPEC_QUEUE_PATH } from '../routePaths';
@@ -27,40 +26,13 @@ export function QueuePage() {
   const { t } = useTranslation('controltower');
   const repository = useRepository();
   const canWrite = useWriteAccess();
-  const { data, isError, refetch } = useQueueProposal(repository.id);
+  const queue = useQueueProposal(repository.id);
+  const data = queue.data;
   const [published, setPublished] = useState(false);
   const [outcomes, setOutcomes] = useState<ControlTowerDispatchOutcome[] | null>(null);
   const dispatch = useRepositoryMutation(repository.id, () =>
     dispatchControlTowerSpecs(repository.id, published),
   );
-
-  let ready;
-  if (data) {
-    ready = data.length ? (
-      data.map((candidate, index) => (
-        <div className={common.row} key={candidate.specId}>
-          <span className={styles.queueIndex}>{index + 1}</span>
-          <div className={styles.grow}>
-            <b>{candidate.title}</b>
-            <small>{candidate.path}</small>
-            <small>
-              {t('queue.priority', { priority: candidate.priority, reason: candidate.reason })}
-            </small>
-          </div>
-        </div>
-      ))
-    ) : (
-      <EmptyState title={t('queue.empty')} />
-    );
-  } else if (isError) {
-    ready = (
-      <ErrorState onRetry={() => void refetch()} retryLabel={t('retry')}>
-        {t('queue.loadFailed')}
-      </ErrorState>
-    );
-  } else {
-    ready = <LoadingState>{t('loading')}</LoadingState>;
-  }
 
   return (
     <div className={common.twoCol}>
@@ -69,7 +41,32 @@ export function QueuePage() {
           <PanelTitle>{t('queue.ready')}</PanelTitle>
           {data && <StatusChip label={t('queue.count', { count: data.length })} kind="neutral" />}
         </PanelHeader>
-        <div className={common.body}>{ready}</div>
+        <div className={common.body}>
+          <ControlTowerQuery
+            query={queue}
+            loadFailed={t('queue.loadFailed')}
+            isEmpty={(rows) => rows.length === 0}
+            empty={<EmptyState title={t('queue.empty')} />}
+          >
+            {(rows) =>
+              rows.map((candidate, index) => (
+                <div className={common.row} key={candidate.specId}>
+                  <span className={styles.queueIndex}>{index + 1}</span>
+                  <div className={styles.grow}>
+                    <b>{candidate.title}</b>
+                    <small>{candidate.path}</small>
+                    <small>
+                      {t('queue.priority', {
+                        priority: candidate.priority,
+                        reason: candidate.reason,
+                      })}
+                    </small>
+                  </div>
+                </div>
+              ))
+            }
+          </ControlTowerQuery>
+        </div>
       </Panel>
       <Panel>
         <PanelHeader>

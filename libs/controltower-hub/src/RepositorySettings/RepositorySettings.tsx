@@ -3,9 +3,7 @@ import { useSelectedProject } from '@openjcockpit/hub-contract';
 import { useTranslation } from '@openjcockpit/i18n';
 import {
   Button,
-  ErrorState,
   Icon,
-  LoadingState,
   SecretField,
   SelectField,
   StatusMessage,
@@ -22,6 +20,7 @@ import {
   type ControlTowerProjectRequest,
 } from '@openjcockpit/api';
 import { useControlTowerRepository, useRepositoryMutation } from '../hooks';
+import { ControlTowerQuery } from '../ControlTowerQuery';
 import { errorMessage } from '../errorMessage';
 import { useWriteAccess } from '../useWriteAccess';
 import { WithTranslations } from '../registerTranslations';
@@ -214,17 +213,17 @@ function RepositoryForm({ data }: { data: ControlTowerProject | null }) {
 
 function LoadedRepositoryForm() {
   const { t } = useTranslation('controltower');
-  const { data, isError, refetch } = useControlTowerRepository();
-  if (isError) {
-    return (
-      <ErrorState onRetry={() => void refetch()} retryLabel={t('retry')}>
-        {t('repository.loadFailed')}
-      </ErrorState>
-    );
-  }
-  if (data === undefined) return <LoadingState>{t('loading')}</LoadingState>;
+  const repository = useControlTowerRepository();
   // Keyed, so a different repository starts from its own values.
-  return <RepositoryForm key={data?.id ?? 'new'} data={data} />;
+  return (
+    <ControlTowerQuery
+      query={repository}
+      loadFailed={t('repository.loadFailed')}
+      none={<RepositoryForm key="new" data={null} />}
+    >
+      {(data) => <RepositoryForm key={data.id} data={data} />}
+    </ControlTowerQuery>
+  );
 }
 
 /** Project settings section; the host loads it lazily, so it registers its own translations. */
