@@ -263,7 +263,9 @@ describe('dispatch queue', () => {
     ct.dispatchControlTowerSpecs.mockRejectedValue(new Error('Dispatch freeze is on'));
     renderRoutes(controltowerRoutes, { path });
     fireEvent.click(await screen.findByRole('checkbox'));
-    fireEvent.click(screen.getByRole('button', { name: 'Dispatch ready specs' }));
+    const button = screen.getByRole('button', { name: 'Dispatch ready specs' });
+    await waitFor(() => expect(button).toBeEnabled());
+    fireEvent.click(button);
     expect(await screen.findByRole('alert')).toHaveTextContent('Dispatch freeze is on');
   });
 

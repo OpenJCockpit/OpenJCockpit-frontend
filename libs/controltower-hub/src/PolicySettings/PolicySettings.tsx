@@ -1,4 +1,3 @@
-import { useState, type FormEvent } from 'react';
 import { useTranslation } from '@openjcockpit/i18n';
 import {
   Button,
@@ -9,68 +8,19 @@ import {
   formActionsClass,
   formGridClass,
 } from '@openjcockpit/ui';
-import {
-  saveControlTowerPolicy,
-  testControlTowerPolicy,
-  type ControlTowerPolicySettings,
-  type ControlTowerSettingsView,
-} from '@openjcockpit/api';
+import type { ControlTowerSettingsView } from '@openjcockpit/api';
 import { ControlTowerQuery } from '../ControlTowerQuery';
 import { ActionFeedback } from '../ActionFeedback';
-import { useAction } from '../useAction';
-import { useControlTowerSettings, useGlobalMutation } from '../hooks';
+import { useControlTowerSettings } from '../hooks';
 import { WithTranslations } from '../registerTranslations';
-
-/** The policies shipped in the ControlTower repository under infrastructure/opa/policies. */
-const STANDARD_POLICIES = [
-  'writerRoles',
-  'gitHosts',
-  'fourEyes',
-  'acceptance',
-  'secrets',
-  'freeze',
-  'dispatchRoles',
-] as const;
-
-const OPA_URL_PLACEHOLDER = 'http://opa:8181';
-const DECISION_PATH_PLACEHOLDER = 'openjcontroltower/decision';
+import { StandardPolicyList } from './StandardPolicyList';
+import { DECISION_PATH_PLACEHOLDER, OPA_URL_PLACEHOLDER, usePolicyForm } from './usePolicyForm';
 
 /** Open Policy Agent settings of the ControlTower backend. The backend lets only administrators save. */
 function PolicyForm({ data }: { data: ControlTowerSettingsView }) {
   const { t } = useTranslation('controltower');
-  const [policy, setPolicy] = useState<ControlTowerPolicySettings>(data.policy);
-  const { run, feedback, pending, clear } = useAction();
-  const save = useGlobalMutation(saveControlTowerPolicy);
-
+  const { policy, set, onSubmit, onTest, saving, testing, feedback } = usePolicyForm(data.policy);
   const editable = data.editable;
-  const set = (patch: Partial<ControlTowerPolicySettings>) => {
-    setPolicy((p) => ({ ...p, ...patch }));
-    clear();
-  };
-
-  function onSubmit(event: FormEvent) {
-    event.preventDefault();
-    return run(
-      () => save.mutateAsync(policy),
-      (saved) => {
-        setPolicy(saved);
-        return saved.enabled ? t('policy.savedOn') : t('policy.savedOff');
-      },
-    );
-  }
-
-  const testing = pending && !save.isPending;
-  const onTest = () =>
-    run(
-      () => testControlTowerPolicy(policy),
-      (result) => ({
-        ok: result.reachable,
-        message: result.message,
-        detail: result.policies?.length
-          ? t('policy.loaded', { list: result.policies.join(', ') })
-          : undefined,
-      }),
-    );
 
   return (
     <>
@@ -106,13 +56,13 @@ function PolicyForm({ data }: { data: ControlTowerSettingsView }) {
         </fieldset>
         {editable && (
           <div className={formActionsClass}>
-            <Button variant="primary" type="submit" disabled={save.isPending}>
+            <Button variant="primary" type="submit" disabled={saving}>
               {t('policy.save')}
             </Button>
             <Button
               type="button"
               variant="secondary"
-              disabled={testing || save.isPending || !policy.url || !policy.decisionPath}
+              disabled={testing || saving || !policy.url || !policy.decisionPath}
               onClick={() => void onTest()}
             >
               <Icon name={testing ? 'spinner' : 'cloud'} /> {t('policy.test')}
@@ -121,15 +71,7 @@ function PolicyForm({ data }: { data: ControlTowerSettingsView }) {
         )}
         <ActionFeedback feedback={feedback} />
       </form>
-      <h3>{t('policy.standardTitle')}</h3>
-      <StatusMessage>{t('policy.standardHint')}</StatusMessage>
-      <ul>
-        {STANDARD_POLICIES.map((key) => (
-          <li key={key}>
-            <b>{t(`policy.standard.${key}.name`)}</b> {t(`policy.standard.${key}.text`)}
-          </li>
-        ))}
-      </ul>
+      <StandardPolicyList />
     </>
   );
 }

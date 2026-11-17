@@ -49,3 +49,6 @@ export function useAction() {
 
   return { run, feedback, pending, clear };
 }
+
+/** The `run` function of `useAction`, for components that receive it from a parent. */
+export type RunAction = ReturnType<typeof useAction>['run'];

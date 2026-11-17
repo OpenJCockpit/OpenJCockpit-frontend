@@ -1,6 +1,5 @@
 import { useTranslation } from '@openjcockpit/i18n';
 import {
-  Button,
   EmptyState,
   Panel,
   PanelHeader,
@@ -8,34 +7,23 @@ import {
   StatusChip,
   useConfirmDialog,
 } from '@openjcockpit/ui';
-import type { StatusKind } from '@openjcockpit/ui';
 import {
   approveControlTowerSpec,
   completeControlTowerSpec,
   type ControlTowerSpec,
-  type ControlTowerSpecStatus,
 } from '@openjcockpit/api';
 import { ControlTowerQuery } from '../ControlTowerQuery';
 import { useRepositoryMutation, useSpecs } from '../hooks';
 import { useRepository } from '../RepositoryGate/RepositoryGate';
 import { ActionFeedback } from '../ActionFeedback';
 import { useAction } from '../useAction';
-import { useWriteAccess } from '../useWriteAccess';
 import common from '../shared.module.scss';
-import styles from './SpecsPage.module.scss';
-
-const STATUS_KIND: Record<ControlTowerSpecStatus, StatusKind> = {
-  DRAFT: 'open',
-  APPROVED: 'review',
-  DISPATCHED: 'active',
-  DONE: 'done',
-};
+import { SpecRow } from './SpecRow';
 
 /** The specification registry: review drafts, approve them (pushes a Git branch) and confirm finished work. */
 export function SpecsPage() {
   const { t } = useTranslation('controltower');
   const repository = useRepository();
-  const canWrite = useWriteAccess();
   const specs = useSpecs(repository.id);
   const data = specs.data;
   const { run, feedback } = useAction();
@@ -58,6 +46,12 @@ export function SpecsPage() {
         ),
     });
 
+  const onComplete = (spec: ControlTowerSpec) =>
+    void run(
+      () => complete.mutateAsync(spec.id),
+      () => t('specs.completed'),
+    );
+
   return (
     <Panel>
       <PanelHeader>
@@ -74,56 +68,13 @@ export function SpecsPage() {
         >
           {(rows) =>
             rows.map((spec) => (
-              <details className={styles.spec} key={spec.id}>
-                <summary>
-                  <div>
-                    <b>{spec.title}</b>
-                    <small>
-                      {[
-                        `${spec.id} · specs/${spec.specPath}`,
-                        spec.branch && t('specs.branch', { branch: spec.branch }),
-                      ]
-                        .filter(Boolean)
-                        .join(' · ')}
-                    </small>
-                  </div>
-                  <StatusChip
-                    label={t(`specs.status.${spec.status}`)}
-                    kind={STATUS_KIND[spec.status]}
-                  />
-                </summary>
-                <div className={styles.specDetails}>
-                  <p>
-                    {t('specs.dependencies', {
-                      list: spec.dependsOn.join(', ') || t('specs.noDependencies'),
-                    })}
-                  </p>
-                  <pre>{spec.body}</pre>
-                  {canWrite && (
-                    <div className={common.actions}>
-                      {spec.status === 'DRAFT' && (
-                        <Button variant="primary" onClick={() => askApprove(spec)}>
-                          {t('specs.approveAndPush')}
-                        </Button>
-                      )}
-                      {spec.status === 'DISPATCHED' && (
-                        <Button
-                          variant="secondary"
-                          disabled={complete.isPending}
-                          onClick={() =>
-                            void run(
-                              () => complete.mutateAsync(spec.id),
-                              () => t('specs.completed'),
-                            )
-                          }
-                        >
-                          {t('specs.confirmDone')}
-                        </Button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </details>
+              <SpecRow
+                key={spec.id}
+                spec={spec}
+                completing={complete.isPending}
+                onApprove={askApprove}
+                onComplete={onComplete}
+              />
             ))
           }
         </ControlTowerQuery>
