@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { useTranslation } from '@openjcockpit/i18n';
-import { Button, Icon, StatusMessage } from '@openjcockpit/ui';
+import { Button } from '../Button/Button';
+import { Icon } from '../Icon/Icon';
+import { StatusMessage } from '../StatusMessage/StatusMessage';
 
 interface Recognition {
   lang: string;
@@ -15,18 +16,29 @@ interface SpeechWindow {
   webkitSpeechRecognition?: RecognitionConstructor;
 }
 
+export interface SpeechInputLabels {
+  /** Dictate button. */
+  speak: string;
+  /** Dictate button while the microphone is open. */
+  listening: string;
+  /** Read-aloud button. */
+  read: string;
+  /** Shown when the browser has no speech recognition. */
+  unsupported: string;
+}
+
 interface Props {
-  /** The question that "Read question" speaks. */
+  /** The text that the read-aloud button speaks. */
   text: string;
   onTranscript: (transcript: string) => void;
+  labels: SpeechInputLabels;
 }
 
 /**
- * Browser speech: reads the question aloud and dictates the answer. Dictation needs the microphone, which
+ * Browser speech: reads text aloud and dictates an answer. Dictation needs the microphone, which
  * the host's Permissions-Policy allows for its own origin (`microphone=(self)`); the browser still asks.
  */
-export function SpeechButtons({ text, onTranscript }: Props) {
-  const { t } = useTranslation('controltower');
+export function SpeechInputButtons({ text, onTranscript, labels }: Props) {
   const [listening, setListening] = useState(false);
   const [unsupported, setUnsupported] = useState(false);
 
@@ -62,12 +74,12 @@ export function SpeechButtons({ text, onTranscript }: Props) {
   return (
     <div>
       <Button type="button" variant="secondary" onClick={listen}>
-        <Icon name="microphone" /> {listening ? t('speech.listening') : t('speech.speak')}
+        <Icon name="microphone" /> {listening ? labels.listening : labels.speak}
       </Button>{' '}
       <Button type="button" variant="secondary" onClick={speak}>
-        <Icon name="speaker" /> {t('speech.read')}
+        <Icon name="speaker" /> {labels.read}
       </Button>
-      {unsupported && <StatusMessage role="status">{t('speech.unsupported')}</StatusMessage>}
+      {unsupported && <StatusMessage role="status">{labels.unsupported}</StatusMessage>}
     </div>
   );
 }

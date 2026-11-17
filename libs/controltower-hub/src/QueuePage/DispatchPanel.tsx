@@ -2,19 +2,20 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from '@openjcockpit/i18n';
 import {
+  ActionRow,
   Button,
-  buttonClass,
   CheckboxField,
   Panel,
+  PanelBody,
   PanelHeader,
   PanelTitle,
   StatusMessage,
+  buttonClass,
 } from '@openjcockpit/ui';
 import { dispatchControlTowerSpecs, type ControlTowerDispatchOutcome } from '@openjcockpit/api';
 import { useRepositoryMutation } from '../hooks';
 import { SPEC_QUEUE_PATH } from '../routePaths';
 import { useWriteAccess } from '../useWriteAccess';
-import common from '../shared.module.scss';
 
 interface Props {
   repositoryId: string;
@@ -37,7 +38,7 @@ export function DispatchPanel({ repositoryId, readyCount }: Props) {
       <PanelHeader>
         <PanelTitle>{t('queue.dispatchTitle')}</PanelTitle>
       </PanelHeader>
-      <div className={common.body}>
+      <PanelBody>
         <StatusMessage>{t('queue.hint')}</StatusMessage>
         {canWrite && (
           <>
@@ -46,7 +47,7 @@ export function DispatchPanel({ repositoryId, readyCount }: Props) {
               checked={published}
               onChange={setPublished}
             />
-            <div className={common.actions}>
+            <ActionRow>
               <Button
                 variant="primary"
                 disabled={dispatch.isPending || !published || !readyCount}
@@ -57,7 +58,7 @@ export function DispatchPanel({ repositoryId, readyCount }: Props) {
               >
                 {t('queue.dispatch')}
               </Button>
-            </div>
+            </ActionRow>
           </>
         )}
         {dispatch.isError && (
@@ -78,7 +79,7 @@ export function DispatchPanel({ repositoryId, readyCount }: Props) {
           </div>
         )}
         <StatusMessage>{t('queue.unknownHint')}</StatusMessage>
-      </div>
+      </PanelBody>
     </Panel>
   );
 }

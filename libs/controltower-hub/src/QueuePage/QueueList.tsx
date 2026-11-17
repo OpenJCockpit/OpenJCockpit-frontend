@@ -1,8 +1,15 @@
 import { useTranslation } from '@openjcockpit/i18n';
-import { EmptyState, Panel, PanelHeader, PanelTitle, StatusChip } from '@openjcockpit/ui';
+import {
+  EmptyState,
+  ListRow,
+  Panel,
+  PanelBody,
+  PanelHeader,
+  PanelTitle,
+  StatusChip,
+} from '@openjcockpit/ui';
 import type { ControlTowerQueueCandidate } from '@openjcockpit/api';
 import { ControlTowerQuery } from '../ControlTowerQuery';
-import common from '../shared.module.scss';
 import styles from './QueuePage.module.scss';
 
 interface Props {
@@ -19,7 +26,7 @@ export function QueueList({ query }: Props) {
         <PanelTitle>{t('queue.ready')}</PanelTitle>
         {data && <StatusChip label={t('queue.count', { count: data.length })} kind="neutral" />}
       </PanelHeader>
-      <div className={common.body}>
+      <PanelBody>
         <ControlTowerQuery
           query={query}
           loadFailed={t('queue.loadFailed')}
@@ -28,7 +35,7 @@ export function QueueList({ query }: Props) {
         >
           {(rows) =>
             rows.map((candidate, index) => (
-              <div className={common.row} key={candidate.specId}>
+              <ListRow key={candidate.specId}>
                 <span className={styles.queueIndex}>{index + 1}</span>
                 <div className={styles.grow}>
                   <b>{candidate.title}</b>
@@ -40,11 +47,11 @@ export function QueueList({ query }: Props) {
                     })}
                   </small>
                 </div>
-              </div>
+              </ListRow>
             ))
           }
         </ControlTowerQuery>
-      </div>
+      </PanelBody>
     </Panel>
   );
 }

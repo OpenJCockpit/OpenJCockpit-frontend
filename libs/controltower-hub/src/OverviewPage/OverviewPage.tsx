@@ -1,10 +1,17 @@
 import { Link } from 'react-router';
 import { useTranslation } from '@openjcockpit/i18n';
-import { buttonClass, Panel, PanelHeader, PanelTitle } from '@openjcockpit/ui';
+import {
+  ActionRow,
+  Panel,
+  PanelBody,
+  PanelHeader,
+  PanelTitle,
+  TwoColumn,
+  buttonClass,
+} from '@openjcockpit/ui';
 import { useInterviews, useQueueProposal, useSpecs } from '../hooks';
 import { useRepository } from '../RepositoryGate/RepositoryGate';
 import { CONTROLTOWER_INTERVIEWS_PATH } from '../routePaths';
-import common from '../shared.module.scss';
 import styles from './OverviewPage.module.scss';
 
 const STEPS = ['repository', 'templates', 'interview', 'specs', 'dispatch'] as const;
@@ -38,36 +45,36 @@ export function OverviewPage() {
           <strong>{queue?.length ?? dash}</strong>
         </Panel>
       </div>
-      <div className={common.twoCol}>
+      <TwoColumn>
         <Panel>
           <PanelHeader>
             <PanelTitle>{t('overview.howTitle')}</PanelTitle>
           </PanelHeader>
-          <div className={common.body}>
+          <PanelBody>
             <ol className={styles.steps}>
               {STEPS.map((step) => (
                 <li key={step}>{t(`overview.steps.${step}`)}</li>
               ))}
             </ol>
-          </div>
+          </PanelBody>
         </Panel>
         <Panel>
           <PanelHeader>
             <PanelTitle>{t('overview.ideasTitle')}</PanelTitle>
           </PanelHeader>
-          <div className={common.body}>
+          <PanelBody>
             <p>{t('overview.ideasText')}</p>
-            <div className={common.actions}>
+            <ActionRow>
               <Link
                 className={buttonClass({ variant: 'primary' })}
                 to={CONTROLTOWER_INTERVIEWS_PATH}
               >
                 {t('overview.start')}
               </Link>
-            </div>
-          </div>
+            </ActionRow>
+          </PanelBody>
         </Panel>
-      </div>
+      </TwoColumn>
     </>
   );
 }

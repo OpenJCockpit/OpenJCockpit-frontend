@@ -2,9 +2,11 @@ import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from '@openjcockpit/i18n';
 import {
+  ActionRow,
   Button,
   Icon,
   SelectField,
+  SpeechInputButtons,
   StatusChip,
   StatusMessage,
   TextAreaField,
@@ -18,8 +20,6 @@ import { useRepositoryMutation, useSpecTemplates } from '../hooks';
 import { CONTROLTOWER_SPECS_PATH } from '../routePaths';
 import type { RunAction } from '../useAction';
 import { useWriteAccess } from '../useWriteAccess';
-import { SpeechButtons } from './SpeechButtons';
-import common from '../shared.module.scss';
 import styles from './InterviewsPage.module.scss';
 
 interface Props {
@@ -80,15 +80,21 @@ export function InterviewSession({ repositoryId, interview, run, onChange, onClo
             onChange={setAnswer}
             placeholder={t('interviews.answerPlaceholder')}
           />
-          <SpeechButtons
+          <SpeechInputButtons
             text={interview.currentQuestion}
+            labels={{
+              speak: t('speech.speak'),
+              listening: t('speech.listening'),
+              read: t('speech.read'),
+              unsupported: t('speech.unsupported'),
+            }}
             onTranscript={(text) => setAnswer((old) => (old ? `${old} ${text}` : text))}
           />
-          <div className={common.actions}>
+          <ActionRow>
             <Button variant="primary" type="submit" disabled={busy || !canWrite}>
               {t('interviews.submit')}
             </Button>
-          </div>
+          </ActionRow>
         </form>
       ) : (
         <div className={styles.session}>
@@ -102,7 +108,7 @@ export function InterviewSession({ repositoryId, interview, run, onChange, onClo
               ...specTemplates.map((s) => ({ value: s.id, label: s.name })),
             ]}
           />
-          <div className={common.actions}>
+          <ActionRow>
             <Button
               variant="primary"
               disabled={busy || !canWrite || interview.status !== 'COMPLETE'}
@@ -113,7 +119,7 @@ export function InterviewSession({ repositoryId, interview, run, onChange, onClo
             <Button variant="secondary" onClick={onClose}>
               {t('interviews.close')}
             </Button>
-          </div>
+          </ActionRow>
         </div>
       )}
     </div>

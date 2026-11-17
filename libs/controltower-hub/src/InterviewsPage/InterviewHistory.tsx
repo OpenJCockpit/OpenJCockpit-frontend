@@ -1,9 +1,8 @@
 import { useTranslation } from '@openjcockpit/i18n';
-import { EmptyState, Icon, StatusMessage } from '@openjcockpit/ui';
+import { EmptyState, Icon, ListRow, StatusMessage } from '@openjcockpit/ui';
 import type { ControlTowerInterview } from '@openjcockpit/api';
 import { ControlTowerQuery } from '../ControlTowerQuery';
 import { useInterviews } from '../hooks';
-import common from '../shared.module.scss';
 import styles from './InterviewsPage.module.scss';
 
 interface Props {
@@ -25,7 +24,7 @@ export function InterviewHistory({ repositoryId, onSelect }: Props) {
       >
         {(rows) =>
           rows.map((interview) => (
-            <div className={common.row} key={interview.id}>
+            <ListRow key={interview.id}>
               <button
                 type="button"
                 className={styles.rowButton}
@@ -43,7 +42,7 @@ export function InterviewHistory({ repositoryId, onSelect }: Props) {
                 </span>
                 <Icon name="arrow-right" />
               </button>
-            </div>
+            </ListRow>
           ))
         }
       </ControlTowerQuery>

@@ -1,21 +1,24 @@
 import { useState, type FormEvent } from 'react';
 import { useTranslation } from '@openjcockpit/i18n';
 import {
+  ActionRow,
   Button,
+  ListRow,
   Panel,
+  PanelBody,
   PanelHeader,
   PanelTitle,
   StatusChip,
   StatusMessage,
   TextAreaField,
   TextField,
+  TwoColumn,
 } from '@openjcockpit/ui';
 import { createControlTowerSpecTemplate } from '@openjcockpit/api';
 import { useGlobalMutation, useSpecTemplates } from '../hooks';
 import type { RunAction } from '../useAction';
 import { useWriteAccess } from '../useWriteAccess';
 import { DEFAULT_SPEC_TEMPLATE } from '../sampleQuestions';
-import common from '../shared.module.scss';
 import { TemplateList } from './TemplateList';
 import styles from './TemplatesPage.module.scss';
 
@@ -45,14 +48,14 @@ export function SpecTemplatesPanel({ run }: { run: RunAction }) {
         <PanelTitle>{t('templates.specTitle')}</PanelTitle>
         <StatusChip label={t('templates.markdown')} kind="neutral" />
       </PanelHeader>
-      <div className={common.body}>
+      <PanelBody>
         <StatusMessage>{t('templates.specHint')}</StatusMessage>
-        <div className={common.twoCol}>
+        <TwoColumn>
           <div>
             <TemplateList
               query={specTemplates}
               row={(item) => (
-                <div className={common.row} key={item.id}>
+                <ListRow key={item.id}>
                   <div>
                     <b>{item.name}</b>
                     <small>
@@ -60,12 +63,12 @@ export function SpecTemplatesPanel({ run }: { run: RunAction }) {
                     </small>
                   </div>
                   <StatusChip label={t('templates.markdown')} kind="neutral" />
-                </div>
+                </ListRow>
               )}
             />
           </div>
           {canWrite && (
-            <form className={common.body} onSubmit={onSubmit}>
+            <PanelBody as="form" onSubmit={onSubmit}>
               <TextField label={t('templates.name')} required value={name} onChange={setName} />
               <TextAreaField
                 label={t('templates.markdownTemplate')}
@@ -74,15 +77,15 @@ export function SpecTemplatesPanel({ run }: { run: RunAction }) {
                 value={content}
                 onChange={setContent}
               />
-              <div className={common.actions}>
+              <ActionRow>
                 <Button variant="primary" type="submit" disabled={createSpecTemplate.isPending}>
                   {t('templates.saveSpec')}
                 </Button>
-              </div>
-            </form>
+              </ActionRow>
+            </PanelBody>
           )}
-        </div>
-      </div>
+        </TwoColumn>
+      </PanelBody>
     </Panel>
   );
 }

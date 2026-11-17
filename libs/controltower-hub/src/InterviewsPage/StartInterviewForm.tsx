@@ -1,11 +1,10 @@
 import { useState, type FormEvent } from 'react';
 import { useTranslation } from '@openjcockpit/i18n';
-import { Button, Icon, SelectField, TextAreaField } from '@openjcockpit/ui';
+import { ActionRow, Button, Icon, SelectField, TextAreaField } from '@openjcockpit/ui';
 import { startControlTowerInterview, type ControlTowerInterview } from '@openjcockpit/api';
 import { useRepositoryMutation, useTemplates } from '../hooks';
 import type { RunAction } from '../useAction';
 import { useWriteAccess } from '../useWriteAccess';
-import common from '../shared.module.scss';
 import styles from './InterviewsPage.module.scss';
 
 interface Props {
@@ -57,7 +56,7 @@ export function StartInterviewForm({ repositoryId, run, onStarted }: Props) {
           placeholder={t('interviews.featurePlaceholder')}
         />
       )}
-      <div className={common.actions}>
+      <ActionRow>
         <Button
           variant="primary"
           type="submit"
@@ -65,7 +64,7 @@ export function StartInterviewForm({ repositoryId, run, onStarted }: Props) {
         >
           <Icon name="plus" /> {t('interviews.start')}
         </Button>
-      </div>
+      </ActionRow>
     </form>
   );
 }

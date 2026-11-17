@@ -2,6 +2,7 @@ import { useTranslation } from '@openjcockpit/i18n';
 import {
   EmptyState,
   Panel,
+  PanelBody,
   PanelHeader,
   PanelTitle,
   StatusChip,
@@ -17,7 +18,6 @@ import { useRepositoryMutation, useSpecs } from '../hooks';
 import { useRepository } from '../RepositoryGate/RepositoryGate';
 import { ActionFeedback } from '../ActionFeedback';
 import { useAction } from '../useAction';
-import common from '../shared.module.scss';
 import { SpecRow } from './SpecRow';
 
 /** The specification registry: review drafts, approve them (pushes a Git branch) and confirm finished work. */
@@ -58,7 +58,7 @@ export function SpecsPage() {
         <PanelTitle>{t('specs.title')}</PanelTitle>
         {data && <StatusChip label={t('specs.count', { count: data.length })} kind="neutral" />}
       </PanelHeader>
-      <div className={common.body}>
+      <PanelBody>
         <ActionFeedback feedback={feedback} />
         <ControlTowerQuery
           query={specs}
@@ -78,7 +78,7 @@ export function SpecsPage() {
             ))
           }
         </ControlTowerQuery>
-      </div>
+      </PanelBody>
       {dialog}
     </Panel>
   );

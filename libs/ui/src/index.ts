@@ -29,6 +29,7 @@ export * from './Icon/Icon';
 export * from './IconBox/IconBox';
 export * from './ModalShell/ModalShell';
 export * from './Select/Select';
+export * from './SpeechInputButtons/SpeechInputButtons';
 export * from './StatusChip/StatusChip';
 export * from './StatusMessage/StatusMessage';
 export * from './States/States';

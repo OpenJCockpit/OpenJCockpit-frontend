@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { useTranslation } from '@openjcockpit/i18n';
-import { Panel, PanelHeader, PanelTitle } from '@openjcockpit/ui';
+import { Panel, PanelBody, PanelHeader, PanelTitle, TwoColumn } from '@openjcockpit/ui';
 import type { ControlTowerInterview } from '@openjcockpit/api';
 import { useRepository } from '../RepositoryGate/RepositoryGate';
 import { ActionFeedback } from '../ActionFeedback';
 import { useAction } from '../useAction';
-import common from '../shared.module.scss';
 import { InterviewHistory } from './InterviewHistory';
 import { InterviewSession } from './InterviewSession';
 import { StartInterviewForm } from './StartInterviewForm';
@@ -18,12 +17,12 @@ export function InterviewsPage() {
   const { run, feedback } = useAction();
 
   return (
-    <div className={common.twoCol}>
+    <TwoColumn>
       <Panel>
         <PanelHeader>
           <PanelTitle>{t('interviews.session')}</PanelTitle>
         </PanelHeader>
-        <div className={common.body}>
+        <PanelBody>
           <ActionFeedback feedback={feedback} />
           {active ? (
             <InterviewSession
@@ -37,16 +36,16 @@ export function InterviewsPage() {
           ) : (
             <StartInterviewForm repositoryId={repository.id} run={run} onStarted={setActive} />
           )}
-        </div>
+        </PanelBody>
       </Panel>
       <Panel>
         <PanelHeader>
           <PanelTitle>{t('interviews.previous')}</PanelTitle>
         </PanelHeader>
-        <div className={common.body}>
+        <PanelBody>
           <InterviewHistory repositoryId={repository.id} onSelect={setActive} />
-        </div>
+        </PanelBody>
       </Panel>
-    </div>
+    </TwoColumn>
   );
 }

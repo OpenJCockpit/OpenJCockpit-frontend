@@ -1,13 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from '@openjcockpit/i18n';
 import type { ControlTowerGraph } from '@openjcockpit/api';
-import { cx, EmptyState, Panel, PanelHeader, PanelTitle } from '@openjcockpit/ui';
+import { EmptyState, Panel, PanelBody, PanelHeader, PanelTitle, cx } from '@openjcockpit/ui';
 import { ControlTowerQuery } from '../ControlTowerQuery';
 import { useGraph } from '../hooks';
 import { useRepository } from '../RepositoryGate/RepositoryGate';
 import { layoutGraph, NODE_HEIGHT, NODE_WIDTH } from './graphLayout';
 import styles from './Graph.module.scss';
-import common from '../shared.module.scss';
 
 const ELLIPSIS = '…';
 const ID_LENGTH = 18;
@@ -76,7 +75,7 @@ export function GraphPage() {
       <PanelHeader>
         <PanelTitle>{t('graph.title')}</PanelTitle>
       </PanelHeader>
-      <p className={common.body}>{t('graph.hint')}</p>
+      <PanelBody as="p">{t('graph.hint')}</PanelBody>
       <ControlTowerQuery
         query={graph}
         loadFailed={t('graph.loadFailed')}

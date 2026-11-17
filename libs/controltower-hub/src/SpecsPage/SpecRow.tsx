@@ -1,8 +1,7 @@
 import { useTranslation } from '@openjcockpit/i18n';
-import { Button, StatusChip, type StatusKind } from '@openjcockpit/ui';
+import { ActionRow, Button, StatusChip, type StatusKind } from '@openjcockpit/ui';
 import type { ControlTowerSpec, ControlTowerSpecStatus } from '@openjcockpit/api';
 import { useWriteAccess } from '../useWriteAccess';
-import common from '../shared.module.scss';
 import styles from './SpecsPage.module.scss';
 
 const STATUS_KIND: Record<ControlTowerSpecStatus, StatusKind> = {
@@ -47,7 +46,7 @@ export function SpecRow({ spec, completing, onApprove, onComplete }: Props) {
         </p>
         <pre>{spec.body}</pre>
         {canWrite && (
-          <div className={common.actions}>
+          <ActionRow>
             {spec.status === 'DRAFT' && (
               <Button variant="primary" onClick={() => onApprove(spec)}>
                 {t('specs.approveAndPush')}
@@ -58,7 +57,7 @@ export function SpecRow({ spec, completing, onApprove, onComplete }: Props) {
                 {t('specs.confirmDone')}
               </Button>
             )}
-          </div>
+          </ActionRow>
         )}
       </div>
     </details>

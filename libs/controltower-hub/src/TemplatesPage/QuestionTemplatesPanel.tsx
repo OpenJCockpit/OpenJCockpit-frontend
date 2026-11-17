@@ -1,14 +1,18 @@
 import { useState, type FormEvent } from 'react';
 import { useTranslation } from '@openjcockpit/i18n';
 import {
+  ActionRow,
   Button,
+  ListRow,
   Panel,
+  PanelBody,
   PanelHeader,
   PanelTitle,
   SelectField,
   StatusChip,
   TextAreaField,
   TextField,
+  TwoColumn,
 } from '@openjcockpit/ui';
 import {
   createControlTowerTemplate,
@@ -20,7 +24,6 @@ import { useGlobalMutation, useTemplates } from '../hooks';
 import type { RunAction } from '../useAction';
 import { useWriteAccess } from '../useWriteAccess';
 import { sampleQuestions } from '../sampleQuestions';
-import common from '../shared.module.scss';
 import { TemplateList } from './TemplateList';
 import styles from './TemplatesPage.module.scss';
 
@@ -50,32 +53,32 @@ export function QuestionTemplatesPanel({ run }: { run: RunAction }) {
   }
 
   return (
-    <div className={common.twoCol}>
+    <TwoColumn>
       <Panel>
         <PanelHeader>
           <PanelTitle>{t('templates.savedTitle')}</PanelTitle>
         </PanelHeader>
-        <div className={common.body}>
+        <PanelBody>
           <TemplateList
             query={templates}
             row={(item) => (
-              <div className={common.row} key={item.id}>
+              <ListRow key={item.id}>
                 <div>
                   <b>{item.name}</b>
                   <small>{t('templates.questions', { count: item.questions.length })}</small>
                 </div>
                 <StatusChip label={item.kind} kind="neutral" />
-              </div>
+              </ListRow>
             )}
           />
-        </div>
+        </PanelBody>
       </Panel>
       {canWrite && (
         <Panel>
           <PanelHeader>
             <PanelTitle>{t('templates.new')}</PanelTitle>
           </PanelHeader>
-          <form className={common.body} onSubmit={onSubmit}>
+          <PanelBody as="form" onSubmit={onSubmit}>
             <TextField label={t('templates.name')} required value={name} onChange={setName} />
             <SelectField
               label={t('templates.kind')}
@@ -97,14 +100,14 @@ export function QuestionTemplatesPanel({ run }: { run: RunAction }) {
               value={questionJson}
               onChange={setQuestionJson}
             />
-            <div className={common.actions}>
+            <ActionRow>
               <Button variant="primary" type="submit" disabled={createTemplate.isPending}>
                 {t('templates.save')}
               </Button>
-            </div>
-          </form>
+            </ActionRow>
+          </PanelBody>
         </Panel>
       )}
-    </div>
+    </TwoColumn>
   );
 }
