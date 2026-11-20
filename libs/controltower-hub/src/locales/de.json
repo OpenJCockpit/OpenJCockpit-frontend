@@ -121,7 +121,8 @@
       "answered_other": "{{count}} beantwortet",
       "submitShortcut": "zum Senden",
       "shortcutCtrl": "Strg",
-      "shortcutEnter": "Enter"
+      "shortcutEnter": "Enter",
+      "viewSpecs": "Generierte Specs ansehen"
     },
     "speech": {
       "speak": "Sprechen",
@@ -166,7 +167,13 @@
       "copied": "Kopiert",
       "copyBranch": "Branch-Namen kopieren",
       "copyBody": "Spec-Text kopieren",
-      "emptyAction": "Discovery-Interview starten"
+      "emptyAction": "Discovery-Interview starten",
+      "new": "Neu",
+      "nextDraft": "Nächsten Entwurf prüfen",
+      "fromInterview": "Zeigt die aus diesem Interview erzeugten Spezifikationen.",
+      "showAll": "Alle anzeigen",
+      "interview": "Interview:",
+      "viewInterview": "Interview ansehen"
     },
     "graph": {
       "title": "Abhängigkeitsgraph",

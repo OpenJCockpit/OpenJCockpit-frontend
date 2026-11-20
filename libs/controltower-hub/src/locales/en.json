@@ -121,7 +121,8 @@
       "answered_other": "{{count}} answered",
       "submitShortcut": "to submit",
       "shortcutCtrl": "Ctrl",
-      "shortcutEnter": "Enter"
+      "shortcutEnter": "Enter",
+      "viewSpecs": "View generated specs"
     },
     "speech": {
       "speak": "Speak",
@@ -166,7 +167,13 @@
       "copied": "Copied",
       "copyBranch": "Copy branch name",
       "copyBody": "Copy spec body",
-      "emptyAction": "Start a discovery interview"
+      "emptyAction": "Start a discovery interview",
+      "new": "New",
+      "nextDraft": "Review next draft",
+      "fromInterview": "Showing the specifications generated from this interview.",
+      "showAll": "Show all",
+      "interview": "Interview:",
+      "viewInterview": "View interview"
     },
     "graph": {
       "title": "Dependency graph",

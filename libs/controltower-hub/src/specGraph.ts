@@ -34,3 +34,24 @@ export function deriveBlockers(
 export function isBlocked(blockers: SpecBlockers | undefined): boolean {
   return blockers !== undefined && blockers.blockedBy.length + blockers.missing.length > 0;
 }
+
+/**
+ * `DRAFT` specs in review order: a draft comes after the drafts it depends on, otherwise oldest first
+ * (spec paths start with a creation-order number). Dependency cycles fall back to oldest first.
+ */
+export function draftReviewOrder<
+  T extends Pick<ControlTowerSpec, 'id' | 'status' | 'dependsOn' | 'specPath'>,
+>(specs: readonly T[]): T[] {
+  const pending = specs
+    .filter((s) => s.status === 'DRAFT')
+    .sort((a, b) => a.specPath.localeCompare(b.specPath, undefined, { numeric: true }));
+  const ordered: T[] = [];
+  while (pending.length > 0) {
+    const ids = new Set(pending.map((s) => s.id));
+    const index = pending.findIndex(
+      (s) => !s.dependsOn.some((dep) => ids.has(dep) && dep !== s.id),
+    );
+    ordered.push(...pending.splice(Math.max(index, 0), 1));
+  }
+  return ordered;
+}

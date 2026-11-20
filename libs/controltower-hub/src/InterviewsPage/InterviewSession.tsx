@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent, type KeyboardEvent } from 'react';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { useTranslation } from '@openjcockpit/i18n';
 import {
   ActionRow,
@@ -12,6 +12,7 @@ import {
   StatusMessage,
   TextAreaField,
   cx,
+  buttonClass,
   usesCommandKey,
 } from '@openjcockpit/ui';
 import {
@@ -137,7 +138,10 @@ export function InterviewSession({ repositoryId, interview, run, onChange, onClo
   function onGenerate() {
     void run(async () => {
       const created = await generate.mutateAsync(interview.id);
-      const state: SpecsHandoff = { draftsCreated: created.length };
+      const state: SpecsHandoff = {
+        draftsCreated: created.length,
+        specIds: created.map((spec) => spec.id),
+      };
       void navigate(CONTROLTOWER_SPECS_PATH, { state });
     });
   }
@@ -223,6 +227,14 @@ export function InterviewSession({ repositoryId, interview, run, onChange, onClo
                 <Icon name={generate.isPending ? 'spinner' : 'sparkle'} />{' '}
                 {generate.isPending ? t('interviews.generating') : t('interviews.generate')}
               </Button>
+            )}
+            {generated && (
+              <Link
+                className={buttonClass({ variant: 'primary' })}
+                to={`${CONTROLTOWER_SPECS_PATH}?interview=${encodeURIComponent(interview.id)}`}
+              >
+                {t('interviews.viewSpecs')}
+              </Link>
             )}
             <Button variant="secondary" onClick={onClose}>
               {t('interviews.close')}

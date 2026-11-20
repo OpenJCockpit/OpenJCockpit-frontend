@@ -172,6 +172,11 @@ export interface Spec {
      * @nullable
      */
   branch: string | null;
+  /**
+     * ID of the interview the spec was generated from; null for specs created before this link existed.
+     * @nullable
+     */
+  interviewId?: string | null;
 }
 
 export interface GraphNode {

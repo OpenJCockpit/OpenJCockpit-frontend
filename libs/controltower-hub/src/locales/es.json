@@ -121,7 +121,8 @@
       "answered_other": "{{count}} respondidas",
       "submitShortcut": "para enviar",
       "shortcutCtrl": "Ctrl",
-      "shortcutEnter": "Intro"
+      "shortcutEnter": "Intro",
+      "viewSpecs": "Ver specs generadas"
     },
     "speech": {
       "speak": "Hablar",
@@ -166,7 +167,13 @@
       "copied": "Copiado",
       "copyBranch": "Copiar nombre de la rama",
       "copyBody": "Copiar texto de la spec",
-      "emptyAction": "Iniciar una entrevista de descubrimiento"
+      "emptyAction": "Iniciar una entrevista de descubrimiento",
+      "new": "Nuevo",
+      "nextDraft": "Revisar el siguiente borrador",
+      "fromInterview": "Mostrando las especificaciones generadas a partir de esta entrevista.",
+      "showAll": "Mostrar todas",
+      "interview": "Entrevista:",
+      "viewInterview": "Ver entrevista"
     },
     "graph": {
       "title": "Grafo de dependencias",

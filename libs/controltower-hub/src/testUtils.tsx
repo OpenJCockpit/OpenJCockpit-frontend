@@ -47,6 +47,7 @@ export const SPEC_DRAFT: ControlTowerSpec = {
   dependsOn: [],
   specPath: 'login.md',
   branch: null,
+  interviewId: 'i1',
 };
 
 export const SPEC_DISPATCHED: ControlTowerSpec = {

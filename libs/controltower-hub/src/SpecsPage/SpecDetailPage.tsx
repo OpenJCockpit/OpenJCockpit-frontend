@@ -20,10 +20,15 @@ import {
 } from '@openjcockpit/api';
 import { ActionFeedback } from '../ActionFeedback';
 import { ControlTowerQuery } from '../ControlTowerQuery';
-import { useRepositoryMutation, useSpecs } from '../hooks';
+import { useInterviews, useRepositoryMutation, useSpecs } from '../hooks';
 import { useRepository } from '../RepositoryGate/RepositoryGate';
-import { CONTROLTOWER_QUEUE_PATH, CONTROLTOWER_SPECS_PATH, specPath } from '../routePaths';
-import { deriveBlockers } from '../specGraph';
+import {
+  CONTROLTOWER_QUEUE_PATH,
+  CONTROLTOWER_SPECS_PATH,
+  interviewPath,
+  specPath,
+} from '../routePaths';
+import { deriveBlockers, draftReviewOrder } from '../specGraph';
 import { useAction } from '../useAction';
 import { useWriteAccess } from '../useWriteAccess';
 import { CopyButton } from './CopyButton';
@@ -47,6 +52,9 @@ export function SpecDetailPage() {
     [specs.data],
   );
   const spec = specs.data?.find((s) => s.id === specId);
+  const interviewTitle = useInterviews(repository.id).data?.find(
+    (i) => i.id === spec?.interviewId,
+  )?.title;
 
   const askApprove = (target: ControlTowerSpec) =>
     confirm({
@@ -59,11 +67,20 @@ export function SpecDetailPage() {
       onConfirm: () =>
         run(
           () => approve.mutateAsync(target.id),
-          (approved) => ({
-            ok: true,
-            message: t('specs.approved', { branch: approved.branch ?? '' }),
-            next: <Link to={CONTROLTOWER_QUEUE_PATH}>{t('specs.toQueue')}</Link>,
-          }),
+          (approved) => {
+            const nextDraft = draftReviewOrder(
+              (specs.data ?? []).filter((s) => s.id !== target.id),
+            )[0];
+            return {
+              ok: true,
+              message: t('specs.approved', { branch: approved.branch ?? '' }),
+              next: nextDraft ? (
+                <Link to={specPath(nextDraft.id)}>{t('specs.nextDraft')}</Link>
+              ) : (
+                <Link to={CONTROLTOWER_QUEUE_PATH}>{t('specs.toQueue')}</Link>
+              ),
+            };
+          },
         ),
     });
 
@@ -108,6 +125,17 @@ export function SpecDetailPage() {
                   {spec.id} · <code>{`specs/${spec.specPath}`}</code>
                   {spec.branch && ` · ${t('specs.branch', { branch: spec.branch })}`}
                 </small>
+                {spec.interviewId && (
+                  <div className={styles.specRelation}>
+                    <span>{t('specs.interview')}</span>
+                    <Link
+                      className={buttonClass({ variant: 'secondary' })}
+                      to={interviewPath(spec.interviewId)}
+                    >
+                      {interviewTitle ?? t('specs.viewInterview')}
+                    </Link>
+                  </div>
+                )}
                 <div className={styles.specRelation}>
                   <span>{t('specs.dependencies')}</span>
                   {spec.dependsOn.length ? specLinks(spec.dependsOn) : t('specs.noDependencies')}

@@ -7,7 +7,7 @@ import { STATUS_KIND } from './statusKind';
 import styles from './SpecsPage.module.scss';
 
 /** One specification in the registry list; picking it opens its detail screen. */
-export function SpecRow({ spec }: { spec: ControlTowerSpec }) {
+export function SpecRow({ spec, isNew = false }: { spec: ControlTowerSpec; isNew?: boolean }) {
   const { t } = useTranslation('controltower');
   const navigate = useNavigate();
   return (
@@ -24,6 +24,7 @@ export function SpecRow({ spec }: { spec: ControlTowerSpec }) {
             {spec.branch && ` · ${t('specs.branch', { branch: spec.branch })}`}
           </small>
         </span>
+        {isNew && <StatusChip label={t('specs.new')} kind="active" />}
         <StatusChip label={t(`specs.status.${spec.status}`)} kind={STATUS_KIND[spec.status]} />
         <Icon name="arrow-right" />
       </button>

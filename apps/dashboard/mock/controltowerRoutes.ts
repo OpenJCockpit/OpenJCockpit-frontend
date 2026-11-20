@@ -219,6 +219,7 @@ const SEED_SPECS: SeedSpec[] = [
 /** Fills a new mock repository with interviews and specs in every status, so every page has something to show. */
 function seedRepository(projectId: string) {
   const ids = new Map<string, string>();
+  const kickoffInterviewId = nextId('ct-interview');
   for (const seed of SEED_SPECS) ids.set(seed.key, nextId('ct-spec'));
   for (const seed of SEED_SPECS) {
     specs.push({
@@ -231,11 +232,12 @@ function seedRepository(projectId: string) {
       dependsOn: seed.dependsOn.map((d) => ids.get(d) ?? d),
       specPath: `docs/specs/${seed.key}.md`,
       branch: seed.status === 'DRAFT' ? null : `spec/${seed.key}`,
+      interviewId: kickoffInterviewId,
     });
   }
   interviews.push(
     {
-      id: nextId('ct-interview'),
+      id: kickoffInterviewId,
       projectId,
       templateId: 'tpl-project',
       kind: 'PROJECT',
@@ -423,6 +425,7 @@ add('POST', '/interviews/:id/generate', ({ p }) => {
     dependsOn: [],
     specPath: 'docs/specs/generated.md',
     branch: null,
+    interviewId: current.id,
   };
   specs.push(created);
   current.status = 'GENERATED';

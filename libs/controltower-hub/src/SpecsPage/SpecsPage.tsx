@@ -26,6 +26,7 @@ export function SpecsPage() {
   const specs = useSpecs(repository.id);
   const data = specs.data;
   const handoff = useHandoffNotice();
+  const newIds = new Set(handoff?.specIds);
   const [params, setParams] = useSearchParams();
   const filter = filterFromParams(params);
 
@@ -38,7 +39,23 @@ export function SpecsPage() {
       <PanelBody>
         {handoff !== null && (
           <StatusMessage role="status" variant="info">
-            {t('specs.draftsCreated', { count: handoff })}
+            {t('specs.draftsCreated', { count: handoff.draftsCreated })}
+          </StatusMessage>
+        )}
+        {filter.interviewId !== null && (
+          <StatusMessage role="status" variant="info">
+            {t('specs.fromInterview')}{' '}
+            <Link
+              to={{
+                search: (() => {
+                  const next = new URLSearchParams(params);
+                  next.delete('interview');
+                  return next.toString();
+                })(),
+              }}
+            >
+              {t('specs.showAll')}
+            </Link>
           </StatusMessage>
         )}
         <ControlTowerQuery
@@ -60,7 +77,11 @@ export function SpecsPage() {
           }
         >
           {(rows) => {
-            const shown = byStatusThenNewest(filterSpecs(rows, filter));
+            const sorted = byStatusThenNewest(filterSpecs(rows, filter));
+            const shown = [
+              ...sorted.filter((spec) => newIds.has(spec.id)),
+              ...sorted.filter((spec) => !newIds.has(spec.id)),
+            ];
             return (
               <>
                 <SpecFilterBar
@@ -82,7 +103,7 @@ export function SpecsPage() {
                 />
                 {shown.length === 0 && <EmptyState title={t('specs.noMatches')} />}
                 {shown.map((spec) => (
-                  <SpecRow key={spec.id} spec={spec} />
+                  <SpecRow key={spec.id} spec={spec} isNew={newIds.has(spec.id)} />
                 ))}
               </>
             );

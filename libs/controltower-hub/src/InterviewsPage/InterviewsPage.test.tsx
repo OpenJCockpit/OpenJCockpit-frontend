@@ -113,6 +113,10 @@ describe('interviews', () => {
     fireEvent.click(await screen.findByText('Kick-off'));
     expect(await screen.findByRole('button', { name: 'Close session' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Generate spec drafts' })).toBeNull();
+    expect(screen.getByRole('link', { name: 'View generated specs' })).toHaveAttribute(
+      'href',
+      `/controltower/specs?interview=${INTERVIEW.id}`,
+    );
     expect(screen.queryByRole('combobox', { name: /Spec output template/ })).toBeNull();
   });
 

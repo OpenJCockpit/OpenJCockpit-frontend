@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { deriveBlockers, isBlocked } from './specGraph';
+import { deriveBlockers, draftReviewOrder, isBlocked } from './specGraph';
 
 const spec = (id: string, status: string, dependsOn: string[] = []) => ({
   id,
@@ -45,5 +45,27 @@ describe('deriveBlockers', () => {
     const map = deriveBlockers([spec('a', 'DRAFT'), spec('b', 'DRAFT', ['a', 'a'])]);
     expect(map.get('b')?.blockedBy).toEqual(['a']);
     expect(map.get('a')?.blocks).toEqual(['b']);
+  });
+});
+
+describe('draftReviewOrder', () => {
+  const draft = (id: string, specPath: string, dependsOn: string[] = [], status = 'DRAFT') => ({
+    ...spec(id, status, dependsOn),
+    specPath,
+  });
+
+  it('puts dependencies first and otherwise goes oldest first', () => {
+    const order = draftReviewOrder([
+      draft('c', '003-c.md'),
+      draft('b', '002-b.md', ['c']),
+      draft('a', '001-a.md', ['b']),
+      draft('x', '004-x.md', [], 'APPROVED'),
+    ]);
+    expect(order.map((s) => s.id)).toEqual(['c', 'b', 'a']);
+  });
+
+  it('survives a dependency cycle', () => {
+    const order = draftReviewOrder([draft('a', '001-a.md', ['b']), draft('b', '002-b.md', ['a'])]);
+    expect(order.map((s) => s.id)).toEqual(['a', 'b']);
   });
 });

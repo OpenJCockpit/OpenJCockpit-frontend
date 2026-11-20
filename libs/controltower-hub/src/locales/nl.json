@@ -121,7 +121,8 @@
       "answered_other": "{{count}} beantwoord",
       "submitShortcut": "om te verzenden",
       "shortcutCtrl": "Ctrl",
-      "shortcutEnter": "Enter"
+      "shortcutEnter": "Enter",
+      "viewSpecs": "Bekijk gegenereerde specs"
     },
     "speech": {
       "speak": "Spreken",
@@ -166,7 +167,13 @@
       "copied": "Gekopieerd",
       "copyBranch": "Branchnaam kopiëren",
       "copyBody": "Spec-tekst kopiëren",
-      "emptyAction": "Een discovery-interview starten"
+      "emptyAction": "Een discovery-interview starten",
+      "new": "Nieuw",
+      "nextDraft": "Volgend concept beoordelen",
+      "fromInterview": "Toont de specificaties die uit dit interview zijn gegenereerd.",
+      "showAll": "Alles tonen",
+      "interview": "Interview:",
+      "viewInterview": "Interview bekijken"
     },
     "graph": {
       "title": "Afhankelijkhedengraaf",

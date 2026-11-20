@@ -156,6 +156,13 @@ describe('specifications', () => {
     expect(await screen.findByText('Blocks:')).toBeInTheDocument();
   });
 
+  it('links a specification to the interview it came from', async () => {
+    const { router } = renderRoutes(controltowerRoutes, { path });
+    fireEvent.click(await screen.findByText('Login page'));
+    fireEvent.click(await screen.findByRole('link', { name: 'Kick-off' }));
+    expect(router.state.location.pathname).toBe('/controltower/interviews/i1');
+  });
+
   it('says so when the specification does not exist', async () => {
     renderRoutes(controltowerRoutes, { path: `${path}/nope` });
     expect(await screen.findByText('This specification no longer exists.')).toBeInTheDocument();
