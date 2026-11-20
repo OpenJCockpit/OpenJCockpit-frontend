@@ -161,7 +161,7 @@
       "approve": "Approve and push",
       "approving": "Pushing…",
       "approved": "Spec pushed to branch {{branch}}. Merge it into the branch OpenJCockpit reads before dispatch.",
-      "confirmDone": "Confirm externally completed",
+      "confirmDone": "Mark done manually",
       "completed": "Marked as done. Verify in OpenJCockpit first.",
       "status": {
         "DRAFT": "Draft",

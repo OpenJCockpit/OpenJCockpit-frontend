@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
   useMutation,
   useQuery,
@@ -16,6 +17,7 @@ import {
   listControlTowerSpecs,
   listControlTowerTemplates,
   queryKeys,
+  reconcileControlTowerSpecs,
 } from '@openjcockpit/api';
 import type {
   ControlTowerGraph,
@@ -173,4 +175,39 @@ export function useControlTowerCounts(repositoryId: string): {
     completeInterviews: interviews?.filter((i) => i.status === 'COMPLETE').length,
     templates: templates?.length,
   };
+}
+
+/** How often dispatched specs are checked against OpenJCockpit while a Control Tower page is open. */
+export const RECONCILE_INTERVAL_MS = 30_000;
+
+/**
+ * While specs are waiting on OpenJCockpit, asks the backend now and then whether their queue items have finished.
+ * Specs it marks DONE refresh the repository's data. Checks pause while the tab is hidden, and a failure is ignored:
+ * "Mark done manually" stays as the fallback.
+ */
+export function useReconcileDispatched(repositoryId: string, enabled: boolean): void {
+  const client = useQueryClient();
+  const hasDispatched = useSpecs(repositoryId).data?.some((s) => s.status === 'DISPATCHED');
+  useEffect(() => {
+    if (!enabled || !hasDispatched) return;
+    let inFlight = false;
+    const check = () => {
+      if (inFlight || document.hidden) return;
+      inFlight = true;
+      reconcileControlTowerSpecs(repositoryId)
+        .then(
+          (changed) =>
+            changed.length > 0
+              ? client.invalidateQueries({ queryKey: ['controltower', repositoryId] })
+              : undefined,
+          () => undefined,
+        )
+        .finally(() => {
+          inFlight = false;
+        });
+    };
+    check();
+    const timer = setInterval(check, RECONCILE_INTERVAL_MS);
+    return () => clearInterval(timer);
+  }, [enabled, hasDispatched, repositoryId, client]);
 }

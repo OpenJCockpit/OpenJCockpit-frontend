@@ -161,7 +161,7 @@
       "approve": "Goedkeuren en pushen",
       "approving": "Pushen…",
       "approved": "Spec gepusht naar branch {{branch}}. Merge die vóór het dispatchen in de branch die OpenJCockpit leest.",
-      "confirmDone": "Extern afgerond bevestigen",
+      "confirmDone": "Handmatig als klaar markeren",
       "completed": "Als klaar gemarkeerd. Controleer dit eerst in OpenJCockpit.",
       "status": {
         "DRAFT": "Concept",

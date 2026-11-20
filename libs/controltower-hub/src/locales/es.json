@@ -161,7 +161,7 @@
       "approve": "Aprobar y enviar",
       "approving": "Enviando…",
       "approved": "Spec enviada a la rama {{branch}}. Fusiónala en la rama que lee OpenJCockpit antes de despachar.",
-      "confirmDone": "Confirmar completada externamente",
+      "confirmDone": "Marcar como hecha manualmente",
       "completed": "Marcada como hecha. Compruébalo antes en OpenJCockpit.",
       "status": {
         "DRAFT": "Borrador",

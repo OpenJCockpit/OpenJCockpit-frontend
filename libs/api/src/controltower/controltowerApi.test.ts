@@ -17,6 +17,7 @@ import {
   getControlTowerQueueProposal,
   getControlTowerSettings,
   listControlTowerInterviews,
+  reconcileControlTowerSpecs,
   listControlTowerProjects,
   listControlTowerSpecs,
   listControlTowerSpecTemplates,
@@ -163,6 +164,15 @@ describe('controltowerApi', () => {
     expect(url).toContain(`${CONTROLTOWER_API_PREFIX}${path}`);
     expect(init.method).toBe(method);
     expect(init.headers['Content-Type']).toBe('application/json');
+  });
+
+  it('posts the reconcile request without a body', async () => {
+    mockFetch.mockResolvedValueOnce(ok([]));
+    await reconcileControlTowerSpecs('p1');
+    const { url, init } = lastCall();
+    expect(url).toContain(`${CONTROLTOWER_API_PREFIX}/projects/p1/queue/reconcile`);
+    expect(init.method).toBe('POST');
+    expect(init.body).toBeUndefined();
   });
 
   it('sends the answer and the dispatch flag as the body', async () => {

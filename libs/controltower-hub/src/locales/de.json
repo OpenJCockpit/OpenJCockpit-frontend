@@ -161,7 +161,7 @@
       "approve": "Freigeben und pushen",
       "approving": "Pusht…",
       "approved": "Spec in Branch {{branch}} gepusht. Merge ihn vor dem Dispatch in den Branch, den OpenJCockpit liest.",
-      "confirmDone": "Extern abgeschlossen bestätigen",
+      "confirmDone": "Manuell als erledigt markieren",
       "completed": "Als erledigt markiert. Prüfe das zuerst in OpenJCockpit.",
       "status": {
         "DRAFT": "Entwurf",

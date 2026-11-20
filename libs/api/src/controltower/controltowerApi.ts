@@ -232,6 +232,15 @@ export function getControlTowerQueueProposal(
   );
 }
 
+/** Asks the backend to mark dispatched specs DONE when OpenJCockpit reports their queue item finished; answers the specs that changed. */
+export function reconcileControlTowerSpecs(projectId: string): Promise<ControlTowerSpec[]> {
+  return request(
+    `/projects/${id(projectId)}/queue/reconcile`,
+    'POST',
+    'Failed to check the dispatched specs',
+  );
+}
+
 export function dispatchControlTowerSpecs(
   projectId: string,
   repositoryPublished: boolean,

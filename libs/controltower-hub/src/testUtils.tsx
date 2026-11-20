@@ -121,6 +121,7 @@ export const ct = api as unknown as ControlTowerRequests & Record<string, Return
 export function stubApi() {
   for (const fn of Object.values(ct)) if (vi.isMockFunction(fn)) fn.mockReset();
   ct.getControlTowerProjectByCockpitProject.mockResolvedValue(REPOSITORY);
+  ct.reconcileControlTowerSpecs.mockResolvedValue([]);
   ct.listControlTowerInterviews.mockResolvedValue([INTERVIEW]);
   // The detail screen loads one interview; serve it from whatever the list mock currently holds.
   vi.mocked(api.getControlTowerInterview).mockImplementation((interviewId: string) =>

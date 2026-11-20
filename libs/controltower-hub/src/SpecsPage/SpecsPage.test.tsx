@@ -1,6 +1,7 @@
 import { fireEvent, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { controltowerRoutes } from '../controltowerRoutes';
+import { RECONCILE_INTERVAL_MS } from '../hooks';
 import { ct, renderRoutes, SPEC_DISPATCHED, SPEC_DRAFT } from '../testUtils';
 
 describe('specifications', () => {
@@ -45,7 +46,7 @@ describe('specifications', () => {
     ct.completeControlTowerSpec.mockResolvedValue({ ...SPEC_DISPATCHED, status: 'DONE' });
     renderRoutes(controltowerRoutes, { path });
     fireEvent.click(await screen.findByText('Logout'));
-    fireEvent.click(await screen.findByRole('button', { name: 'Confirm externally completed' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Mark done manually' }));
     expect(await screen.findByText(/Marked as done/)).toBeInTheDocument();
     expect(ct.completeControlTowerSpec).toHaveBeenCalledWith('s2');
   });
@@ -54,7 +55,7 @@ describe('specifications', () => {
     ct.completeControlTowerSpec.mockRejectedValue('plain failure');
     renderRoutes(controltowerRoutes, { path });
     fireEvent.click(await screen.findByText('Logout'));
-    fireEvent.click(await screen.findByRole('button', { name: 'Confirm externally completed' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Mark done manually' }));
     expect(await screen.findByRole('alert')).toHaveTextContent('plain failure');
   });
 
@@ -63,7 +64,7 @@ describe('specifications', () => {
     fireEvent.click(await screen.findByText('Login page'));
     expect(await screen.findByText('# Login')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Approve and push branch' })).toBeNull();
-    expect(screen.queryByRole('button', { name: 'Confirm externally completed' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Mark done manually' })).toBeNull();
   });
 
   it('shows the empty and error states', async () => {
@@ -241,5 +242,34 @@ describe('specifications', () => {
       await screen.findByText('Alpha');
       expect(screen.queryByLabelText('Select all drafts')).toBeNull();
     });
+  });
+});
+
+describe('reconciling dispatched specs', () => {
+  it('asks the backend and refreshes the specs when one finished', async () => {
+    ct.reconcileControlTowerSpecs.mockResolvedValue([{ ...SPEC_DISPATCHED, status: 'DONE' }]);
+    renderRoutes(controltowerRoutes, { path: '/controltower/specs' });
+    await vi.waitFor(() => expect(ct.reconcileControlTowerSpecs).toHaveBeenCalledWith('r1'));
+    await vi.waitFor(() => expect(ct.listControlTowerSpecs.mock.calls.length).toBeGreaterThan(1));
+    expect(ct.reconcileControlTowerSpecs).toHaveBeenCalledTimes(1);
+  });
+
+  it('checks again periodically while specs are dispatched', async () => {
+    vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] });
+    try {
+      renderRoutes(controltowerRoutes, { path: '/controltower/specs' });
+      await vi.waitFor(() => expect(ct.reconcileControlTowerSpecs).toHaveBeenCalledTimes(1));
+      await vi.advanceTimersByTimeAsync(RECONCILE_INTERVAL_MS);
+      expect(ct.reconcileControlTowerSpecs).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('stays quiet when the check fails', async () => {
+    ct.reconcileControlTowerSpecs.mockRejectedValue(new Error('cockpit down'));
+    renderRoutes(controltowerRoutes, { path: '/controltower/specs' });
+    await vi.waitFor(() => expect(ct.reconcileControlTowerSpecs).toHaveBeenCalled());
+    expect(screen.queryByText('cockpit down')).toBeNull();
   });
 });
