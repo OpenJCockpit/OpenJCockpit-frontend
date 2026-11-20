@@ -1,7 +1,9 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { controltowerRoutes } from '../controltowerRoutes';
-import { ct, renderRoutes, SPEC_DISPATCHED, SPEC_DRAFT } from '../testUtils';
+import { ct, INTERVIEW, renderRoutes, SPEC_DISPATCHED, SPEC_DRAFT } from '../testUtils';
+
+const GENERATED = { ...INTERVIEW, status: 'GENERATED' as const };
 
 const stat = (label: string) =>
   screen
@@ -16,6 +18,8 @@ describe('overview', () => {
     await waitFor(() => expect(within(stat('Interviews')).getByText('1')).toBeInTheDocument());
     expect(within(stat('Specifications')).getByText('2')).toBeInTheDocument();
     expect(within(stat('Ready to dispatch')).getByText('1')).toBeInTheDocument();
+    expect(within(stat('Needs review')).getByText('1')).toBeInTheDocument();
+    expect(stat('Needs review')).toHaveAttribute('href', '/controltower/specs?status=DRAFT');
     expect(stat('Interviews')).toHaveAttribute('href', '/controltower/interviews');
     expect(stat('Specifications')).toHaveAttribute('href', '/controltower/specs');
     expect(stat('Ready to dispatch')).toHaveAttribute('href', '/controltower/queue');
@@ -47,24 +51,53 @@ describe('overview', () => {
       await cta('Create a template', '/controltower/templates');
     });
 
+    it('resumes the one active interview', async () => {
+      renderRoutes(controltowerRoutes);
+      await cta('Resume interview', '/controltower/interviews/i1');
+    });
+
+    it('lets the user pick when several interviews are active', async () => {
+      ct.listControlTowerInterviews.mockResolvedValue([INTERVIEW, { ...INTERVIEW, id: 'i2' }]);
+      renderRoutes(controltowerRoutes);
+      await cta('Resume interview', '/controltower/interviews');
+    });
+
+    it('generates specs for a completed interview', async () => {
+      ct.listControlTowerInterviews.mockResolvedValue([{ ...INTERVIEW, status: 'COMPLETE' }]);
+      renderRoutes(controltowerRoutes);
+      await cta('Generate specs', '/controltower/interviews/i1');
+    });
+
+    it('confirms dispatched specs when nothing else waits', async () => {
+      ct.listControlTowerInterviews.mockResolvedValue([GENERATED]);
+      ct.listControlTowerSpecs.mockResolvedValue([SPEC_DISPATCHED]);
+      ct.getControlTowerQueueProposal.mockResolvedValue([]);
+      renderRoutes(controltowerRoutes);
+      await cta('Confirm 1 spec done', '/controltower/specs?status=DISPATCHED');
+    });
+
     it('starts discovery when there are no specs', async () => {
+      ct.listControlTowerInterviews.mockResolvedValue([GENERATED]);
       ct.listControlTowerSpecs.mockResolvedValue([]);
       renderRoutes(controltowerRoutes);
       await cta('Start discovery', '/controltower/interviews');
     });
 
     it('reviews the drafts', async () => {
+      ct.listControlTowerInterviews.mockResolvedValue([GENERATED]);
       renderRoutes(controltowerRoutes);
       await cta('Review 1 draft', '/controltower/specs');
     });
 
     it('pluralises the drafts', async () => {
+      ct.listControlTowerInterviews.mockResolvedValue([GENERATED]);
       ct.listControlTowerSpecs.mockResolvedValue([SPEC_DRAFT, { ...SPEC_DRAFT, id: 's3' }]);
       renderRoutes(controltowerRoutes);
       await cta('Review 2 drafts', '/controltower/specs');
     });
 
     it('goes to dispatch when specs are ready', async () => {
+      ct.listControlTowerInterviews.mockResolvedValue([GENERATED]);
       ct.listControlTowerSpecs.mockResolvedValue([SPEC_DISPATCHED]);
       renderRoutes(controltowerRoutes);
       await cta('Go to dispatch', '/controltower/queue');
@@ -112,6 +145,11 @@ describe('tab badges', () => {
     renderRoutes(controltowerRoutes);
     expect(await screen.findByRole('link', { name: 'Specifications 1' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Dispatch queue 1' })).toBeInTheDocument();
+  });
+
+  it('shows the interviews in progress on Discovery interviews', async () => {
+    renderRoutes(controltowerRoutes);
+    expect(await screen.findByRole('link', { name: 'Discovery interviews 1' })).toBeInTheDocument();
   });
 
   it('hides a badge at zero and while loading', async () => {

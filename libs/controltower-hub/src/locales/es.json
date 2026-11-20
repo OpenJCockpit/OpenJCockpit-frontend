@@ -54,6 +54,7 @@
       "interviews": "Entrevistas",
       "specs": "Especificaciones",
       "ready": "Listas para despachar",
+      "needsReview": "Por revisar",
       "howTitle": "Cómo funciona",
       "steps": {
         "repository": "Conecta un repositorio y su workflow de OpenJCockpit",
@@ -69,6 +70,10 @@
       "ctaReview_one": "Revisar {{count}} borrador",
       "ctaReview_other": "Revisar {{count}} borradores",
       "ctaDispatch": "Ir al despacho",
+      "ctaResume": "Reanudar entrevista",
+      "ctaGenerate": "Generar specs",
+      "ctaConfirm_one": "Confirmar {{count}} spec como hecha",
+      "ctaConfirm_other": "Confirmar {{count}} specs como hechas",
       "stepDone": "Hecho"
     },
     "interviews": {
@@ -76,6 +81,9 @@
       "previous": "Entrevistas anteriores",
       "template": "Plantilla de entrevista",
       "selectTemplate": "Selecciona una plantilla",
+      "noTemplatesTitle": "Crea primero una plantilla",
+      "noTemplatesHint": "Una entrevista parte de una plantilla de cuestionario.",
+      "noTemplatesAction": "Ir a plantillas",
       "featureRequest": "Solicitud de nueva funcionalidad",
       "featurePlaceholder": "Describe la funcionalidad que quieres crear…",
       "start": "Iniciar entrevista",

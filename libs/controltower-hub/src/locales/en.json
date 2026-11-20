@@ -54,6 +54,7 @@
       "interviews": "Interviews",
       "specs": "Specifications",
       "ready": "Ready to dispatch",
+      "needsReview": "Needs review",
       "howTitle": "How it works",
       "steps": {
         "repository": "Connect a repository and its OpenJCockpit workflow",
@@ -69,6 +70,10 @@
       "ctaReview_one": "Review {{count}} draft",
       "ctaReview_other": "Review {{count}} drafts",
       "ctaDispatch": "Go to dispatch",
+      "ctaResume": "Resume interview",
+      "ctaGenerate": "Generate specs",
+      "ctaConfirm_one": "Confirm {{count}} spec done",
+      "ctaConfirm_other": "Confirm {{count}} specs done",
       "stepDone": "Done"
     },
     "interviews": {
@@ -76,6 +81,9 @@
       "previous": "Previous interviews",
       "template": "Interview template",
       "selectTemplate": "Select template",
+      "noTemplatesTitle": "Create a template first",
+      "noTemplatesHint": "An interview starts from a questionnaire template.",
+      "noTemplatesAction": "Go to templates",
       "featureRequest": "New feature request",
       "featurePlaceholder": "Describe the feature you'd like to create…",
       "start": "Start interview",

@@ -54,6 +54,7 @@
       "interviews": "Interviews",
       "specs": "Spezifikationen",
       "ready": "Bereit zum Dispatch",
+      "needsReview": "Zu prüfen",
       "howTitle": "So funktioniert es",
       "steps": {
         "repository": "Repository und zugehörigen OpenJCockpit-Workflow verbinden",
@@ -69,6 +70,10 @@
       "ctaReview_one": "{{count}} Entwurf prüfen",
       "ctaReview_other": "{{count}} Entwürfe prüfen",
       "ctaDispatch": "Zum Dispatch",
+      "ctaResume": "Interview fortsetzen",
+      "ctaGenerate": "Specs erzeugen",
+      "ctaConfirm_one": "{{count}} Spec als erledigt bestätigen",
+      "ctaConfirm_other": "{{count}} Specs als erledigt bestätigen",
       "stepDone": "Erledigt"
     },
     "interviews": {
@@ -76,6 +81,9 @@
       "previous": "Frühere Interviews",
       "template": "Interviewvorlage",
       "selectTemplate": "Vorlage wählen",
+      "noTemplatesTitle": "Erstelle zuerst eine Vorlage",
+      "noTemplatesHint": "Ein Interview startet mit einer Fragebogen-Vorlage.",
+      "noTemplatesAction": "Zu den Vorlagen",
       "featureRequest": "Neue Feature-Anfrage",
       "featurePlaceholder": "Beschreibe das Feature, das du erstellen möchtest…",
       "start": "Interview starten",

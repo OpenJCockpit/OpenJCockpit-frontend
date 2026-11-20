@@ -54,6 +54,7 @@
       "interviews": "Interviews",
       "specs": "Specificaties",
       "ready": "Klaar om te dispatchen",
+      "needsReview": "Te beoordelen",
       "howTitle": "Zo werkt het",
       "steps": {
         "repository": "Koppel een repository en de bijbehorende OpenJCockpit-workflow",
@@ -69,6 +70,10 @@
       "ctaReview_one": "{{count}} concept beoordelen",
       "ctaReview_other": "{{count}} concepten beoordelen",
       "ctaDispatch": "Naar dispatch",
+      "ctaResume": "Interview hervatten",
+      "ctaGenerate": "Specs genereren",
+      "ctaConfirm_one": "{{count}} spec als klaar bevestigen",
+      "ctaConfirm_other": "{{count}} specs als klaar bevestigen",
       "stepDone": "Klaar"
     },
     "interviews": {
@@ -76,6 +81,9 @@
       "previous": "Eerdere interviews",
       "template": "Interviewsjabloon",
       "selectTemplate": "Kies een sjabloon",
+      "noTemplatesTitle": "Maak eerst een sjabloon",
+      "noTemplatesHint": "Een interview start vanuit een vragenlijstsjabloon.",
+      "noTemplatesAction": "Naar sjablonen",
       "featureRequest": "Nieuw featureverzoek",
       "featurePlaceholder": "Beschrijf de feature die je wilt maken…",
       "start": "Interview starten",

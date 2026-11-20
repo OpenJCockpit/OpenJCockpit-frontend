@@ -146,6 +146,10 @@ export interface ControlTowerCounts {
   /** Specs the queue proposes for dispatch. */
   ready: number;
   interviews: number;
+  /** Interviews still being answered. */
+  activeInterviews: number;
+  /** Finished interviews whose specs are not generated yet. */
+  completeInterviews: number;
   templates: number;
 }
 
@@ -165,6 +169,8 @@ export function useControlTowerCounts(repositoryId: string): {
     done: countStatus('DONE'),
     ready: ready?.length,
     interviews: interviews?.length,
+    activeInterviews: interviews?.filter((i) => i.status === 'ACTIVE').length,
+    completeInterviews: interviews?.filter((i) => i.status === 'COMPLETE').length,
     templates: templates?.length,
   };
 }

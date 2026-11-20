@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from '@openjcockpit/i18n';
+import type { ControlTowerInterview } from '@openjcockpit/api';
 import {
   ActionRow,
   Icon,
@@ -21,6 +22,7 @@ import {
   CONTROLTOWER_REPOSITORY_SETTINGS_PATH,
   CONTROLTOWER_SPECS_PATH,
   CONTROLTOWER_TEMPLATES_PATH,
+  interviewPath,
 } from '../routePaths';
 import styles from './OverviewPage.module.scss';
 
@@ -49,24 +51,42 @@ function stepsDone(counts: Counts): Record<Step, boolean | undefined> {
   };
 }
 
-/** The most useful next move: set up, discover, review drafts, dispatch. Falls back to discovery. */
-function useNextAction(counts: Counts): { to: string; label: string } {
+/** The interview itself when exactly one matches, otherwise the list to pick from. */
+function interviewTarget(interviews: readonly ControlTowerInterview[] | undefined, status: string) {
+  const matching = interviews?.filter((i) => i.status === status) ?? [];
+  const [only, ...others] = matching;
+  return only && others.length === 0 ? interviewPath(only.id) : CONTROLTOWER_INTERVIEWS_PATH;
+}
+
+/**
+ * The most useful next move, in workflow order: a template, an interview to resume or turn into specs,
+ * drafts to review, specs to dispatch, dispatched specs to confirm. Falls back to starting discovery.
+ */
+function useNextAction(
+  counts: Counts,
+  interviews: readonly ControlTowerInterview[] | undefined,
+): { to: string; label: string } {
   const { t } = useTranslation('controltower');
-  const { templates, drafts, approved, dispatched, done, ready } = counts;
+  const { templates, activeInterviews, completeInterviews, drafts, dispatched, ready } = counts;
   if (templates === 0) {
     return { to: CONTROLTOWER_TEMPLATES_PATH, label: t('overview.ctaTemplates') };
   }
-  const specs = [drafts, approved, dispatched, done].every((n) => n !== undefined)
-    ? (drafts ?? 0) + (approved ?? 0) + (dispatched ?? 0) + (done ?? 0)
-    : undefined;
-  if (specs === 0) return { to: CONTROLTOWER_INTERVIEWS_PATH, label: t('overview.start') };
+  if (activeInterviews) {
+    return { to: interviewTarget(interviews, 'ACTIVE'), label: t('overview.ctaResume') };
+  }
+  if (completeInterviews) {
+    return { to: interviewTarget(interviews, 'COMPLETE'), label: t('overview.ctaGenerate') };
+  }
   if (drafts) {
-    return {
-      to: CONTROLTOWER_SPECS_PATH,
-      label: t('overview.ctaReview', { count: drafts }),
-    };
+    return { to: CONTROLTOWER_SPECS_PATH, label: t('overview.ctaReview', { count: drafts }) };
   }
   if (ready) return { to: CONTROLTOWER_QUEUE_PATH, label: t('overview.ctaDispatch') };
+  if (dispatched) {
+    return {
+      to: `${CONTROLTOWER_SPECS_PATH}?status=DISPATCHED`,
+      label: t('overview.ctaConfirm', { count: dispatched }),
+    };
+  }
   return { to: CONTROLTOWER_INTERVIEWS_PATH, label: t('overview.start') };
 }
 
@@ -104,7 +124,7 @@ export function OverviewPage() {
   const done = stepsDone(counts);
   const steps = Object.keys(STEP_PATHS) as Step[];
   const current = steps.find((step) => done[step] === false);
-  const next = useNextAction(counts);
+  const next = useNextAction(counts, interviews.data);
   const specCount = specs.data?.length;
 
   return (
@@ -119,6 +139,12 @@ export function OverviewPage() {
           to={CONTROLTOWER_INTERVIEWS_PATH}
           value={counts.interviews}
           failed={interviews.isError}
+        />
+        <Stat
+          label={t('overview.needsReview')}
+          to={`${CONTROLTOWER_SPECS_PATH}?status=DRAFT`}
+          value={counts.drafts}
+          failed={specs.isError}
         />
         <Stat
           label={t('overview.specs')}

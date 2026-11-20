@@ -36,6 +36,17 @@ describe('interviews', () => {
     expect(await screen.findByText(/2 drafts created/)).toBeInTheDocument();
   });
 
+  it('points to the templates when there are none to start from', async () => {
+    ct.listControlTowerTemplates.mockResolvedValue([]);
+    renderRoutes(controltowerRoutes, { path });
+    expect(await screen.findByText('Create a template first')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Go to templates' })).toHaveAttribute(
+      'href',
+      '/controltower/templates',
+    );
+    expect(screen.queryByRole('button', { name: 'Start interview' })).not.toBeInTheDocument();
+  });
+
   it('shows the answer count, keeps an unsent draft per interview and submits with Ctrl+Enter', async () => {
     ct.answerControlTowerInterview.mockResolvedValue({ ...INTERVIEW, status: 'COMPLETE' });
     ct.listControlTowerInterviews.mockResolvedValue([
