@@ -53,7 +53,8 @@
       "EMBABEL_UNAVAILABLE": "De agentservice is niet beschikbaar",
       "NOT_FOUND": "Verbinding niet gevonden",
       "NAME_CONFLICT": "Er bestaat al een verbinding met deze naam",
-      "API_KEY_REQUIRED": "Een API-sleutel is verplicht"
+      "API_KEY_REQUIRED": "Een API-sleutel is verplicht",
+      "SERVICE_UNAVAILABLE": "De service is niet bereikbaar"
     }
   }
 }

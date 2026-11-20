@@ -282,6 +282,11 @@
       "controltower": {
         "widgetTitle": "Klaar om te dispatchen"
       }
+    },
+    "remoteFailures": {
+      "title": "Sommige apps zijn niet beschikbaar",
+      "body": "Deze apps konden niet worden geladen en ontbreken op deze pagina: {{apps}}. Laad de pagina opnieuw of vraag een beheerder te controleren of ze draaien.",
+      "dismiss": "Sluiten"
     }
   }
 }

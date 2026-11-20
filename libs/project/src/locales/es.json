@@ -20,7 +20,9 @@
       "manageGear": "Gestionar proyectos",
       "owner": "Responsable: {{owner}}",
       "branch": "Rama: {{branch}}",
-      "notReachableNotice": "Repositorio no accesible. Actualiza el proyecto en Gestionar proyectos."
+      "notReachableNotice": "Repositorio no accesible. Actualiza el proyecto en Gestionar proyectos.",
+      "loadFailed": "No se pudieron cargar sus proyectos. Es posible que el backend no esté disponible.",
+      "retry": "Reintentar"
     },
     "settings": {
       "loading": "Cargando proyectos…",

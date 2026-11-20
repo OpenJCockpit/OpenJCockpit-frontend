@@ -1,6 +1,7 @@
 import { federation } from '@module-federation/vite';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { mergeConfig } from 'vite';
+import { mergeConfig, type Plugin } from 'vite';
 import base from '../../vite.config.base';
 import { sharedModules } from '../../module-federation.shared';
 import { mockApi } from './mock/mockApi';
@@ -19,11 +20,35 @@ const plugins = process.env.VITEST
       }),
     ];
 
+// `npm run start:hub:core`: HUB_WITHOUT=controltower,... leaves those remotes out of the dev manifest, so the
+// host runs as if they were not installed (no request to a dev server that is not running).
+function withoutRemotes(names: string[]): Plugin {
+  return {
+    name: 'manifest-without-remotes',
+    configureServer(server) {
+      server.middlewares.use('/federation.manifest.json', (_req, res) => {
+        const file = fileURLToPath(new URL('./public/federation.manifest.json', import.meta.url));
+        const manifest = JSON.parse(readFileSync(file, 'utf8')) as Record<string, string>;
+        for (const name of names) delete manifest[name];
+        res.setHeader('content-type', 'application/json');
+        res.setHeader('cache-control', 'no-store');
+        res.end(JSON.stringify(manifest));
+      });
+    },
+  };
+}
+
+const omitted = (process.env.HUB_WITHOUT ?? '').split(',').filter(Boolean);
+
 // `npm run dev:mock`: serve fixtures for /api and skip Keycloak, so the UI runs without the backend.
 const mock = process.env.MOCK_API === '1';
 
 export default mergeConfig(base, {
-  plugins: mock ? [...plugins, mockApi()] : plugins,
+  plugins: [
+    ...plugins,
+    ...(omitted.length > 0 ? [withoutRemotes(omitted)] : []),
+    ...(mock ? [mockApi()] : []),
+  ],
   resolve: mock
     ? {
         alias: [

@@ -33,6 +33,23 @@ describe('ProjectSelection', () => {
     expect(onSettings).toHaveBeenCalledTimes(1);
   });
 
+  it('shows a load error with Retry instead of the empty state', () => {
+    const onRetry = vi.fn();
+    render(
+      <ProjectSelection
+        projects={[]}
+        onSelect={vi.fn()}
+        onSettings={vi.fn()}
+        loadFailed
+        onRetry={onRetry}
+      />,
+    );
+    expect(screen.getByRole('alert')).toHaveTextContent('Failed to load your projects');
+    expect(screen.queryByTestId('project-selection-empty')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
+    expect(onRetry).toHaveBeenCalledTimes(1);
+  });
+
   it('opens settings from the footer', () => {
     const { onSettings } = setup([project()]);
     fireEvent.click(screen.getAllByText('Manage projects')[0]!);

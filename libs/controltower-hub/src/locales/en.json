@@ -352,6 +352,10 @@
     "kind": {
       "PROJECT": "Initial project",
       "FEATURE": "New feature"
+    },
+    "unavailable": {
+      "title": "Control Tower is not reachable",
+      "hint": "The Control Tower service is not responding. Check that it is running, then try again."
     }
   }
 }

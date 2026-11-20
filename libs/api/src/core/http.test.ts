@@ -4,6 +4,7 @@ import {
   apiRequestVoid,
   authHeaders,
   isAbortError,
+  isServiceUnavailable,
   setAuthToken,
   setErrorTranslator,
   setSessionRefresher,
@@ -261,6 +262,41 @@ describe('server error codes', () => {
       message: 'name must not be blank',
       code: 'VALIDATION_ERROR',
     });
+  });
+
+  it('marks a gateway failure with an HTML body as unavailable and translates it', async () => {
+    setErrorTranslator((code) => (code === 'SERVICE_UNAVAILABLE' ? 'Niet bereikbaar' : undefined));
+    mockFetch.mockResolvedValue({
+      ok: false,
+      status: 502,
+      json: () => Promise.reject(new Error()),
+    });
+    const error = await apiRequest('/x', { errorMessage: 'Failed' }).catch((e: unknown) => e);
+    expect(error).toMatchObject({
+      message: 'Niet bereikbaar',
+      code: 'SERVICE_UNAVAILABLE',
+      status: 502,
+    });
+    expect(isServiceUnavailable(error)).toBe(true);
+  });
+
+  it('keeps the fallback message for a gateway failure without a translator', async () => {
+    mockFetch.mockResolvedValue({
+      ok: false,
+      status: 504,
+      json: () => Promise.reject(new Error()),
+    });
+    await expect(apiRequest('/x', { errorMessage: 'Failed' })).rejects.toMatchObject({
+      message: 'Failed: 504',
+      code: 'SERVICE_UNAVAILABLE',
+    });
+  });
+
+  it('does not treat a backend-reported 503 or other errors as unavailable', async () => {
+    failWith({ code: 'EMBABEL_UNAVAILABLE', message: 'down' });
+    const reported = await apiRequest('/x', { errorMessage: 'Failed' }).catch((e: unknown) => e);
+    expect(isServiceUnavailable(reported)).toBe(false);
+    expect(isServiceUnavailable(new Error('x'))).toBe(false);
   });
 
   it('reads the message of a ControlTower { error } body, without a code', async () => {

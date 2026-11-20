@@ -23,3 +23,8 @@ export function RemoteAppsProvider({
 export function useRemoteApps(): readonly AppDefinition[] {
   return useContext(RemoteAppsContext);
 }
+
+/** Names of the manifest's remotes that failed to load. */
+export function useRemoteFailures(): readonly string[] {
+  return useContext(RemoteFailuresContext);
+}

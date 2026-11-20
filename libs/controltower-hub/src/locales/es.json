@@ -352,6 +352,10 @@
     "kind": {
       "PROJECT": "Proyecto inicial",
       "FEATURE": "Nueva funcionalidad"
+    },
+    "unavailable": {
+      "title": "Control Tower no está disponible",
+      "hint": "El servicio de Control Tower no responde. Compruebe que está en ejecución e inténtelo de nuevo."
     }
   }
 }

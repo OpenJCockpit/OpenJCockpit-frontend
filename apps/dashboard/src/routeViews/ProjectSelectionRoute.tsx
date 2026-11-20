@@ -11,9 +11,13 @@ function redirectFrom(state: unknown): string | undefined {
 export function ProjectSelectionRoute({
   projects,
   onSelect,
+  loadFailed,
+  onRetry,
 }: {
   projects: Project[];
   onSelect: (project: Project) => void;
+  loadFailed?: boolean;
+  onRetry?: () => void;
 }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -21,6 +25,8 @@ export function ProjectSelectionRoute({
   return (
     <ProjectSelection
       projects={projects}
+      loadFailed={loadFailed}
+      onRetry={onRetry}
       onSelect={(project) => {
         onSelect(project);
         void navigate(from ?? ROUTES.home, { replace: true });

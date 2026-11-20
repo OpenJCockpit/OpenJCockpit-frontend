@@ -53,7 +53,8 @@
       "EMBABEL_UNAVAILABLE": "The agent service is unavailable",
       "NOT_FOUND": "Connection not found",
       "NAME_CONFLICT": "A connection with this name already exists",
-      "API_KEY_REQUIRED": "An API key is required"
+      "API_KEY_REQUIRED": "An API key is required",
+      "SERVICE_UNAVAILABLE": "The service is not reachable"
     }
   }
 }

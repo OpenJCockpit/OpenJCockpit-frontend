@@ -11,6 +11,7 @@ import {
 } from './homeLayout';
 import { CustomerHero } from '../components/CustomerHero/CustomerHero';
 import { HomeCustomiser } from './HomeCustomiser';
+import { RemoteFailuresNotice } from './RemoteFailuresNotice';
 import { WidgetCard } from './WidgetCard';
 import styles from './Home.module.scss';
 import gridStyles from './HomeGrid.module.scss';
@@ -69,6 +70,8 @@ export function Home() {
             </Button>
           </div>
         </div>
+
+        <RemoteFailuresNotice />
 
         {customising ? null : layout.length === 0 ? (
           <p className={styles.empty} data-testid="home-empty">

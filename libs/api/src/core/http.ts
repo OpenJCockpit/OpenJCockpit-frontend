@@ -49,6 +49,10 @@ export function authHeaders(): HeadersInit {
   return _authToken ? { Authorization: `Bearer ${_authToken}` } : {};
 }
 
+/** Synthetic `ApiError.code` for a gateway failure: the backend behind the proxy is down or unreachable. */
+export const SERVICE_UNAVAILABLE = 'SERVICE_UNAVAILABLE';
+const GATEWAY_STATUSES = [502, 503, 504];
+
 /** A non-2xx response; `status` lets callers tell a deterministic server failure from a network error. */
 export class ApiError extends Error {
   constructor(
@@ -100,10 +104,13 @@ async function apiFetch(
   if (!response.ok) {
     const fallback =
       typeof errorMessage === 'function' ? errorMessage(response.status) : errorMessage;
-    const { message, code } = await parseApiError(response, fallback);
+    const parsed = await parseApiError(response, fallback);
+    // A gateway answer (nginx 502/503/504, an HTML body) carries no server code: the backend is not reachable.
+    const code =
+      parsed.code ?? (GATEWAY_STATUSES.includes(response.status) ? SERVICE_UNAVAILABLE : undefined);
     // Known codes are shown in the active language; unknown codes keep the server's message.
     const localised = code ? _translateError?.(code) : undefined;
-    throw new ApiError(localised ?? message, response.status, code);
+    throw new ApiError(localised ?? parsed.message, response.status, code);
   }
   return response;
 }
@@ -116,6 +123,11 @@ export async function apiRequest<T>(path: string, options: RequestOptions): Prom
 /** Like `apiRequest` for endpoints that answer without a body (DELETE, activate, ...). */
 export async function apiRequestVoid(path: string, options: RequestOptions): Promise<void> {
   await apiFetch(path, options);
+}
+
+/** True when the backend could not be reached: a gateway failure (502/503/504), not a failure the backend reported. */
+export function isServiceUnavailable(error: unknown): boolean {
+  return error instanceof ApiError && error.code === SERVICE_UNAVAILABLE;
 }
 
 export function isAbortError(error: unknown): boolean {

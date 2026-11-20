@@ -59,6 +59,20 @@ npm run start:hub:mock
 
 Port `4000` is a registered Keycloak redirect URI, so only one of 2a/2b can run at a time.
 
+### Running without ControlTower
+
+ControlTower is optional. The host skips a remote that is not in its manifest, and the Control Tower nav entry, home widget and settings sections disappear with it. A remote that *is* in the manifest but fails to load is named in a dismissible notice on Home.
+
+```bash
+# containers: put the four-remote FEDERATION_MANIFEST from .env.example in .env, then start all but ControlTower
+docker compose up -d --build dashboard remote-skills-hub remote-specs remote-evidence remote-quality
+
+# development
+npm run start:hub:core
+```
+
+`CONTROLTOWER_UPSTREAM` can stay unset in both cases. Contributors without the `OpenJControlTower` checkout cannot run `nx run api:generate-controltower` or its stale check (CI does).
+
 ## Verification
 
 ```bash

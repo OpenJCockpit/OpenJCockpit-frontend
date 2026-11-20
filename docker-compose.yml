@@ -12,6 +12,9 @@
 # here. The dashboard's nginx resolves its API and remote upstreams per request, so a backend that is not up yet
 # only surfaces as 502s on /api until it is.
 #
+# Without ControlTower: set the four-remote FEDERATION_MANIFEST from .env.example and start every service but
+# remote-controltower (README, "Running without ControlTower").
+#
 # Backend on another host, or behind another port: set API_UPSTREAM / KEYCLOAK_URL in .env (see .env.example).
 
 x-host-gateway: &host-gateway
@@ -42,7 +45,8 @@ services:
       KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID:-openjcockpit}
       # Same-origin: the dashboard's nginx proxies /remotes/<name>/ to the remote containers (host remote-<name>,
       # port 8080: REMOTE_HOST_PREFIX / REMOTE_PORT), so no extra origin, CORS or allow-list is needed.
-      FEDERATION_MANIFEST: '{"skillsHub":"/remotes/skills-hub/mf-manifest.json","specs":"/remotes/specs/mf-manifest.json","evidence":"/remotes/evidence/mf-manifest.json","quality":"/remotes/quality/mf-manifest.json","controltower":"/remotes/controltower/mf-manifest.json"}'
+      # Override FEDERATION_MANIFEST in .env to run without a remote (see .env.example for the four-remote value).
+      FEDERATION_MANIFEST: ${FEDERATION_MANIFEST:-{"skillsHub":"/remotes/skills-hub/mf-manifest.json","specs":"/remotes/specs/mf-manifest.json","evidence":"/remotes/evidence/mf-manifest.json","quality":"/remotes/quality/mf-manifest.json","controltower":"/remotes/controltower/mf-manifest.json"}}
       FEDERATION_ALLOWED_ORIGINS_JSON: '[]'
       FEDERATION_ALLOWED_ORIGINS: ""
 

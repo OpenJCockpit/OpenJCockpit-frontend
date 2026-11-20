@@ -352,6 +352,10 @@
     "kind": {
       "PROJECT": "Erstes Projekt",
       "FEATURE": "Neues Feature"
+    },
+    "unavailable": {
+      "title": "Control Tower ist nicht erreichbar",
+      "hint": "Der Control-Tower-Dienst antwortet nicht. Prüfen Sie, ob er läuft, und versuchen Sie es erneut."
     }
   }
 }

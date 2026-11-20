@@ -282,6 +282,11 @@
       "controltower": {
         "widgetTitle": "Ready to dispatch"
       }
+    },
+    "remoteFailures": {
+      "title": "Some apps are unavailable",
+      "body": "These apps could not be loaded and are missing from this page: {{apps}}. Reload to try again, or ask an administrator to check that they are running.",
+      "dismiss": "Dismiss"
     }
   }
 }

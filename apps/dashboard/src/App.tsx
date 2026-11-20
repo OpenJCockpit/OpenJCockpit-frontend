@@ -180,7 +180,13 @@ function App() {
                   <Route
                     path={ROUTES.projects}
                     element={
-                      <ProjectSelectionRoute projects={projects} onSelect={handleSelectProject} />
+                      <ProjectSelectionRoute
+                        projects={projects}
+                        onSelect={handleSelectProject}
+                        // A failed load must not read as "you have no projects".
+                        loadFailed={projectsQuery.isError && !projectsQuery.data}
+                        onRetry={() => void projectsQuery.refetch()}
+                      />
                     }
                   />
                   <Route

@@ -352,6 +352,10 @@
     "kind": {
       "PROJECT": "Eerste project",
       "FEATURE": "Nieuwe functie"
+    },
+    "unavailable": {
+      "title": "Control Tower is niet bereikbaar",
+      "hint": "De Control Tower-service reageert niet. Controleer of hij draait en probeer het opnieuw."
     }
   }
 }
