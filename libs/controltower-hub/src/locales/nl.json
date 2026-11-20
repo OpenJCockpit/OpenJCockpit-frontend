@@ -74,7 +74,17 @@
       "ctaGenerate": "Specs genereren",
       "ctaConfirm_one": "{{count}} spec als klaar bevestigen",
       "ctaConfirm_other": "{{count}} specs als klaar bevestigen",
-      "stepDone": "Klaar"
+      "stepDone": "Klaar",
+      "pipelineTitle": "Pijplijn",
+      "pipelineLabel": "Specificatiepijplijn",
+      "gettingStarted": "Aan de slag",
+      "stages": {
+        "interviews": "Interviews",
+        "drafts": "Concepten",
+        "approved": "Goedgekeurd",
+        "dispatched": "Verzonden",
+        "done": "Klaar"
+      }
     },
     "interviews": {
       "session": "Discovery-sessie",
@@ -173,7 +183,16 @@
       "fromInterview": "Toont de specificaties die uit dit interview zijn gegenereerd.",
       "showAll": "Alles tonen",
       "interview": "Interview:",
-      "viewInterview": "Interview bekijken"
+      "viewInterview": "Interview bekijken",
+      "select": "Selecteer {{title}}",
+      "selectAllDrafts": "Selecteer alle concepten",
+      "approveSelected": "Geselecteerde goedkeuren ({{count}})",
+      "bulkApproveTitle_one": "{{count}} concept goedkeuren?",
+      "bulkApproveTitle_other": "{{count}} concepten goedkeuren?",
+      "bulkApproveMessage": "Elke spec wordt in afhankelijkheidsvolgorde naar een eigen Git-branch gepusht:",
+      "bulkApproved_one": "{{count}} spec naar Git gepusht. Merge de branch in de branch die OpenJCockpit leest vóór het verzenden.",
+      "bulkApproved_other": "{{count}} specs naar Git gepusht. Merge de branches in de branch die OpenJCockpit leest vóór het verzenden.",
+      "bulkApproveFailed": "\"{{title}}\" kon niet worden goedgekeurd: {{error}} ({{count}} eerder goedgekeurd.)"
     },
     "graph": {
       "title": "Afhankelijkhedengraaf",
@@ -223,7 +242,9 @@
       "confirmMessage_one": "Dit verzendt {{count}} spec naar OpenJCockpit:",
       "confirmMessage_other": "Dit verzendt {{count}} specs naar OpenJCockpit:",
       "dispatching": "Verzenden…",
-      "emptyAction": "Specificaties beoordelen"
+      "emptyAction": "Specificaties beoordelen",
+      "publishedHint": "Goedkeuren pusht alleen een branch. OpenJCockpit leest de spec-bestanden uit de doelbranch; verzenden vóór de merge stuurt het bestanden die er nog niet staan.",
+      "branchesToMerge": "Eerst te mergen branches:"
     },
     "templates": {
       "savedTitle": "Opgeslagen sjablonen",

@@ -74,7 +74,17 @@
       "ctaGenerate": "Generar specs",
       "ctaConfirm_one": "Confirmar {{count}} spec como hecha",
       "ctaConfirm_other": "Confirmar {{count}} specs como hechas",
-      "stepDone": "Hecho"
+      "stepDone": "Hecho",
+      "pipelineTitle": "Flujo",
+      "pipelineLabel": "Flujo de especificaciones",
+      "gettingStarted": "Primeros pasos",
+      "stages": {
+        "interviews": "Entrevistas",
+        "drafts": "Borradores",
+        "approved": "Aprobadas",
+        "dispatched": "Enviadas",
+        "done": "Hechas"
+      }
     },
     "interviews": {
       "session": "Sesión de descubrimiento",
@@ -173,7 +183,16 @@
       "fromInterview": "Mostrando las especificaciones generadas a partir de esta entrevista.",
       "showAll": "Mostrar todas",
       "interview": "Entrevista:",
-      "viewInterview": "Ver entrevista"
+      "viewInterview": "Ver entrevista",
+      "select": "Seleccionar {{title}}",
+      "selectAllDrafts": "Seleccionar todos los borradores",
+      "approveSelected": "Aprobar seleccionados ({{count}})",
+      "bulkApproveTitle_one": "¿Aprobar {{count}} borrador?",
+      "bulkApproveTitle_other": "¿Aprobar {{count}} borradores?",
+      "bulkApproveMessage": "Cada spec se sube a su propia rama de Git, en orden de dependencias:",
+      "bulkApproved_one": "{{count}} spec subida a Git. Fusiona su rama en la rama que lee OpenJCockpit antes del envío.",
+      "bulkApproved_other": "{{count}} specs subidas a Git. Fusiona sus ramas en la rama que lee OpenJCockpit antes del envío.",
+      "bulkApproveFailed": "\"{{title}}\" no se pudo aprobar: {{error}} ({{count}} aprobadas antes.)"
     },
     "graph": {
       "title": "Grafo de dependencias",
@@ -223,7 +242,9 @@
       "confirmMessage_one": "Esto envía {{count}} spec a OpenJCockpit:",
       "confirmMessage_other": "Esto envía {{count}} specs a OpenJCockpit:",
       "dispatching": "Enviando…",
-      "emptyAction": "Revisar especificaciones"
+      "emptyAction": "Revisar especificaciones",
+      "publishedHint": "Aprobar solo sube una rama. OpenJCockpit lee los archivos de spec de la rama de destino; enviar antes de fusionar envía archivos que aún no están allí.",
+      "branchesToMerge": "Ramas que fusionar primero:"
     },
     "templates": {
       "savedTitle": "Plantillas guardadas",

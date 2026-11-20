@@ -74,7 +74,17 @@
       "ctaGenerate": "Specs erzeugen",
       "ctaConfirm_one": "{{count}} Spec als erledigt bestätigen",
       "ctaConfirm_other": "{{count}} Specs als erledigt bestätigen",
-      "stepDone": "Erledigt"
+      "stepDone": "Erledigt",
+      "pipelineTitle": "Pipeline",
+      "pipelineLabel": "Spezifikations-Pipeline",
+      "gettingStarted": "Erste Schritte",
+      "stages": {
+        "interviews": "Interviews",
+        "drafts": "Entwürfe",
+        "approved": "Freigegeben",
+        "dispatched": "Gestartet",
+        "done": "Erledigt"
+      }
     },
     "interviews": {
       "session": "Discovery-Sitzung",
@@ -173,7 +183,16 @@
       "fromInterview": "Zeigt die aus diesem Interview erzeugten Spezifikationen.",
       "showAll": "Alle anzeigen",
       "interview": "Interview:",
-      "viewInterview": "Interview ansehen"
+      "viewInterview": "Interview ansehen",
+      "select": "{{title}} auswählen",
+      "selectAllDrafts": "Alle Entwürfe auswählen",
+      "approveSelected": "Ausgewählte freigeben ({{count}})",
+      "bulkApproveTitle_one": "{{count}} Entwurf freigeben?",
+      "bulkApproveTitle_other": "{{count}} Entwürfe freigeben?",
+      "bulkApproveMessage": "Jede Spec wird in Abhängigkeitsreihenfolge in einen eigenen Git-Branch gepusht:",
+      "bulkApproved_one": "{{count}} Spec nach Git gepusht. Merge den Branch vor dem Versand in den Branch, den OpenJCockpit liest.",
+      "bulkApproved_other": "{{count}} Specs nach Git gepusht. Merge die Branches vor dem Versand in den Branch, den OpenJCockpit liest.",
+      "bulkApproveFailed": "„{{title}}“ konnte nicht freigegeben werden: {{error}} ({{count}} zuvor freigegeben.)"
     },
     "graph": {
       "title": "Abhängigkeitsgraph",
@@ -223,7 +242,9 @@
       "confirmMessage_one": "Dies sendet {{count}} Spec an OpenJCockpit:",
       "confirmMessage_other": "Dies sendet {{count}} Specs an OpenJCockpit:",
       "dispatching": "Wird versendet…",
-      "emptyAction": "Spezifikationen prüfen"
+      "emptyAction": "Spezifikationen prüfen",
+      "publishedHint": "Die Freigabe pusht nur einen Branch. OpenJCockpit liest die Spec-Dateien aus dem Zielbranch; ein Versand vor dem Merge schickt Dateien, die dort noch fehlen.",
+      "branchesToMerge": "Zuerst zu mergende Branches:"
     },
     "templates": {
       "savedTitle": "Gespeicherte Vorlagen",

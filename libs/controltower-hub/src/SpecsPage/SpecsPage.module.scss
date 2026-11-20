@@ -58,10 +58,25 @@
   gap: 10px;
   margin-bottom: 12px;
 }
-.statusFilter {
+.stageStrip {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.stages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  & li + li::before {
+    content: '\2192';
+    margin-right: 6px;
+    color: var(--muted);
+  }
 }
 .rowButton code,
 .specDetails code {

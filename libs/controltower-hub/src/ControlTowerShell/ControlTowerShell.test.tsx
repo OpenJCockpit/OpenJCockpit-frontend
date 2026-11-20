@@ -64,6 +64,26 @@ describe('routing', () => {
     );
   });
 
+  it('orders the tabs along the workflow', async () => {
+    renderRoutes(controltowerRoutes);
+    await screen.findByText('demo-repo');
+    const names = screen
+      .getAllByRole('link')
+      .map((link) => link.textContent ?? '')
+      .map((text) => text.replace(/\d+$/, ''));
+    const order = [
+      'Overview',
+      'Discovery interviews',
+      'Specifications',
+      'Dispatch queue',
+      'Dependency graph',
+      'Templates',
+    ];
+    const at = order.map((name) => names.findIndex((text) => text === name));
+    expect(at.every((i) => i >= 0)).toBe(true);
+    expect(at).toEqual([...at].sort((a, b) => a - b));
+  });
+
   it('goes back to the dashboard without the host header', async () => {
     const { router } = renderRoutes(controltowerRoutes);
     await screen.findByText('demo-repo');

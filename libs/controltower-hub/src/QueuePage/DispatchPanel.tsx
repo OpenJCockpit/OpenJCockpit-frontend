@@ -21,7 +21,7 @@ import {
   type ControlTowerSpec,
 } from '@openjcockpit/api';
 import { useRepositoryMutation } from '../hooks';
-import { SPEC_QUEUE_PATH } from '../routePaths';
+import { SPEC_QUEUE_PATH, specPath } from '../routePaths';
 import { useWriteAccess } from '../useWriteAccess';
 
 interface Props {
@@ -30,6 +30,26 @@ interface Props {
   ready: ControlTowerQueueCandidate[];
   /** All specs, to name the specs in an outcome. */
   specs?: ControlTowerSpec[];
+}
+
+const outcomesKey = (repositoryId: string) => `controltower.dispatchOutcomes.${repositoryId}`;
+
+/** The last outcomes survive navigation within the session; storage failures just mean none. */
+function loadOutcomes(repositoryId: string): ControlTowerDispatchOutcome[] | null {
+  try {
+    const raw = sessionStorage.getItem(outcomesKey(repositoryId));
+    return raw ? (JSON.parse(raw) as ControlTowerDispatchOutcome[]) : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveOutcomes(repositoryId: string, outcomes: ControlTowerDispatchOutcome[]) {
+  try {
+    sessionStorage.setItem(outcomesKey(repositoryId), JSON.stringify(outcomes));
+  } catch {
+    // Persisting is a convenience only.
+  }
 }
 
 function outcomeKind(result: string) {
@@ -43,7 +63,7 @@ export function DispatchPanel({ repositoryId, ready, specs }: Props) {
   const { t } = useTranslation('controltower');
   const canWrite = useWriteAccess();
   const [published, setPublished] = useState(false);
-  const [outcomes, setOutcomes] = useState<ControlTowerDispatchOutcome[] | null>(null);
+  const [outcomes, setOutcomes] = useState(() => loadOutcomes(repositoryId));
   const { confirm, dialog } = useConfirmDialog();
   const dispatch = useRepositoryMutation(repositoryId, () =>
     dispatchControlTowerSpecs(repositoryId, published),
@@ -52,6 +72,14 @@ export function DispatchPanel({ repositoryId, ready, specs }: Props) {
     ...(specs ?? []).map((s) => [s.id, s.title] as const),
     ...ready.map((c) => [c.specId, c.title] as const),
   ]);
+  const branches = [
+    ...new Set(
+      ready.flatMap((c) => {
+        const branch = specs?.find((s) => s.id === c.specId)?.branch;
+        return branch ? [branch] : [];
+      }),
+    ),
+  ];
   const disabledReason = !ready.length
     ? t('queue.disabledNothingReady')
     : !published
@@ -75,7 +103,13 @@ export function DispatchPanel({ repositoryId, ready, specs }: Props) {
       tone: 'primary',
       onConfirm: async () => {
         // The last outcome stays until the next dispatch completes, so a refetch never clears it.
-        await dispatch.mutateAsync(undefined).then(setOutcomes, () => undefined);
+        await dispatch.mutateAsync(undefined).then(
+          (result) => {
+            saveOutcomes(repositoryId, result);
+            setOutcomes(result);
+          },
+          () => undefined,
+        );
       },
     });
 
@@ -92,7 +126,19 @@ export function DispatchPanel({ repositoryId, ready, specs }: Props) {
               label={t('queue.published')}
               checked={published}
               onChange={setPublished}
+              hint={t('queue.publishedHint')}
             />
+            {branches.length > 0 && (
+              <StatusMessage>
+                {t('queue.branchesToMerge')}{' '}
+                {branches.map((b, i) => (
+                  <span key={b}>
+                    {i > 0 && ', '}
+                    <code>{b}</code>
+                  </span>
+                ))}
+              </StatusMessage>
+            )}
             <ActionRow>
               <Button
                 variant="primary"
@@ -118,7 +164,7 @@ export function DispatchPanel({ repositoryId, ready, specs }: Props) {
             <ul>
               {outcomes.map((o) => (
                 <li key={o.specId}>
-                  {titles.get(o.specId) ?? o.specId}{' '}
+                  <Link to={specPath(o.specId)}>{titles.get(o.specId) ?? o.specId}</Link>{' '}
                   <StatusChip
                     label={t(`queue.result.${o.result}`, { defaultValue: o.result })}
                     kind={outcomeKind(o.result)}

@@ -17,6 +17,12 @@ describe('dispatch queue', () => {
     return dialog;
   }
 
+  it('names the branches to merge before dispatch', async () => {
+    renderRoutes(controltowerRoutes, { path });
+    expect(await screen.findByText(/Branches to merge first:/)).toHaveTextContent('spec/s2');
+    expect(screen.getByText(/Approving only pushes a branch/)).toBeInTheDocument();
+  });
+
   it('dispatches only after the branches are confirmed as merged', async () => {
     ct.dispatchControlTowerSpecs.mockResolvedValue([{ specId: 's2', result: 'DISPATCHED' }]);
     renderRoutes(controltowerRoutes, { path });
@@ -101,6 +107,20 @@ describe('dispatch queue', () => {
     expect(rows[1]).toHaveTextContent('Login page');
     expect(rows[1]).toHaveTextContent('Unknown');
     expect(screen.getByText(/never automatically retried/)).toBeInTheDocument();
+  });
+
+  it('keeps the last outcomes after leaving the page and links each to its spec', async () => {
+    ct.listControlTowerSpecs.mockResolvedValue([SPEC_DRAFT, SPEC_DISPATCHED]);
+    ct.dispatchControlTowerSpecs.mockResolvedValue([{ specId: 's2', result: 'DISPATCHED' }]);
+    const first = renderRoutes(controltowerRoutes, { path });
+    await dispatchThroughDialog();
+    const link = await screen.findByRole('link', { name: 'Logout' });
+    expect(link).toHaveAttribute('href', '/controltower/specs/s2');
+    first.unmount();
+
+    renderRoutes(controltowerRoutes, { path });
+    expect(await screen.findByRole('link', { name: 'Logout' })).toBeInTheDocument();
+    expect(screen.getByText('Dispatched')).toBeInTheDocument();
   });
 
   it('lists approved specs that wait on a predecessor', async () => {

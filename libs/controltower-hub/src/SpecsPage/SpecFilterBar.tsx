@@ -10,31 +10,33 @@ interface Props {
   onChange: (filter: SpecFilter) => void;
 }
 
-/** Status buttons with counts and a title/ID search. The parent keeps the state in the URL. */
+/** The spec lifecycle as a stage strip (Draft -> Approved -> Dispatched -> Done) that filters by stage, plus a title/ID search. The parent keeps the state in the URL. */
 export function SpecFilterBar({ specs, filter, onChange }: Props) {
   const { t } = useTranslation('controltower');
   const counts = countByStatus(specs);
-  const options = [
-    { status: null, label: t('specs.filterAll'), count: specs.length },
-    ...SPEC_STATUSES.map((status) => ({
-      status,
-      label: t(`specs.status.${status}`),
-      count: counts[status],
-    })),
-  ];
   return (
     <div className={styles.filterBar}>
-      <div role="group" aria-label={t('specs.filterLabel')} className={styles.statusFilter}>
-        {options.map((o) => (
-          <Button
-            key={o.status ?? 'ALL'}
-            variant={filter.status === o.status ? 'primary' : 'secondary'}
-            aria-pressed={filter.status === o.status}
-            onClick={() => onChange({ ...filter, status: o.status })}
-          >
-            {o.label} ({o.count})
-          </Button>
-        ))}
+      <div role="group" aria-label={t('specs.filterLabel')} className={styles.stageStrip}>
+        <Button
+          variant={filter.status === null ? 'primary' : 'secondary'}
+          aria-pressed={filter.status === null}
+          onClick={() => onChange({ ...filter, status: null })}
+        >
+          {t('specs.filterAll')} ({specs.length})
+        </Button>
+        <ol className={styles.stages}>
+          {SPEC_STATUSES.map((status) => (
+            <li key={status}>
+              <Button
+                variant={filter.status === status ? 'primary' : 'secondary'}
+                aria-pressed={filter.status === status}
+                onClick={() => onChange({ ...filter, status })}
+              >
+                {t(`specs.status.${status}`)} ({counts[status]})
+              </Button>
+            </li>
+          ))}
+        </ol>
       </div>
       <TextField
         label={t('specs.search')}

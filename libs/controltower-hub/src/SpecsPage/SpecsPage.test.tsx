@@ -90,10 +90,11 @@ describe('specifications', () => {
   });
 
   it('lists the newest specification first', async () => {
+    const approved = { ...SPEC_DRAFT, status: 'APPROVED' as const };
     ct.listControlTowerSpecs.mockResolvedValue([
-      { ...SPEC_DRAFT, id: 'a', title: 'First', specPath: '001-first/spec.md' },
-      { ...SPEC_DRAFT, id: 'b', title: 'Tenth', specPath: '010-tenth/spec.md' },
-      { ...SPEC_DRAFT, id: 'c', title: 'Second', specPath: '002-second/spec.md' },
+      { ...approved, id: 'a', title: 'First', specPath: '001-first/spec.md' },
+      { ...approved, id: 'b', title: 'Tenth', specPath: '010-tenth/spec.md' },
+      { ...approved, id: 'c', title: 'Second', specPath: '002-second/spec.md' },
     ]);
     renderRoutes(controltowerRoutes, { path });
     await screen.findByText('Tenth');
@@ -176,5 +177,69 @@ describe('specifications', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Copy branch name' }));
     expect(writeText).toHaveBeenCalledWith('spec/s2');
     expect(await screen.findAllByText('Copied')).not.toHaveLength(0);
+  });
+
+  it('lists drafts after the drafts they depend on', async () => {
+    ct.listControlTowerSpecs.mockResolvedValue([
+      { ...SPEC_DRAFT, id: 'a', title: 'Alpha', specPath: '001-a/spec.md', dependsOn: ['b'] },
+      { ...SPEC_DRAFT, id: 'b', title: 'Bravo', specPath: '002-b/spec.md', dependsOn: [] },
+    ]);
+    renderRoutes(controltowerRoutes, { path });
+    await screen.findByText('Alpha');
+    const text = document.body.textContent ?? '';
+    expect(text.indexOf('Bravo')).toBeLessThan(text.indexOf('Alpha'));
+  });
+
+  describe('bulk approval', () => {
+    const drafts = [
+      { ...SPEC_DRAFT, id: 'a', title: 'Alpha', specPath: '001-a/spec.md', dependsOn: ['b'] },
+      { ...SPEC_DRAFT, id: 'b', title: 'Bravo', specPath: '002-b/spec.md', dependsOn: [] },
+    ];
+
+    it('approves the selected drafts in dependency order after one confirmation', async () => {
+      ct.listControlTowerSpecs.mockResolvedValue(drafts);
+      ct.approveControlTowerSpec.mockResolvedValue({ ...SPEC_DRAFT, status: 'APPROVED' });
+      renderRoutes(controltowerRoutes, { path });
+      fireEvent.click(await screen.findByLabelText('Select all drafts'));
+      fireEvent.click(screen.getByRole('button', { name: 'Approve selected (2)' }));
+      fireEvent.click(await screen.findByTestId('confirm-action-confirm'));
+      expect(await screen.findByText(/2 specs pushed to Git/)).toBeInTheDocument();
+      expect(ct.approveControlTowerSpec.mock.calls.map(([id]) => id)).toEqual(['b', 'a']);
+    });
+
+    it('approves only the ticked draft', async () => {
+      ct.listControlTowerSpecs.mockResolvedValue(drafts);
+      ct.approveControlTowerSpec.mockResolvedValue({ ...SPEC_DRAFT, status: 'APPROVED' });
+      renderRoutes(controltowerRoutes, { path });
+      expect(await screen.findByRole('button', { name: 'Approve selected (0)' })).toBeDisabled();
+      fireEvent.click(await screen.findByLabelText('Select Alpha'));
+      fireEvent.click(screen.getByRole('button', { name: 'Approve selected (1)' }));
+      fireEvent.click(await screen.findByTestId('confirm-action-confirm'));
+      expect(await screen.findByText(/1 spec pushed to Git/)).toBeInTheDocument();
+      expect(ct.approveControlTowerSpec).toHaveBeenCalledTimes(1);
+      expect(ct.approveControlTowerSpec).toHaveBeenCalledWith('a');
+    });
+
+    it('stops at the first failure and says how far it got', async () => {
+      ct.listControlTowerSpecs.mockResolvedValue(drafts);
+      ct.approveControlTowerSpec
+        .mockResolvedValueOnce({ ...SPEC_DRAFT, status: 'APPROVED' })
+        .mockRejectedValueOnce(new Error('Policy denied'));
+      renderRoutes(controltowerRoutes, { path });
+      fireEvent.click(await screen.findByLabelText('Select all drafts'));
+      fireEvent.click(screen.getByRole('button', { name: 'Approve selected (2)' }));
+      fireEvent.click(await screen.findByTestId('confirm-action-confirm'));
+      expect(await screen.findByRole('alert')).toHaveTextContent(
+        '"Alpha" could not be approved: Policy denied (1 approved before it.)',
+      );
+      expect(ct.approveControlTowerSpec).toHaveBeenCalledTimes(2);
+    });
+
+    it('is hidden from a viewer', async () => {
+      ct.listControlTowerSpecs.mockResolvedValue(drafts);
+      renderRoutes(controltowerRoutes, { path, permissions: [] });
+      await screen.findByText('Alpha');
+      expect(screen.queryByLabelText('Select all drafts')).toBeNull();
+    });
   });
 });

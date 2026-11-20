@@ -74,7 +74,17 @@
       "ctaGenerate": "Generate specs",
       "ctaConfirm_one": "Confirm {{count}} spec done",
       "ctaConfirm_other": "Confirm {{count}} specs done",
-      "stepDone": "Done"
+      "stepDone": "Done",
+      "pipelineTitle": "Pipeline",
+      "pipelineLabel": "Specification pipeline",
+      "gettingStarted": "Getting started",
+      "stages": {
+        "interviews": "Interviews",
+        "drafts": "Drafts",
+        "approved": "Approved",
+        "dispatched": "Dispatched",
+        "done": "Done"
+      }
     },
     "interviews": {
       "session": "Discovery session",
@@ -173,7 +183,16 @@
       "fromInterview": "Showing the specifications generated from this interview.",
       "showAll": "Show all",
       "interview": "Interview:",
-      "viewInterview": "View interview"
+      "viewInterview": "View interview",
+      "select": "Select {{title}}",
+      "selectAllDrafts": "Select all drafts",
+      "approveSelected": "Approve selected ({{count}})",
+      "bulkApproveTitle_one": "Approve {{count}} draft?",
+      "bulkApproveTitle_other": "Approve {{count}} drafts?",
+      "bulkApproveMessage": "Each spec is pushed to its own Git branch, in dependency order:",
+      "bulkApproved_one": "{{count}} spec pushed to Git. Merge its branch into the branch OpenJCockpit reads before dispatch.",
+      "bulkApproved_other": "{{count}} specs pushed to Git. Merge their branches into the branch OpenJCockpit reads before dispatch.",
+      "bulkApproveFailed": "\"{{title}}\" could not be approved: {{error}} ({{count}} approved before it.)"
     },
     "graph": {
       "title": "Dependency graph",
@@ -223,7 +242,9 @@
       "confirmMessage_one": "This sends {{count}} spec to OpenJCockpit:",
       "confirmMessage_other": "This sends {{count}} specs to OpenJCockpit:",
       "dispatching": "Dispatching…",
-      "emptyAction": "Review specifications"
+      "emptyAction": "Review specifications",
+      "publishedHint": "Approving only pushes a branch. OpenJCockpit reads the spec files from the target branch, so dispatching before the merge sends it files that are not there yet.",
+      "branchesToMerge": "Branches to merge first:"
     },
     "templates": {
       "savedTitle": "Saved templates",

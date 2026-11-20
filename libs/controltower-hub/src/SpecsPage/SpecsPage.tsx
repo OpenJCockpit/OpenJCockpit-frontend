@@ -1,6 +1,10 @@
+import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { useTranslation } from '@openjcockpit/i18n';
 import {
+  ActionRow,
+  Button,
+  CheckboxField,
   EmptyState,
   Panel,
   PanelBody,
@@ -9,10 +13,17 @@ import {
   StatusChip,
   StatusMessage,
   buttonClass,
+  useConfirmDialog,
 } from '@openjcockpit/ui';
+import { approveControlTowerSpec, type ControlTowerSpec } from '@openjcockpit/api';
+import { ActionFeedback } from '../ActionFeedback';
 import { ControlTowerQuery } from '../ControlTowerQuery';
-import { useSpecs } from '../hooks';
+import { errorMessage } from '../errorMessage';
+import { useRepositoryMutation, useSpecs } from '../hooks';
 import { CONTROLTOWER_INTERVIEWS_PATH } from '../routePaths';
+import { draftReviewOrder } from '../specGraph';
+import { useAction } from '../useAction';
+import { useWriteAccess } from '../useWriteAccess';
 import { useRepository } from '../RepositoryGate/RepositoryGate';
 import { useHandoffNotice } from './handoff';
 import { SpecFilterBar } from './SpecFilterBar';
@@ -29,6 +40,62 @@ export function SpecsPage() {
   const newIds = new Set(handoff?.specIds);
   const [params, setParams] = useSearchParams();
   const filter = filterFromParams(params);
+  const canWrite = useWriteAccess();
+  const [selected, setSelected] = useState<ReadonlySet<string>>(new Set());
+  const { run, feedback, clear } = useAction();
+  const { confirm, dialog } = useConfirmDialog();
+  const approve = useRepositoryMutation(repository.id, approveControlTowerSpec);
+
+  const toggle = (id: string, on: boolean) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (on) next.add(id);
+      else next.delete(id);
+      return next;
+    });
+
+  /** Approves the drafts one by one in dependency order; the first failure stops the run. */
+  const askApproveMany = (drafts: ControlTowerSpec[]) =>
+    confirm({
+      title: t('specs.bulkApproveTitle', { count: drafts.length }),
+      message: t('specs.bulkApproveMessage'),
+      details: (
+        <ul>
+          {drafts.map((d) => (
+            <li key={d.id}>{d.title}</li>
+          ))}
+        </ul>
+      ),
+      confirmLabel: t('specs.approve'),
+      cancelLabel: t('cancel'),
+      busyLabel: t('specs.approving'),
+      tone: 'primary',
+      onConfirm: () =>
+        run(
+          async () => {
+            const done: string[] = [];
+            try {
+              for (const draft of drafts) {
+                await approve.mutateAsync(draft.id);
+                done.push(draft.id);
+              }
+              return { count: done.length, failed: null };
+            } catch (e) {
+              const title = drafts[done.length]?.title ?? '';
+              return {
+                count: done.length,
+                failed: { title, error: errorMessage(e) },
+              };
+            } finally {
+              setSelected((prev) => new Set([...prev].filter((id) => !done.includes(id))));
+            }
+          },
+          ({ count, failed }) =>
+            failed
+              ? { ok: false, message: t('specs.bulkApproveFailed', { ...failed, count }) }
+              : t('specs.bulkApproved', { count }),
+        ),
+    });
 
   return (
     <Panel>
@@ -58,6 +125,7 @@ export function SpecsPage() {
             </Link>
           </StatusMessage>
         )}
+        <ActionFeedback feedback={feedback} onDismiss={clear} />
         <ControlTowerQuery
           query={specs}
           loadFailed={t('specs.loadFailed')}
@@ -82,6 +150,8 @@ export function SpecsPage() {
               ...sorted.filter((spec) => newIds.has(spec.id)),
               ...sorted.filter((spec) => !newIds.has(spec.id)),
             ];
+            const shownDrafts = shown.filter((spec) => spec.status === 'DRAFT');
+            const chosen = draftReviewOrder(shownDrafts.filter((spec) => selected.has(spec.id)));
             return (
               <>
                 <SpecFilterBar
@@ -101,15 +171,42 @@ export function SpecsPage() {
                     )
                   }
                 />
+                {canWrite && shownDrafts.length > 0 && (
+                  <ActionRow>
+                    <CheckboxField
+                      label={t('specs.selectAllDrafts')}
+                      checked={chosen.length === shownDrafts.length}
+                      onChange={(on) =>
+                        setSelected(on ? new Set(shownDrafts.map((d) => d.id)) : new Set())
+                      }
+                    />
+                    <Button
+                      variant="primary"
+                      disabled={chosen.length === 0 || approve.isPending}
+                      onClick={() => askApproveMany(chosen)}
+                    >
+                      {t('specs.approveSelected', { count: chosen.length })}
+                    </Button>
+                  </ActionRow>
+                )}
                 {shown.length === 0 && <EmptyState title={t('specs.noMatches')} />}
                 {shown.map((spec) => (
-                  <SpecRow key={spec.id} spec={spec} isNew={newIds.has(spec.id)} />
+                  <SpecRow
+                    key={spec.id}
+                    spec={spec}
+                    isNew={newIds.has(spec.id)}
+                    selected={selected.has(spec.id)}
+                    onSelect={
+                      canWrite && spec.status === 'DRAFT' ? (on) => toggle(spec.id, on) : undefined
+                    }
+                  />
                 ))}
               </>
             );
           }}
         </ControlTowerQuery>
       </PanelBody>
+      {dialog}
     </Panel>
   );
 }

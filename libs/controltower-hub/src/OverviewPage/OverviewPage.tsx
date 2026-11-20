@@ -51,6 +51,39 @@ function stepsDone(counts: Counts): Record<Step, boolean | undefined> {
   };
 }
 
+type Stage = 'interviews' | 'drafts' | 'approved' | 'dispatched' | 'done';
+
+const STAGE_PATHS: Record<Stage, string> = {
+  interviews: CONTROLTOWER_INTERVIEWS_PATH,
+  drafts: `${CONTROLTOWER_SPECS_PATH}?status=DRAFT`,
+  approved: `${CONTROLTOWER_SPECS_PATH}?status=APPROVED`,
+  dispatched: `${CONTROLTOWER_SPECS_PATH}?status=DISPATCHED`,
+  done: `${CONTROLTOWER_SPECS_PATH}?status=DONE`,
+};
+
+/** Set up and under way: the checklist has told the user what it can, so the pipeline leads instead. */
+function isEstablished(done: Record<Step, boolean | undefined>): boolean {
+  return done.templates === true && done.interview === true && done.specs === true;
+}
+
+/** Where the work stands: each stage's count links to the matching list. */
+function Pipeline({ counts }: { counts: Counts }) {
+  const { t } = useTranslation('controltower');
+  const stages = Object.keys(STAGE_PATHS) as Stage[];
+  return (
+    <ol className={styles.pipeline} aria-label={t('overview.pipelineLabel')}>
+      {stages.map((stage) => (
+        <li key={stage}>
+          <Link to={STAGE_PATHS[stage]} className={styles.pipelineLink}>
+            <span>{t(`overview.stages.${stage}`)}</span>
+            <strong>{counts[stage] ?? t('notAvailable')}</strong>
+          </Link>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
 /** The interview itself when exactly one matches, otherwise the list to pick from. */
 function interviewTarget(interviews: readonly ControlTowerInterview[] | undefined, status: string) {
   const matching = interviews?.filter((i) => i.status === status) ?? [];
@@ -126,6 +159,22 @@ export function OverviewPage() {
   const current = steps.find((step) => done[step] === false);
   const next = useNextAction(counts, interviews.data);
   const specCount = specs.data?.length;
+  const established = isEstablished(done);
+  const checklist = (
+    <ol className={styles.steps}>
+      {steps.map((step) => (
+        <li key={step} className={step === current ? styles.stepCurrent : undefined}>
+          <span className={cx(styles.stepMark, done[step] && styles.stepDone)} aria-hidden="true">
+            {done[step] ? <Icon name="check" /> : null}
+          </span>
+          <Link to={STEP_PATHS[step]} aria-current={step === current ? 'step' : undefined}>
+            {t(`overview.steps.${step}`)}
+          </Link>
+          {done[step] && <span className={styles.visuallyHidden}>{t('overview.stepDone')}</span>}
+        </li>
+      ))}
+    </ol>
+  );
 
   return (
     <>
@@ -159,30 +208,30 @@ export function OverviewPage() {
           failed={queue.isError}
         />
       </div>
+      {established && (
+        <Panel className={styles.pipelinePanel}>
+          <PanelHeader>
+            <PanelTitle>{t('overview.pipelineTitle')}</PanelTitle>
+          </PanelHeader>
+          <PanelBody>
+            <Pipeline counts={counts} />
+          </PanelBody>
+        </Panel>
+      )}
       <TwoColumn>
         <Panel>
           <PanelHeader>
             <PanelTitle>{t('overview.howTitle')}</PanelTitle>
           </PanelHeader>
           <PanelBody>
-            <ol className={styles.steps}>
-              {steps.map((step) => (
-                <li key={step} className={step === current ? styles.stepCurrent : undefined}>
-                  <span
-                    className={cx(styles.stepMark, done[step] && styles.stepDone)}
-                    aria-hidden="true"
-                  >
-                    {done[step] ? <Icon name="check" /> : null}
-                  </span>
-                  <Link to={STEP_PATHS[step]} aria-current={step === current ? 'step' : undefined}>
-                    {t(`overview.steps.${step}`)}
-                  </Link>
-                  {done[step] && (
-                    <span className={styles.visuallyHidden}>{t('overview.stepDone')}</span>
-                  )}
-                </li>
-              ))}
-            </ol>
+            {established ? (
+              <details>
+                <summary>{t('overview.gettingStarted')}</summary>
+                {checklist}
+              </details>
+            ) : (
+              checklist
+            )}
           </PanelBody>
         </Panel>
         <Panel>

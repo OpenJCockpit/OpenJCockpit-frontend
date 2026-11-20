@@ -1,4 +1,4 @@
-import { screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { controltowerRoutes } from '../controltowerRoutes';
 import { ct, INTERVIEW, renderRoutes, SPEC_DISPATCHED, SPEC_DRAFT } from '../testUtils';
@@ -127,16 +127,34 @@ describe('overview', () => {
 
     it('marks finished steps as done', async () => {
       renderRoutes(controltowerRoutes);
-      const item = (
-        await screen.findByRole('link', { name: /Create project and feature/ })
-      ).closest('li')!;
-      await waitFor(() => expect(within(item).getByText('Done')).toBeInTheDocument());
-      expect(
-        within(screen.getByRole('link', { name: /Generate and review/ }).closest('li')!).getByText(
-          'Done',
-        ),
-      ).toBeInTheDocument();
+      // Finished steps fold into "Getting started" once the project is under way.
+      fireEvent.click(await screen.findByText('Getting started'));
+      const link = (name: RegExp) => screen.getByRole('link', { name }).closest('li')!;
+      expect(within(link(/Create project and feature/)).getByText('Done')).toBeInTheDocument();
+      expect(within(link(/Generate and review/)).getByText('Done')).toBeInTheDocument();
     });
+  });
+});
+
+describe('pipeline', () => {
+  it('leads with the stage counts once the project is under way', async () => {
+    renderRoutes(controltowerRoutes);
+    const pipeline = await screen.findByRole('list', { name: 'Specification pipeline' });
+    const stage = (name: string) => within(pipeline).getByText(name).closest('a')!;
+    expect(stage('Drafts')).toHaveAttribute('href', '/controltower/specs?status=DRAFT');
+    expect(stage('Approved')).toHaveAttribute('href', '/controltower/specs?status=APPROVED');
+    expect(stage('Dispatched')).toHaveAttribute('href', '/controltower/specs?status=DISPATCHED');
+    expect(stage('Done')).toHaveAttribute('href', '/controltower/specs?status=DONE');
+  });
+
+  it('shows the full checklist and no pipeline for a new project', async () => {
+    ct.listControlTowerInterviews.mockResolvedValue([]);
+    ct.listControlTowerSpecs.mockResolvedValue([]);
+    renderRoutes(controltowerRoutes);
+    await screen.findByRole('link', { name: /Generate and review/ });
+    await waitFor(() => expect(ct.listControlTowerSpecs).toHaveBeenCalled());
+    expect(screen.queryByRole('list', { name: 'Specification pipeline' })).not.toBeInTheDocument();
+    expect(screen.queryByText('Getting started')).not.toBeInTheDocument();
   });
 });
 

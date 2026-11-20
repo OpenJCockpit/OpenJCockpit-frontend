@@ -1,4 +1,5 @@
 import type { ControlTowerSpec, ControlTowerSpecStatus } from '@openjcockpit/api';
+import { draftReviewOrder } from '../specGraph';
 
 export const SPEC_STATUSES: readonly ControlTowerSpecStatus[] = [
   'DRAFT',
@@ -49,9 +50,13 @@ export function newestFirst(specs: readonly ControlTowerSpec[]): ControlTowerSpe
   );
 }
 
-/** Draft, approved, dispatched, then done; newest first within each status. */
+/**
+ * Draft, approved, dispatched, then done. Drafts are in review order (a draft after the drafts it
+ * depends on, so the order matches the execution order); the other statuses are newest first.
+ */
 export function byStatusThenNewest(specs: readonly ControlTowerSpec[]): ControlTowerSpec[] {
-  return [...newestFirst(specs)].sort(
+  const rest = [...newestFirst(specs.filter((s) => s.status !== 'DRAFT'))].sort(
     (a, b) => SPEC_STATUSES.indexOf(a.status) - SPEC_STATUSES.indexOf(b.status),
   );
+  return [...draftReviewOrder(specs), ...rest];
 }
