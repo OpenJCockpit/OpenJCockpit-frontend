@@ -116,4 +116,14 @@ describe('SpeechInputButtons', () => {
     unmount();
     expect(instances[1]!.abort).toHaveBeenCalled();
   });
+
+  it('cancels read-aloud on unmount when speech synthesis exists', () => {
+    const cancel = vi.fn();
+    (window as unknown as Win).speechSynthesis = { cancel };
+    const { unmount } = render(
+      <SpeechInputButtons text="Hi" onTranscript={vi.fn()} labels={labels} />,
+    );
+    unmount();
+    expect(cancel).toHaveBeenCalled();
+  });
 });

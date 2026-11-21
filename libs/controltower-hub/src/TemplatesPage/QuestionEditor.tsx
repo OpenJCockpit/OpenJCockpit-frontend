@@ -25,7 +25,6 @@ export function QuestionEditor({ questions, onChange }: Props) {
 
   function move(index: number, by: -1 | 1) {
     const target = index + by;
-    if (target < 0 || target >= questions.length) return;
     const next = [...questions];
     [next[index], next[target]] = [next[target]!, next[index]!];
     onChange(next);

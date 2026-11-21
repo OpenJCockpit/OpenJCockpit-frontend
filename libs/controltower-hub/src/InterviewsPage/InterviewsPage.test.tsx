@@ -145,16 +145,51 @@ describe('interviews', () => {
     );
   });
 
+  it('submits with Cmd+Enter, ignores other keys and shows the Cmd hint on Apple platforms', async () => {
+    vi.spyOn(navigator, 'platform', 'get').mockReturnValue('MacIntel');
+    ct.answerControlTowerInterview.mockResolvedValue({ ...INTERVIEW, status: 'COMPLETE' });
+    try {
+      renderRoutes(controltowerRoutes, { path });
+      fireEvent.click(await screen.findByText('Kick-off'));
+      const box = await screen.findByRole('textbox', { name: /Your answer/ });
+      expect(screen.getByText('\u2318')).toBeInTheDocument();
+      fireEvent.change(box, { target: { value: 'typed' } });
+      fireEvent.keyDown(box, { key: 'a', metaKey: true });
+      fireEvent.keyDown(box, { key: 'Enter' });
+      expect(ct.answerControlTowerInterview).not.toHaveBeenCalled();
+      fireEvent.keyDown(box, { key: 'Enter', metaKey: true });
+      await waitFor(() =>
+        expect(ct.answerControlTowerInterview).toHaveBeenCalledWith('i1', 'typed'),
+      );
+    } finally {
+      vi.restoreAllMocks();
+    }
+  });
+
+  it('starts with an empty answer when the draft cannot be read', async () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
+    try {
+      renderRoutes(controltowerRoutes, { path });
+      fireEvent.click(await screen.findByText('Kick-off'));
+      expect(await screen.findByRole('textbox', { name: /Your answer/ })).toHaveValue('');
+    } finally {
+      vi.restoreAllMocks();
+    }
+  });
+
   it('lists the newest interview first with its date', async () => {
     ct.listControlTowerInterviews.mockResolvedValue([
       { ...INTERVIEW, id: 'old', title: 'Old one', createdAt: '2026-01-01T10:00:00Z' },
       { ...INTERVIEW, id: 'undated', title: 'Undated one' },
+      { ...INTERVIEW, id: 'garbled', title: 'Garbled one', createdAt: 'not a date' },
       { ...INTERVIEW, id: 'new', title: 'New one', createdAt: '2026-06-01T10:00:00Z' },
     ]);
     renderRoutes(controltowerRoutes, { path });
     await screen.findByText('New one');
     const titles = screen.getAllByRole('button').map((b) => b.querySelector('b')?.textContent);
-    expect(titles.filter(Boolean)).toEqual(['New one', 'Old one', 'Undated one']);
+    expect(titles.filter(Boolean)).toEqual(['New one', 'Old one', 'Undated one', 'Garbled one']);
   });
 
   it('generates with the default template and can close the session', async () => {

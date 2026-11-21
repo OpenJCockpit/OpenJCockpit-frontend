@@ -28,7 +28,7 @@ import {
   interviewPath,
   specPath,
 } from '../routePaths';
-import { deriveBlockers, draftReviewOrder } from '../specGraph';
+import { deriveBlockers, draftReviewOrder, type SpecBlockers } from '../specGraph';
 import { useAction } from '../useAction';
 import { useWriteAccess } from '../useWriteAccess';
 import { CopyButton } from './CopyButton';
@@ -69,7 +69,7 @@ export function SpecDetailPage() {
           () => approve.mutateAsync(target.id),
           (approved) => {
             const nextDraft = draftReviewOrder(
-              (specs.data ?? []).filter((s) => s.id !== target.id),
+              (specs.data as ControlTowerSpec[]).filter((s) => s.id !== target.id),
             )[0];
             return {
               ok: true,
@@ -140,10 +140,10 @@ export function SpecDetailPage() {
                   <span>{t('specs.dependencies')}</span>
                   {spec.dependsOn.length ? specLinks(spec.dependsOn) : t('specs.noDependencies')}
                 </div>
-                {(blockers.get(spec.id)?.blocks ?? []).length > 0 && (
+                {(blockers.get(spec.id) as SpecBlockers).blocks.length > 0 && (
                   <div className={styles.specRelation}>
                     <span>{t('specs.blocks')}</span>
-                    {specLinks(blockers.get(spec.id)?.blocks ?? [])}
+                    {specLinks((blockers.get(spec.id) as SpecBlockers).blocks)}
                   </div>
                 )}
                 <ActionRow>

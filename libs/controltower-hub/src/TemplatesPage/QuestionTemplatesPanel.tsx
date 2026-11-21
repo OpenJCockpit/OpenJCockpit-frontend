@@ -84,7 +84,6 @@ export function QuestionTemplatesPanel({ run }: { run: RunAction }) {
   const reset = () => load({ editing: null, name: '', kind, questions: sampleQuestions(kind) });
 
   function changeKind(next: ControlTowerTemplateKind) {
-    if (next === kind) return;
     const apply = () => {
       setKind(next);
       if (!editing) {

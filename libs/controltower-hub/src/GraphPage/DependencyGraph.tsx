@@ -69,8 +69,8 @@ export function DependencyGraph({ graph }: { graph: ControlTowerGraph }) {
   const lineOf = new Map(dependencyLines.map((l) => [l.id, l.text]));
 
   const fit = () => {
-    const available = scroller.current?.clientWidth ?? 0;
-    setZoom(available > 0 ? Math.min(1, Math.max(MIN_ZOOM, available / layout.width)) : 1);
+    const available = scroller.current?.clientWidth;
+    setZoom(available ? Math.min(1, Math.max(MIN_ZOOM, available / layout.width)) : 1);
   };
   const zoomBy = (factor: number) =>
     setZoom((z) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z * factor)));

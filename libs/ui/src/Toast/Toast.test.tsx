@@ -25,6 +25,23 @@ describe('useToasts', () => {
   });
 });
 
+describe('useToasts dismiss', () => {
+  it('ignores an id that is already gone', () => {
+    const { result } = renderHook(() => useToasts(1000));
+    act(() => result.current.dismiss(99));
+    expect(result.current.toasts).toHaveLength(0);
+  });
+});
+
+describe('useToasts unmount', () => {
+  it('clears pending timers', () => {
+    const { result, unmount } = renderHook(() => useToasts(1000));
+    act(() => void result.current.show('Saved'));
+    unmount();
+    expect(vi.getTimerCount()).toBe(0);
+  });
+});
+
 describe('ToastRegion', () => {
   it('renders messages in a status region and dismisses on click', () => {
     const onDismiss = vi.fn();

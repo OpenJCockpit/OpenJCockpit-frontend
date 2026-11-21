@@ -23,4 +23,12 @@ describe('Shortcut', () => {
     expect(usesCommandKey()).toBe(true);
     vi.unstubAllGlobals();
   });
+
+  it('is false without a navigator or a platform string', () => {
+    vi.stubGlobal('navigator', undefined);
+    expect(usesCommandKey()).toBe(false);
+    vi.stubGlobal('navigator', {});
+    expect(usesCommandKey()).toBe(false);
+    vi.unstubAllGlobals();
+  });
 });

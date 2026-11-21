@@ -1,5 +1,5 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { controltowerRoutes } from '../controltowerRoutes';
 import { ct, renderRoutes, SPEC_DISPATCHED, SPEC_DRAFT } from '../testUtils';
 
@@ -137,5 +137,55 @@ describe('dispatch queue', () => {
       'href',
       '/controltower/specs/s1',
     );
+  });
+
+  it('names several unfinished predecessors, including one that does not exist', async () => {
+    ct.listControlTowerSpecs.mockResolvedValue([
+      SPEC_DRAFT,
+      {
+        ...SPEC_DISPATCHED,
+        id: 's3',
+        title: 'Profile',
+        status: 'APPROVED',
+        dependsOn: ['s1', 'ghost'],
+      },
+    ]);
+    renderRoutes(controltowerRoutes, { path });
+    const section = await screen.findByRole('region', { name: 'Waiting on predecessors' });
+    expect(within(section).getByRole('link', { name: 'Login page' })).toBeInTheDocument();
+    expect(within(section).getByRole('link', { name: 'ghost' })).toBeInTheDocument();
+  });
+
+  it('lists every branch to merge and any other outcome as neutral', async () => {
+    ct.getControlTowerQueueProposal.mockResolvedValue([
+      { specId: 's2', title: 'Logout', path: 'specs/logout.md', priority: 1, reason: 'ok' },
+      { specId: 's1', title: 'Login page', path: 'specs/login.md', priority: 2, reason: 'ok' },
+      { specId: 's4', title: 'Other', path: 'specs/other.md', priority: 3, reason: 'ok' },
+    ]);
+    ct.listControlTowerSpecs.mockResolvedValue([
+      SPEC_DRAFT,
+      SPEC_DISPATCHED,
+      { ...SPEC_DRAFT, id: 's4', title: 'Other', branch: 'spec/s4' },
+    ]);
+    ct.dispatchControlTowerSpecs.mockResolvedValue([{ specId: 's2', result: 'REJECTED' }]);
+    renderRoutes(controltowerRoutes, { path });
+    expect(await screen.findByText(/Branches to merge first:/)).toHaveTextContent(
+      'spec/s2, spec/s4',
+    );
+    await dispatchThroughDialog();
+    expect(await screen.findByText('REJECTED')).toBeInTheDocument();
+  });
+
+  it('shows no earlier outcomes when the browser storage cannot be read', async () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
+    try {
+      renderRoutes(controltowerRoutes, { path });
+      await screen.findByText('Logout');
+      expect(screen.queryByRole('link', { name: 'Logout' })).toBeNull();
+    } finally {
+      vi.restoreAllMocks();
+    }
   });
 });

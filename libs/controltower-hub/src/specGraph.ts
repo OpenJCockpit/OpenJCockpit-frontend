@@ -14,12 +14,12 @@ export function deriveBlockers(
   specs: readonly Pick<ControlTowerSpec, 'id' | 'status' | 'dependsOn'>[],
 ): Map<string, SpecBlockers> {
   const byId = new Map(specs.map((s) => [s.id, s]));
-  const result = new Map<string, SpecBlockers>(
-    specs.map((s) => [s.id, { blockedBy: [], missing: [], blocks: [] }]),
-  );
-  for (const spec of specs) {
-    const entry = result.get(spec.id);
-    if (!entry) continue;
+  const rows = specs.map((spec) => {
+    const entry: SpecBlockers = { blockedBy: [], missing: [], blocks: [] };
+    return { spec, entry };
+  });
+  const result = new Map<string, SpecBlockers>(rows.map((row) => [row.spec.id, row.entry]));
+  for (const { spec, entry } of rows) {
     for (const depId of new Set(spec.dependsOn)) {
       const dep = byId.get(depId);
       if (!dep) entry.missing.push(depId);

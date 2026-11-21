@@ -87,6 +87,23 @@ describe('graph', () => {
     expect(svg.querySelectorAll('.dimmed')).toHaveLength(0);
   });
 
+  it('dims an edge that leaves the selection', async () => {
+    ct.getControlTowerGraph.mockResolvedValue({
+      nodes: [
+        { id: 'a', title: 'A', status: 'DONE', dependsOn: [], ready: false },
+        { id: 'b', title: 'B', status: 'APPROVED', dependsOn: ['a'], ready: true },
+        { id: 'c', title: 'C', status: 'DRAFT', dependsOn: ['b'], ready: false },
+      ],
+      topologicalOrder: ['a', 'b', 'c'],
+    });
+    renderRoutes(controltowerRoutes, { path });
+    const svg = await screen.findByRole('group', { name: 'Spec dependency graph' });
+    for (const name of [/^A, Done/, /^C, Draft/]) {
+      fireEvent.click(within(svg).getByRole('link', { name }));
+      expect(svg.querySelectorAll('path[class*="dimmed"]')).toHaveLength(1);
+    }
+  });
+
   it('opens the spec with Enter', async () => {
     const { router } = renderRoutes(controltowerRoutes, { path });
     const svg = await screen.findByRole('group', { name: 'Spec dependency graph' });

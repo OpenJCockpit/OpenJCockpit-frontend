@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { chooseOption } from '@openjcockpit/ui/testing';
 import { controltowerRoutes } from '../controltowerRoutes';
 import { sampleQuestions } from '../sampleQuestions';
+import { nextQuestionId } from './QuestionEditor';
 import { ct, FEATURE_TEMPLATE, renderRoutes, TEMPLATE } from '../testUtils';
 
 const TEMPLATE_RESULT = { id: 't9', name: 'Mine', kind: 'FEATURE', questions: [] };
@@ -76,6 +77,84 @@ describe('templates', () => {
         },
       ],
     });
+  });
+
+  it('edits every field of a question and moves it down', async () => {
+    ct.createControlTowerTemplate.mockResolvedValue(TEMPLATE_RESULT);
+    renderRoutes(controltowerRoutes, { path });
+    fireEvent.change((await screen.findAllByRole('textbox', { name: /Template name/ }))[0]!, {
+      target: { value: 'Mine' },
+    });
+    fireEvent.change(screen.getAllByRole('textbox', { name: /Completion criteria/ })[0]!, {
+      target: { value: 'Done when clear' },
+    });
+    const followUps = screen.getAllByRole('spinbutton', { name: /Max follow-ups/ })[0]!;
+    fireEvent.change(followUps, { target: { value: 'abc' } });
+    expect(followUps).toHaveValue(0);
+    fireEvent.click(screen.getAllByRole('checkbox', { name: /Required/ })[0]!);
+    fireEvent.click(screen.getByRole('button', { name: 'Move question 1 down' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save template' }));
+    expect(await screen.findByText('Template saved.')).toBeInTheDocument();
+    const [first, second] = sampleQuestions('PROJECT');
+    const call = ct.createControlTowerTemplate.mock.calls[0]![0] as { questions: unknown[] };
+    expect(call.questions.slice(0, 2)).toEqual([
+      second,
+      {
+        ...first,
+        completionCriteria: 'Done when clear',
+        maxFollowUps: 0,
+        required: !first!.required,
+      },
+    ]);
+  });
+
+  it('numbers a new question past ids that are already taken', () => {
+    const question = (id: string) => ({ ...sampleQuestions('PROJECT')[0]!, id });
+    expect(nextQuestionId([question('question-2')])).toBe('question-3');
+    expect(nextQuestionId([])).toBe('question-1');
+  });
+
+  it('switches between the JSON and the form editor and flags invalid JSON', async () => {
+    renderRoutes(controltowerRoutes, { path });
+    fireEvent.click(await screen.findByRole('button', { name: 'Edit as JSON' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Use question editor' }));
+    expect(await screen.findAllByRole('group', { name: /Question/ })).toHaveLength(3);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Edit as JSON' }));
+    fireEvent.change(screen.getByRole('textbox', { name: /Questions/ }), {
+      target: { value: '[' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Use question editor' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('not valid JSON');
+  });
+
+  it('keeps the questions when an existing template changes kind', async () => {
+    ct.listControlTowerTemplates.mockResolvedValue([
+      { ...FEATURE_TEMPLATE, questions: sampleQuestions('FEATURE') },
+    ]);
+    renderRoutes(controltowerRoutes, { path });
+    fireEvent.click(await screen.findByRole('button', { name: 'Edit Feature' }));
+    chooseOption(screen.getByRole('combobox', { name: /Interview type/ }), 'Initial project');
+    expect(screen.getByRole('combobox', { name: /Interview type/ })).toHaveTextContent(
+      'Initial project',
+    );
+    expect(await screen.findAllByRole('group', { name: /Question/ })).toHaveLength(
+      sampleQuestions('FEATURE').length,
+    );
+  });
+
+  it('resets the form when the template being edited is deleted', async () => {
+    ct.listControlTowerTemplates.mockResolvedValue([
+      { ...FEATURE_TEMPLATE, questions: sampleQuestions('FEATURE') },
+    ]);
+    ct.deleteControlTowerTemplate.mockResolvedValue(undefined);
+    renderRoutes(controltowerRoutes, { path });
+    fireEvent.click(await screen.findByRole('button', { name: 'Edit Feature' }));
+    expect(screen.getByRole('button', { name: 'Update template' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Delete Feature' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Delete' }));
+    expect(await screen.findByText('Template deleted.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Save template' })).toBeInTheDocument();
   });
 
   it('asks before replacing edited questions when the kind changes', async () => {

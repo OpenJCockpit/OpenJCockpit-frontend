@@ -59,4 +59,26 @@ describe('ActionFeedback', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('Boom');
     expect(screen.queryByRole('button', { name: 'Dismiss' })).toBeNull();
   });
+
+  it('shows the detail and next step of a failure inline', () => {
+    renderWith(
+      <WithTranslations>
+        <ActionFeedback
+          feedback={{ ok: false, message: 'Boom', detail: 'Because', next: 'Try again' }}
+        />
+      </WithTranslations>,
+    );
+    expect(screen.getByRole('alert')).toHaveTextContent('Boom Because Try again');
+  });
+
+  it('puts the detail and next step of a success in the toast', () => {
+    renderWith(
+      <WithTranslations>
+        <ToastProvider>
+          <ActionFeedback feedback={{ ok: true, message: 'Saved', detail: 'D', next: 'N' }} />
+        </ToastProvider>
+      </WithTranslations>,
+    );
+    expect(screen.getByRole('status')).toHaveTextContent('Saved D N');
+  });
 });

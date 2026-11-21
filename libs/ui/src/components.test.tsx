@@ -16,6 +16,7 @@ import {
   PanelTitle,
   RevealGroup,
   Tab,
+  TabBadge,
   TabNav,
   panelClassName,
   tabActiveClass,
@@ -95,6 +96,17 @@ describe('Tabs', () => {
     expect(screen.getByRole('navigation', { name: 'views' })).toBeInTheDocument();
     expect(screen.getByText('One')).toHaveClass(tabActiveClass);
     expect(screen.getByText('Two')).not.toHaveClass(tabActiveClass);
+  });
+
+  it('shows a badge count only when there is something to show', () => {
+    const { container, rerender } = render(<TabBadge count={3} accent />);
+    expect(container).toHaveTextContent('3');
+    rerender(<TabBadge count={undefined} />);
+    expect(container).toBeEmptyDOMElement();
+    rerender(<TabBadge count={0} />);
+    expect(container).toBeEmptyDOMElement();
+    rerender(<TabBadge count={0} showZero />);
+    expect(container).toHaveTextContent('0');
   });
 
   it('fires clicks', () => {

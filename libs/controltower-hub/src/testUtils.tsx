@@ -125,11 +125,9 @@ export function stubApi() {
   ct.listControlTowerInterviews.mockResolvedValue([INTERVIEW]);
   // The detail screen loads one interview; serve it from whatever the list mock currently holds.
   vi.mocked(api.getControlTowerInterview).mockImplementation((interviewId: string) =>
-    api.listControlTowerInterviews('r1').then((rows) => {
-      const found = rows.find((i) => i.id === interviewId);
-      if (!found) throw new Error(`no interview ${interviewId}`);
-      return found;
-    }),
+    api
+      .listControlTowerInterviews('r1')
+      .then((rows) => rows.find((i) => i.id === interviewId) as ControlTowerInterview),
   );
   ct.listControlTowerSpecs.mockResolvedValue([SPEC_DRAFT, SPEC_DISPATCHED]);
   ct.getControlTowerGraph.mockResolvedValue(GRAPH);

@@ -141,6 +141,22 @@ describe('specifications', () => {
     );
   });
 
+  it('clears the status filter with "All"', async () => {
+    const { router } = renderRoutes(controltowerRoutes, { path: `${path}?status=DRAFT&q=log` });
+    await screen.findByText('Login page');
+    fireEvent.click(screen.getByRole('button', { name: /^All/ }));
+    expect(router.state.location.search).toBe('?q=log');
+  });
+
+  it('offers to leave the interview filter', async () => {
+    const { router } = renderRoutes(controltowerRoutes, { path: `${path}?interview=i1&q=log` });
+    expect(
+      await screen.findByText(/Showing the specifications generated from this interview/),
+    ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('link', { name: 'Show all' }));
+    expect(router.state.location.search).toBe('?q=log');
+  });
+
   it('opens a detail screen with a link back to the list', async () => {
     const { router } = renderRoutes(controltowerRoutes, { path });
     fireEvent.click(await screen.findByText('Login page'));
@@ -168,6 +184,24 @@ describe('specifications', () => {
   it('says so when the specification does not exist', async () => {
     renderRoutes(controltowerRoutes, { path: `${path}/nope` });
     expect(await screen.findByText('This specification no longer exists.')).toBeInTheDocument();
+  });
+
+  it('offers the next draft after approving one, and shows unknown relations as plain IDs', async () => {
+    ct.listControlTowerSpecs.mockResolvedValue([
+      { ...SPEC_DRAFT, interviewId: 'gone', dependsOn: ['ghost'] },
+      { ...SPEC_DRAFT, id: 's9', title: 'Second draft', specPath: 'second.md' },
+    ]);
+    ct.approveControlTowerSpec.mockResolvedValue({ ...SPEC_DRAFT, status: 'APPROVED' });
+    renderRoutes(controltowerRoutes, { path });
+    fireEvent.click(await screen.findByText('Login page'));
+    expect(await screen.findByText('ghost')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'View interview' })).toBeInTheDocument();
+    fireEvent.click(await screen.findByRole('button', { name: 'Approve and push branch' }));
+    fireEvent.click(await screen.findByTestId('confirm-action-confirm'));
+    expect(await screen.findByRole('link', { name: 'Review next draft' })).toHaveAttribute(
+      'href',
+      '/controltower/specs/s9',
+    );
   });
 
   it('copies the branch name', async () => {
@@ -206,6 +240,20 @@ describe('specifications', () => {
       fireEvent.click(await screen.findByTestId('confirm-action-confirm'));
       expect(await screen.findByText(/2 specs pushed to Git/)).toBeInTheDocument();
       expect(ct.approveControlTowerSpec.mock.calls.map(([id]) => id)).toEqual(['b', 'a']);
+    });
+
+    it('unticks a draft and clears the selection again', async () => {
+      ct.listControlTowerSpecs.mockResolvedValue(drafts);
+      renderRoutes(controltowerRoutes, { path });
+      const alpha = await screen.findByLabelText('Select Alpha');
+      fireEvent.click(alpha);
+      expect(screen.getByRole('button', { name: 'Approve selected (1)' })).toBeEnabled();
+      fireEvent.click(alpha);
+      expect(screen.getByRole('button', { name: 'Approve selected (0)' })).toBeDisabled();
+      const all = screen.getByLabelText('Select all drafts');
+      fireEvent.click(all);
+      fireEvent.click(all);
+      expect(screen.getByRole('button', { name: 'Approve selected (0)' })).toBeDisabled();
     });
 
     it('approves only the ticked draft', async () => {
@@ -271,5 +319,18 @@ describe('reconciling dispatched specs', () => {
     renderRoutes(controltowerRoutes, { path: '/controltower/specs' });
     await vi.waitFor(() => expect(ct.reconcileControlTowerSpecs).toHaveBeenCalled());
     expect(screen.queryByText('cockpit down')).toBeNull();
+  });
+
+  it('skips a check while the previous one is still running', async () => {
+    vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] });
+    try {
+      ct.reconcileControlTowerSpecs.mockReturnValue(new Promise(() => undefined));
+      renderRoutes(controltowerRoutes, { path: '/controltower/specs' });
+      await vi.waitFor(() => expect(ct.reconcileControlTowerSpecs).toHaveBeenCalledTimes(1));
+      await vi.advanceTimersByTimeAsync(RECONCILE_INTERVAL_MS);
+      expect(ct.reconcileControlTowerSpecs).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

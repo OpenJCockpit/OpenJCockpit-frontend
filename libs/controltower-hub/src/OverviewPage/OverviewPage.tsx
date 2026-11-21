@@ -40,8 +40,9 @@ const STEP_PATHS: Record<Step, string> = {
 /** `undefined` while the data is still loading, so a step is neither done nor the next one to do. */
 function stepsDone(counts: Counts): Record<Step, boolean | undefined> {
   const { approved, dispatched, done } = counts;
+  // All three come from the same specs query, so they load together.
   const progressed =
-    approved === undefined ? undefined : approved + (dispatched ?? 0) + (done ?? 0);
+    approved === undefined ? undefined : approved + (dispatched as number) + (done as number);
   return {
     repository: true,
     templates: counts.templates === undefined ? undefined : counts.templates > 0,
@@ -76,7 +77,7 @@ function Pipeline({ counts }: { counts: Counts }) {
         <li key={stage}>
           <Link to={STAGE_PATHS[stage]} className={styles.pipelineLink}>
             <span>{t(`overview.stages.${stage}`)}</span>
-            <strong>{counts[stage] ?? t('notAvailable')}</strong>
+            <strong>{counts[stage]}</strong>
           </Link>
         </li>
       ))}
@@ -85,8 +86,8 @@ function Pipeline({ counts }: { counts: Counts }) {
 }
 
 /** The interview itself when exactly one matches, otherwise the list to pick from. */
-function interviewTarget(interviews: readonly ControlTowerInterview[] | undefined, status: string) {
-  const matching = interviews?.filter((i) => i.status === status) ?? [];
+function interviewTarget(interviews: readonly ControlTowerInterview[], status: string) {
+  const matching = interviews.filter((i) => i.status === status);
   const [only, ...others] = matching;
   return only && others.length === 0 ? interviewPath(only.id) : CONTROLTOWER_INTERVIEWS_PATH;
 }
@@ -105,10 +106,16 @@ function useNextAction(
     return { to: CONTROLTOWER_TEMPLATES_PATH, label: t('overview.ctaTemplates') };
   }
   if (activeInterviews) {
-    return { to: interviewTarget(interviews, 'ACTIVE'), label: t('overview.ctaResume') };
+    return {
+      to: interviewTarget(interviews as readonly ControlTowerInterview[], 'ACTIVE'),
+      label: t('overview.ctaResume'),
+    };
   }
   if (completeInterviews) {
-    return { to: interviewTarget(interviews, 'COMPLETE'), label: t('overview.ctaGenerate') };
+    return {
+      to: interviewTarget(interviews as readonly ControlTowerInterview[], 'COMPLETE'),
+      label: t('overview.ctaGenerate'),
+    };
   }
   if (drafts) {
     return { to: CONTROLTOWER_SPECS_PATH, label: t('overview.ctaReview', { count: drafts }) };

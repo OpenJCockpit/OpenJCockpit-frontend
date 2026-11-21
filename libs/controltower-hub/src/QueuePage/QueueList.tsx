@@ -13,7 +13,7 @@ import {
 import type { ControlTowerQueueCandidate, ControlTowerSpec } from '@openjcockpit/api';
 import { ControlTowerQuery } from '../ControlTowerQuery';
 import { CONTROLTOWER_SPECS_PATH, specPath } from '../routePaths';
-import { deriveBlockers } from '../specGraph';
+import { deriveBlockers, type SpecBlockers } from '../specGraph';
 import styles from './QueuePage.module.scss';
 
 interface Props {
@@ -30,8 +30,8 @@ function waitingSpecs(ready: ControlTowerQueueCandidate[], specs: ControlTowerSp
   return specs
     .filter((s) => s.status === 'APPROVED' && !readyIds.has(s.id))
     .map((spec) => {
-      const b = blockers.get(spec.id);
-      const ids = [...(b?.blockedBy ?? []), ...(b?.missing ?? [])];
+      const b = blockers.get(spec.id) as SpecBlockers;
+      const ids = [...b.blockedBy, ...b.missing];
       return { spec, predecessors: ids.map((id) => ({ id, title: titles.get(id) ?? id })) };
     });
 }

@@ -81,7 +81,7 @@ export function SpecsPage() {
               }
               return { count: done.length, failed: null };
             } catch (e) {
-              const title = drafts[done.length]?.title ?? '';
+              const title = (drafts[done.length] as ControlTowerSpec).title;
               return {
                 count: done.length,
                 failed: { title, error: errorMessage(e) },

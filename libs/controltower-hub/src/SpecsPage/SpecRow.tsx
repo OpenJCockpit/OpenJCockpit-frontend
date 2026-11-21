@@ -10,7 +10,7 @@ import styles from './SpecsPage.module.scss';
 export function SpecRow({
   spec,
   isNew = false,
-  selected,
+  selected = false,
   onSelect,
 }: {
   spec: ControlTowerSpec;
@@ -27,7 +27,7 @@ export function SpecRow({
         <CheckboxField
           label=""
           aria-label={t('specs.select', { title: spec.title })}
-          checked={selected ?? false}
+          checked={selected}
           onChange={onSelect}
         />
       )}
