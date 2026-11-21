@@ -76,9 +76,16 @@ describe('ControlTower mock routes', () => {
     expect(call('GET', `/interviews/${id}`)).toMatchObject({ id });
     expect(call('GET', '/projects/p1/interviews')).toHaveLength(2);
 
-    const done = call('POST', `/interviews/${id}/answers`, { answer: 'a' });
+    // The template has several questions: the interview stays ACTIVE until the last one is answered.
+    const questionCount = (call('GET', '/templates') as Rec[]).find((t) => t.id === 'tpl-project')
+      ?.questions as unknown[];
+    let done = call('POST', `/interviews/${id}/answers`, { answer: 'a' });
+    expect(done).toMatchObject({ status: 'ACTIVE' });
+    for (let i = 1; i < questionCount.length; i += 1) {
+      done = call('POST', `/interviews/${id}/answers`, { answer: 'a' });
+    }
     expect(done).toMatchObject({ status: 'COMPLETE', currentQuestion: '' });
-    expect(done.answers).toHaveLength(1);
+    expect(done.answers).toHaveLength(questionCount.length);
 
     const [spec] = call('POST', `/interviews/${id}/generate`) as unknown as Rec[];
     const specId = String(spec?.id);

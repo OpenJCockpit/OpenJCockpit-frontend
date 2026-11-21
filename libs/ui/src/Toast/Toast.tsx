@@ -8,6 +8,12 @@ export interface ToastItem {
   variant: 'success' | 'info';
 }
 
+/** Written out so the style check sees both classes in use. */
+const VARIANT_CLASS: Record<ToastItem['variant'], string> = {
+  success: styles.success,
+  info: styles.info,
+};
+
 /** Success toasts disappear on their own after this long. */
 export const TOAST_DURATION_MS = 5000;
 
@@ -60,7 +66,7 @@ export function ToastRegion({ toasts, onDismiss, dismissLabel }: ToastRegionProp
   return (
     <div className={styles.region} role="status" aria-live="polite">
       {toasts.map((toast) => (
-        <div key={toast.id} className={cx(styles.toast, styles[toast.variant])}>
+        <div key={toast.id} className={cx(styles.toast, VARIANT_CLASS[toast.variant])}>
           <span>{toast.message}</span>
           <button
             type="button"

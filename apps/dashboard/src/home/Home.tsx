@@ -1,6 +1,11 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from '@openjcockpit/i18n';
-import { useAppRegistry, useHubHeader, useHubProject, useHubSession } from '@openjcockpit/hub-contract';
+import {
+  useAppRegistry,
+  useHubHeader,
+  useHubProject,
+  useHubSession,
+} from '@openjcockpit/hub-contract';
 import { AppShell, Button, Eyebrow, cx, pageClass, pageHeaderClass } from '@openjcockpit/ui';
 import {
   defaultLayout,

@@ -98,9 +98,7 @@ export function QueueList({ query, specs }: Props) {
                       {predecessors.map((p, i) => (
                         <span key={p.id}>
                           {i > 0 && ', '}
-                          <Link to={specPath(p.id)}>
-                            {p.title}
-                          </Link>
+                          <Link to={specPath(p.id)}>{p.title}</Link>
                         </span>
                       ))}
                     </small>
