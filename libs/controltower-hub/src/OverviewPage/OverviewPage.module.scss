@@ -24,7 +24,7 @@
   text-decoration: none;
   &:hover strong,
   &:focus-visible strong {
-    color: var(--teal);
+    color: var(--cyan);
   }
 }
 .visuallyHidden {
@@ -34,6 +34,19 @@
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+.intro {
+  margin: 0;
+}
+.gettingStarted {
+  & summary {
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  &:not([open]) summary {
+    margin-bottom: 0;
+  }
 }
 .steps {
   display: grid;
@@ -60,7 +73,7 @@
   height: 26px;
   border-radius: 50%;
   border: 1px solid rgb(var(--accent-rgb) / 0.4);
-  color: var(--teal);
+  color: var(--cyan);
   font-size: 12px;
   &::before {
     content: counter(step);
@@ -73,7 +86,7 @@
   font-weight: 600;
   & .stepMark {
     background: rgb(var(--accent-rgb) / 0.15);
-    border-color: var(--teal);
+    border-color: var(--cyan-a55);
   }
 }
 
@@ -116,6 +129,7 @@
   }
   &:hover,
   &:focus-visible {
-    border-color: var(--teal);
+    border-color: var(--cyan-a55);
+    background: var(--surface-glow);
   }
 }

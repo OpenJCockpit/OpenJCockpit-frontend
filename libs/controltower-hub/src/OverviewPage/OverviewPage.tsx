@@ -225,7 +225,7 @@ export function OverviewPage() {
           </PanelHeader>
           <PanelBody>
             {established ? (
-              <details>
+              <details className={styles.gettingStarted}>
                 <summary>{t('overview.gettingStarted')}</summary>
                 {checklist}
               </details>
@@ -239,7 +239,7 @@ export function OverviewPage() {
             <PanelTitle>{t('overview.ideasTitle')}</PanelTitle>
           </PanelHeader>
           <PanelBody>
-            <p>{t('overview.ideasText')}</p>
+            <p className={styles.intro}>{t('overview.ideasText')}</p>
             <ActionRow>
               <Link className={buttonClass({ variant: 'primary' })} to={next.to}>
                 {next.label}

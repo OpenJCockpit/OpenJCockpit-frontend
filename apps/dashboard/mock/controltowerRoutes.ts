@@ -473,6 +473,8 @@ add('POST', '/projects/:id/queue/dispatch', ({ p }) => {
       return { specId: s.id, result: 'DISPATCHED' };
     });
 });
+// OpenJCockpit never finishes in the mock, so no dispatched spec changes; "Mark done manually" completes them.
+add('POST', '/projects/:id/queue/reconcile', () => []);
 
 add('GET', '/settings', () => ({ policy, editable: true }));
 add('PUT', '/settings/policy', ({ body }) => {
