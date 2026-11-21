@@ -67,6 +67,8 @@ Keep the last two in step. Entries on the host's own origin (`/remotes/<name>/..
 
 An app with its own backend (ControlTower) cannot share `/api`: give it a prefix, e.g. `/controltower-api/` in `nginx.conf.template` (variable upstream `CONTROLTOWER_UPSTREAM`, rewritten to the backend's `/api/`) and in the Vite dev proxy, and send its requests through `apiRequest` with that prefix so the host token and 401 handling still apply. Mock mode serves it from `apps/dashboard/mock/controltowerRoutes.ts`.
 
+A remote is optional: leave it out of `FEDERATION_MANIFEST` (compose: set the variable in `.env` and do not start its container) and the host runs without it, with no notice. A remote that is in the manifest but down, slow or invalid is listed in the "Some apps are unavailable" notice on Home. In dev, `npm run start:hub:core` drops `controltower` from the served manifest (`HUB_WITHOUT=<name>,<name>` does the same for any remote).
+
 Adding an app to a deployed hub: build its image with base `/remotes/<name>/`, run it as `remote-<name>` next to the host, then add `"<key>":"/remotes/<name>/mf-manifest.json"` to `FEDERATION_MANIFEST` and restart the host. No allow-list change and no host rebuild.
 
 Governance gates in CI (`frontend-ci.yml`): `scripts/check-remotes.mjs` (each remote exposes `./app`, shares the singletons, bundles no identity SDK, and its `app-entry` reaches the contract only through the shared scope, never a private copy); the image jobs smoke-test the endpoints above and `single-origin` checks every remote through the host; the host's contract version gate rejects a remote with a higher `HUB_CONTRACT_VERSION` at runtime.

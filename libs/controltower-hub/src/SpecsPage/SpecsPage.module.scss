@@ -1,16 +1,31 @@
-.spec {
-  border-bottom: 1px solid rgb(var(--accent-rgb) / 0.075);
-  & summary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 10px 0;
-    cursor: pointer;
-    overflow-wrap: anywhere;
+.rowButton {
+  all: unset;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+  & > span:first-child {
+    flex: 1;
   }
   & small {
     display: block;
+    color: var(--muted);
+    font-size: 12px;
+  }
+  &:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 2px;
+  }
+}
+.specDetails {
+  display: grid;
+  gap: 10px;
+  padding-bottom: 12px;
+  overflow-wrap: anywhere;
+  & small {
     color: var(--muted);
     font-size: 12px;
   }
@@ -24,8 +39,46 @@
     font-size: 12px;
   }
 }
-.specDetails {
+.specRelation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.specLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.statusTag {
+  justify-self: start;
+}
+.filterBar {
   display: grid;
   gap: 10px;
-  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+.stageStrip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.stages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  & li + li::before {
+    content: '\2192';
+    margin-right: 6px;
+    color: var(--muted);
+  }
+}
+.rowButton code,
+.specDetails code {
+  font-size: 12px;
 }

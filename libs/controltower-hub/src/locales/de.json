@@ -1,7 +1,6 @@
 {
   "controltower": {
     "title": "Control Tower",
-    "subtitle": "Interviewbasierte Anforderungen, abhängigkeitsbewusste Specs und kontrollierte Auslieferung.",
     "back": "Zurück zum Dashboard",
     "loading": "Lädt…",
     "retry": "Erneut versuchen",
@@ -55,6 +54,7 @@
       "interviews": "Interviews",
       "specs": "Spezifikationen",
       "ready": "Bereit zum Dispatch",
+      "needsReview": "Zu prüfen",
       "howTitle": "So funktioniert es",
       "steps": {
         "repository": "Repository und zugehörigen OpenJCockpit-Workflow verbinden",
@@ -65,13 +65,35 @@
       },
       "ideasTitle": "Von Ideen zu ausführbaren Specs.",
       "ideasText": "Halte jede Änderung klein, testbar und nachvollziehbar. Der Abhängigkeitsgraph verhindert eine unsichere Ausführungsreihenfolge. KI hilft, Anforderungen zu formulieren; das Backend prüft die Regeln.",
-      "start": "Discovery starten"
+      "start": "Discovery starten",
+      "ctaTemplates": "Vorlage erstellen",
+      "ctaReview_one": "{{count}} Entwurf prüfen",
+      "ctaReview_other": "{{count}} Entwürfe prüfen",
+      "ctaDispatch": "Zum Dispatch",
+      "ctaResume": "Interview fortsetzen",
+      "ctaGenerate": "Specs erzeugen",
+      "ctaConfirm_one": "{{count}} Spec als erledigt bestätigen",
+      "ctaConfirm_other": "{{count}} Specs als erledigt bestätigen",
+      "stepDone": "Erledigt",
+      "pipelineTitle": "Pipeline",
+      "pipelineLabel": "Spezifikations-Pipeline",
+      "gettingStarted": "Erste Schritte",
+      "stages": {
+        "interviews": "Interviews",
+        "drafts": "Entwürfe",
+        "approved": "Freigegeben",
+        "dispatched": "Gestartet",
+        "done": "Erledigt"
+      }
     },
     "interviews": {
       "session": "Discovery-Sitzung",
       "previous": "Frühere Interviews",
       "template": "Interviewvorlage",
       "selectTemplate": "Vorlage wählen",
+      "noTemplatesTitle": "Erstelle zuerst eine Vorlage",
+      "noTemplatesHint": "Ein Interview startet mit einer Fragebogen-Vorlage.",
+      "noTemplatesAction": "Zu den Vorlagen",
       "featureRequest": "Neue Feature-Anfrage",
       "featurePlaceholder": "Beschreibe das Feature, das du erstellen möchtest…",
       "start": "Interview starten",
@@ -80,6 +102,14 @@
       "submit": "Antwort senden",
       "completed": "Interview abgeschlossen",
       "enough": "Das Interview enthält genug Informationen für einen Spec-Vorschlag.",
+      "progress": "Frage {{current}} von {{total}}",
+      "progressLast": "Letzte Frage",
+      "progressLeft_one": "Noch {{count}} Frage nach dieser",
+      "progressLeft_other": "Noch {{count}} Fragen nach dieser",
+      "progressFollow": "Nachfrage {{number}} von bis zu {{max}}",
+      "progressLabel": "Fortschritt des Interviews",
+      "backToList": "Zurück zu den Interviews",
+      "transcript": "Fragen und Antworten",
       "specTemplate": "Vorlage für die Spec-Ausgabe",
       "defaultSpecTemplate": "OpenJCockpit-Standard",
       "generate": "Spec-Entwürfe generieren",
@@ -93,7 +123,16 @@
         "ACTIVE": "Läuft",
         "COMPLETE": "Abgeschlossen",
         "GENERATED": "Specs generiert"
-      }
+      },
+      "starting": "Wird gestartet…",
+      "submitting": "Wird gesendet…",
+      "generating": "Wird erzeugt…",
+      "answered_one": "{{count}} beantwortet",
+      "answered_other": "{{count}} beantwortet",
+      "submitShortcut": "zum Senden",
+      "shortcutCtrl": "Strg",
+      "shortcutEnter": "Enter",
+      "viewSpecs": "Generierte Specs ansehen"
     },
     "speech": {
       "speak": "Sprechen",
@@ -107,8 +146,14 @@
       "count_other": "{{count}} Dateien",
       "empty": "Schließe ein Interview ab und generiere deine ersten Spec-Entwürfe.",
       "loadFailed": "Die Spezifikationen konnten nicht geladen werden.",
+      "detailTitle": "Spezifikation",
+      "backToList": "Zurück zu den Spezifikationen",
+      "notFound": "Diese Spezifikation existiert nicht mehr.",
+      "draftsCreated_one": "{{count}} Entwurf erstellt. Prüfe ihn und gib ihn frei, um ihn nach Git zu pushen.",
+      "draftsCreated_other": "{{count}} Entwürfe erstellt. Prüfe sie und gib sie frei, um sie nach Git zu pushen.",
+      "toQueue": "Zur Dispatch-Warteschlange",
       "branch": "Branch {{branch}}",
-      "dependencies": "Abhängigkeiten: {{list}}",
+      "dependencies": "Abhängigkeiten:",
       "noDependencies": "Keine",
       "approveAndPush": "Freigeben und Branch pushen",
       "approveTitle": "Diese Spec freigeben?",
@@ -116,14 +161,38 @@
       "approve": "Freigeben und pushen",
       "approving": "Pusht…",
       "approved": "Spec in Branch {{branch}} gepusht. Merge ihn vor dem Dispatch in den Branch, den OpenJCockpit liest.",
-      "confirmDone": "Extern abgeschlossen bestätigen",
+      "confirmDone": "Manuell als erledigt markieren",
       "completed": "Als erledigt markiert. Prüfe das zuerst in OpenJCockpit.",
       "status": {
         "DRAFT": "Entwurf",
         "APPROVED": "Freigegeben",
         "DISPATCHED": "Dispatcht",
         "DONE": "Erledigt"
-      }
+      },
+      "filterAll": "Alle",
+      "filterLabel": "Nach Status filtern",
+      "search": "Nach Titel oder ID suchen",
+      "noMatches": "Keine Spezifikation passt zu diesem Filter.",
+      "blocks": "Blockiert:",
+      "copied": "Kopiert",
+      "copyBranch": "Branch-Namen kopieren",
+      "copyBody": "Spec-Text kopieren",
+      "emptyAction": "Discovery-Interview starten",
+      "new": "Neu",
+      "nextDraft": "Nächsten Entwurf prüfen",
+      "fromInterview": "Zeigt die aus diesem Interview erzeugten Spezifikationen.",
+      "showAll": "Alle anzeigen",
+      "interview": "Interview:",
+      "viewInterview": "Interview ansehen",
+      "select": "{{title}} auswählen",
+      "selectAllDrafts": "Alle Entwürfe auswählen",
+      "approveSelected": "Ausgewählte freigeben ({{count}})",
+      "bulkApproveTitle_one": "{{count}} Entwurf freigeben?",
+      "bulkApproveTitle_other": "{{count}} Entwürfe freigeben?",
+      "bulkApproveMessage": "Jede Spec wird in Abhängigkeitsreihenfolge in einen eigenen Git-Branch gepusht:",
+      "bulkApproved_one": "{{count}} Spec nach Git gepusht. Merge den Branch vor dem Versand in den Branch, den OpenJCockpit liest.",
+      "bulkApproved_other": "{{count}} Specs nach Git gepusht. Merge die Branches vor dem Versand in den Branch, den OpenJCockpit liest.",
+      "bulkApproveFailed": "„{{title}}“ konnte nicht freigegeben werden: {{error}} ({{count}} zuvor freigegeben.)"
     },
     "graph": {
       "title": "Abhängigkeitsgraph",
@@ -131,7 +200,22 @@
       "label": "Abhängigkeitsgraph der Specs",
       "empty": "Noch keine Spezifikationen. Starte dein erstes Interview.",
       "loadFailed": "Der Abhängigkeitsgraph konnte nicht geladen werden.",
-      "ready": "{{status}} · BEREIT"
+      "ready": "{{status}} · Bereit",
+      "legend": "Status",
+      "zoomIn": "Vergrößern",
+      "zoomOut": "Verkleinern",
+      "fit": "An Ansicht anpassen",
+      "showList": "Als Liste anzeigen",
+      "showGraph": "Als Graph anzeigen",
+      "open": "Spezifikation öffnen",
+      "selected": "Ausgewählt: {{title}}",
+      "clearSelection": "Auswahl aufheben",
+      "dependsOn": "{{title}} hängt ab von {{dependencies}}",
+      "noDependencies": "{{title}} hat keine Abhängigkeiten",
+      "tooltip": "{{id}} · {{title}}",
+      "listLabel": "Spezifikationsabhängigkeiten",
+      "openHint": "Eingabetaste zum Öffnen",
+      "emptyAction": "Discovery-Interview starten"
     },
     "queue": {
       "ready": "Bereite Arbeit",
@@ -145,8 +229,22 @@
       "published": "Die Spec-Branches sind in den Branch gemergt, den OpenJCockpit liest.",
       "dispatch": "Bereite Specs dispatchen",
       "openSpecQueue": "Spec-Queue öffnen",
-      "result": { "DISPATCHED": "Versendet" },
-      "unknownHint": "Unsichere HTTP-Ergebnisse werden als UNKNOWN erfasst und nie automatisch wiederholt."
+      "result": {
+        "DISPATCHED": "Versendet",
+        "UNKNOWN": "Unbekannt"
+      },
+      "unknownHint": "Unsichere HTTP-Ergebnisse werden als UNKNOWN erfasst und nie automatisch wiederholt.",
+      "waiting": "Wartet auf Vorgänger",
+      "blockedBy": "Blockiert durch",
+      "disabledNothingReady": "Nichts zu versenden: Noch keine Spec ist bereit.",
+      "disabledNotPublished": "Bestätige, dass die Spec-Branches gemergt sind, um den Versand zu aktivieren.",
+      "confirmTitle": "Bereite Specs versenden?",
+      "confirmMessage_one": "Dies sendet {{count}} Spec an OpenJCockpit:",
+      "confirmMessage_other": "Dies sendet {{count}} Specs an OpenJCockpit:",
+      "dispatching": "Wird versendet…",
+      "emptyAction": "Spezifikationen prüfen",
+      "publishedHint": "Die Freigabe pusht nur einen Branch. OpenJCockpit liest die Spec-Dateien aus dem Zielbranch; ein Versand vor dem Merge schickt Dateien, die dort noch fehlen.",
+      "branchesToMerge": "Zuerst zu mergende Branches:"
     },
     "templates": {
       "savedTitle": "Gespeicherte Vorlagen",
@@ -170,7 +268,37 @@
       "custom": "Eigene Spec-Vorlage",
       "markdownTemplate": "Markdown-Vorlage",
       "saveSpec": "Spec-Vorlage speichern",
-      "specSaved": "Spec-Vorlage gespeichert."
+      "specSaved": "Spec-Vorlage gespeichert.",
+      "questionN": "Frage {{number}}",
+      "questionText": "Frage",
+      "completionCriteria": "Abschlusskriterien",
+      "maxFollowUps": "Max. Rückfragen",
+      "required": "Pflichtfrage",
+      "moveUp": "Frage {{number}} nach oben",
+      "moveDown": "Frage {{number}} nach unten",
+      "removeQuestion": "Frage {{number}} entfernen",
+      "up": "Hoch",
+      "down": "Runter",
+      "remove": "Entfernen",
+      "addQuestion": "Frage hinzufügen",
+      "replaceTitle": "Bearbeitete Fragen ersetzen?",
+      "replaceMessage": "Beim Ändern des Interviewtyps werden Ihre bearbeiteten Fragen durch die Beispielfragen dieses Typs ersetzt.",
+      "replace": "Ersetzen",
+      "deleteTitle": "Vorlage löschen?",
+      "deleteMessage": "„{{name}}“ löschen? Das kann nicht rückgängig gemacht werden.",
+      "delete": "Löschen",
+      "deleting": "Wird gelöscht…",
+      "deleted": "Vorlage gelöscht.",
+      "edit": "Bearbeiten",
+      "editNamed": "{{name}} bearbeiten",
+      "duplicate": "Duplizieren",
+      "duplicateNamed": "{{name}} duplizieren",
+      "deleteNamed": "{{name}} löschen",
+      "copyName": "{{name}} (Kopie)",
+      "editing": "Vorlage bearbeiten: {{name}}",
+      "update": "Vorlage aktualisieren",
+      "useEditor": "Fragen-Editor verwenden",
+      "editAsJson": "Als JSON bearbeiten"
     },
     "policy": {
       "loadFailed": "Die Richtlinien-Einstellungen konnten nicht geladen werden.",
@@ -217,6 +345,17 @@
           "text": "Nur diese Rollen dürfen Specs an OpenJCockpit senden."
         }
       }
+    },
+    "dismiss": "Schließen",
+    "repositorySettings": "Repository-Einstellungen",
+    "readOnly": "Nur Operatoren und Administratoren können hier Änderungen vornehmen. Sie können diese Seite ansehen.",
+    "kind": {
+      "PROJECT": "Erstes Projekt",
+      "FEATURE": "Neues Feature"
+    },
+    "unavailable": {
+      "title": "Control Tower ist nicht erreichbar",
+      "hint": "Der Control-Tower-Dienst antwortet nicht. Prüfen Sie, ob er läuft, und versuchen Sie es erneut."
     }
   }
 }

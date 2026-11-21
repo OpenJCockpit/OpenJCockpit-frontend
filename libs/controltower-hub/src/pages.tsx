@@ -11,7 +11,7 @@ function lazyNamed<K extends string>(
 }
 
 /** `global` pages work without a project; `project` pages need a selected project and its linked repository. */
-export type TabKey = 'overview' | 'interviews' | 'specs' | 'graph' | 'queue' | 'templates';
+export type TabKey = 'overview' | 'interviews' | 'specs' | 'queue' | 'graph' | 'templates';
 
 export type PageScope = 'global' | 'project';
 
@@ -24,7 +24,7 @@ export interface ControlTowerPage {
   Component: ComponentType;
 }
 
-/** Single source of truth for the page tabs and the route tree. Tab order is array order. */
+/** Single source of truth for the page tabs and the route tree. Tab order is array order and follows the workflow; the graph is a reference view, so it comes after the queue. */
 export const pages: readonly ControlTowerPage[] = [
   {
     path: '',
@@ -45,16 +45,16 @@ export const pages: readonly ControlTowerPage[] = [
     Component: lazyNamed(() => import('./SpecsPage/SpecsPage'), 'SpecsPage'),
   },
   {
-    path: 'graph',
-    tabKey: 'graph',
-    scope: 'project',
-    Component: lazyNamed(() => import('./GraphPage/GraphPage'), 'GraphPage'),
-  },
-  {
     path: 'queue',
     tabKey: 'queue',
     scope: 'project',
     Component: lazyNamed(() => import('./QueuePage/QueuePage'), 'QueuePage'),
+  },
+  {
+    path: 'graph',
+    tabKey: 'graph',
+    scope: 'project',
+    Component: lazyNamed(() => import('./GraphPage/GraphPage'), 'GraphPage'),
   },
   {
     path: 'templates',
@@ -63,6 +63,11 @@ export const pages: readonly ControlTowerPage[] = [
     Component: lazyNamed(() => import('./TemplatesPage/TemplatesPage'), 'TemplatesPage'),
   },
 ];
+
+const InterviewDetailPage = lazyNamed(
+  () => import('./InterviewsPage/InterviewDetailPage'),
+  'InterviewDetailPage',
+);
 
 /** Absolute URL of a page, e.g. `/controltower/graph`. */
 export function pageUrl({ path }: ControlTowerPage): string {
@@ -74,3 +79,17 @@ export function pageRoute(page: ControlTowerPage): RouteObject {
   const element = <page.Component />;
   return page.path ? { path: page.path, element } : { index: true, element };
 }
+
+const SpecDetailPage = lazyNamed(() => import('./SpecsPage/SpecDetailPage'), 'SpecDetailPage');
+
+/** The interview detail screen: a project page without a tab, so the Interviews tab stays active. */
+export const interviewDetailRoute: RouteObject = {
+  path: 'interviews/:interviewId',
+  element: <InterviewDetailPage />,
+};
+
+/** The specification detail screen: a project page without a tab, so the Specs tab stays active. */
+export const specDetailRoute: RouteObject = {
+  path: 'specs/:specId',
+  element: <SpecDetailPage />,
+};

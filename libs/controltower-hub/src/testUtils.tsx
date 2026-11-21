@@ -47,6 +47,7 @@ export const SPEC_DRAFT: ControlTowerSpec = {
   dependsOn: [],
   specPath: 'login.md',
   branch: null,
+  interviewId: 'i1',
 };
 
 export const SPEC_DISPATCHED: ControlTowerSpec = {
@@ -81,6 +82,7 @@ export const TEMPLATE: ControlTowerTemplate = {
   name: 'Standard project',
   kind: 'PROJECT',
   questions: [],
+  builtIn: false,
 };
 
 export const FEATURE_TEMPLATE: ControlTowerTemplate = {
@@ -119,7 +121,14 @@ export const ct = api as unknown as ControlTowerRequests & Record<string, Return
 export function stubApi() {
   for (const fn of Object.values(ct)) if (vi.isMockFunction(fn)) fn.mockReset();
   ct.getControlTowerProjectByCockpitProject.mockResolvedValue(REPOSITORY);
+  ct.reconcileControlTowerSpecs.mockResolvedValue([]);
   ct.listControlTowerInterviews.mockResolvedValue([INTERVIEW]);
+  // The detail screen loads one interview; serve it from whatever the list mock currently holds.
+  vi.mocked(api.getControlTowerInterview).mockImplementation((interviewId: string) =>
+    api
+      .listControlTowerInterviews('r1')
+      .then((rows) => rows.find((i) => i.id === interviewId) as ControlTowerInterview),
+  );
   ct.listControlTowerSpecs.mockResolvedValue([SPEC_DRAFT, SPEC_DISPATCHED]);
   ct.getControlTowerGraph.mockResolvedValue(GRAPH);
   ct.getControlTowerQueueProposal.mockResolvedValue(QUEUE);

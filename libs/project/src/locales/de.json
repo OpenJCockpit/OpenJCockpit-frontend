@@ -20,7 +20,9 @@
       "manageGear": "Projekte verwalten",
       "owner": "Eigentümer: {{owner}}",
       "branch": "Branch: {{branch}}",
-      "notReachableNotice": "Repository nicht erreichbar. Aktualisieren Sie das Projekt über Projekte verwalten."
+      "notReachableNotice": "Repository nicht erreichbar. Aktualisieren Sie das Projekt über Projekte verwalten.",
+      "loadFailed": "Ihre Projekte konnten nicht geladen werden. Das Backend ist möglicherweise nicht erreichbar.",
+      "retry": "Erneut versuchen"
     },
     "settings": {
       "loading": "Projekte werden geladen…",

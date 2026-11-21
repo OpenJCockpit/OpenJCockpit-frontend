@@ -106,6 +106,8 @@ export interface Template {
   name: string;
   kind: TemplateKind;
   questions: Question[];
+  /** Seeded template; cannot be edited or deleted. */
+  builtIn: boolean;
 }
 
 export interface Answer {
@@ -142,6 +144,8 @@ export interface Interview {
   questionIndex: number;
   followUps: number;
   currentQuestion: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export type SpecStatus = typeof SpecStatus[keyof typeof SpecStatus];
@@ -168,6 +172,11 @@ export interface Spec {
      * @nullable
      */
   branch: string | null;
+  /**
+     * ID of the interview the spec was generated from; null for specs created before this link existed.
+     * @nullable
+     */
+  interviewId?: string | null;
 }
 
 export interface GraphNode {

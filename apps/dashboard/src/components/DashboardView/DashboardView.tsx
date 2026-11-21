@@ -60,7 +60,6 @@ export function DashboardView({ projects, project, onProjectChange, onLogout, us
           )}
         </section>
       </main>
-
     </AppShell>
   );
 }

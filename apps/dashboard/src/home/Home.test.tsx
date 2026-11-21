@@ -56,12 +56,12 @@ async function renderHome(
       withI18n(
         <FakeHubSessionProvider session={session}>
           <FakeHubProjectProvider selected={project}>
-          <AppRegistryProvider apps={[demo]}>
-            <MemoryRouter>
-              <Home />
-              <Where />
-            </MemoryRouter>
-          </AppRegistryProvider>
+            <AppRegistryProvider apps={[demo]}>
+              <MemoryRouter>
+                <Home />
+                <Where />
+              </MemoryRouter>
+            </AppRegistryProvider>
           </FakeHubProjectProvider>
         </FakeHubSessionProvider>,
         appResources,
@@ -79,11 +79,15 @@ describe('Home', () => {
   beforeEach(() => localStorage.clear());
 
   it('shows the selected project as the page header instead of the greeting', async () => {
-    await renderHome([], { firstName: 'Ada', username: 'ada' } as HubUser, {
-      id: 'p1',
-      name: 'Noordzee',
-      gitStatus: 'ACCESSIBLE',
-    } as HubProject);
+    await renderHome(
+      [],
+      { firstName: 'Ada', username: 'ada' } as HubUser,
+      {
+        id: 'p1',
+        name: 'Noordzee',
+        gitStatus: 'ACCESSIBLE',
+      } as HubProject,
+    );
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Noordzee');
     expect(screen.queryByText(/Ada/)).not.toBeInTheDocument();
   });

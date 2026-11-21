@@ -38,7 +38,7 @@ fi
 if [ "$mode" = image ] || [ "$mode" = all ]; then
   sha="$(git rev-parse HEAD 2>/dev/null || echo local)"
   build() { # name dockerfile [remote]
-    local args=(--build-arg BUILD_SHA="$sha")
+    local args=(--build-arg BUILD_SHA="$sha" --build-arg APK_REFRESH="$(date +%s)")
     [ -z "${3:-}" ] || args+=(--build-arg REMOTE="$3")
     docker build -q -f "$2" "${args[@]}" -t "trivy-scan-$1:local" . >/dev/null
   }

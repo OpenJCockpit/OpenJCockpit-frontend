@@ -21,8 +21,10 @@ RUN NX_DAEMON=false npx nx run dashboard:build
 
 FROM nginxinc/nginx-unprivileged:1.30-alpine@sha256:f5116ed4606f3eb015dd4a8e28cb9b351476dc0ad4bc6e9f93b19cec130cdf03
 # Pick up Alpine security patches published after the base image was built (the digest pin does not move on its own).
+# The unused dynamic nginx modules pin nginx to the version they were built for (and hold back nginx patches), so drop them.
+ARG APK_REFRESH=0
 USER root
-RUN apk upgrade --no-cache
+RUN echo "apk refresh: $APK_REFRESH" >/dev/null && apk del --no-cache nginx-module-geoip nginx-module-image-filter nginx-module-njs nginx-module-xslt && apk upgrade --no-cache && apk add --no-cache --upgrade nginx
 USER 101
 # The nginx image renders /etc/nginx/templates/*.template into /etc/nginx/conf.d at startup. The filter
 # keeps envsubst from touching nginx's own $variables ($uri, $host, ...).

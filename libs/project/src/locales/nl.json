@@ -20,7 +20,9 @@
       "manageGear": "Projecten beheren",
       "owner": "Eigenaar: {{owner}}",
       "branch": "Branch: {{branch}}",
-      "notReachableNotice": "Repository niet bereikbaar. Pas het project aan via Projecten beheren."
+      "notReachableNotice": "Repository niet bereikbaar. Pas het project aan via Projecten beheren.",
+      "loadFailed": "Je projecten konden niet worden geladen. De backend is mogelijk niet beschikbaar.",
+      "retry": "Opnieuw proberen"
     },
     "settings": {
       "loading": "Projecten laden…",

@@ -1,11 +1,12 @@
 import type { ReactNode } from 'react';
 import { AppHeader, AppShell } from '../AppShell/AppShell';
-import { IconBox } from '../IconBox/IconBox';
+import { Eyebrow } from '../Panel/Panel';
 import { pageClass, pageHeaderClass } from '../Page/Page';
 
 interface HubPageProps {
-  /** The hub's icon, as the element for `IconBox` (usually `<Icon name="…" />`). */
-  icon: ReactNode;
+  /** The small label above the title naming the hub, as the workflow and spec pages do. */
+  eyebrow: ReactNode;
+  /** The page heading: the selected project's name, as on the workflow and spec pages. */
   title: ReactNode;
   /** A line under the title: a description or a status chip. */
   subtitle?: ReactNode;
@@ -20,7 +21,7 @@ interface HubPageProps {
 
 /** The chrome every hub page shares: host header (or a back header), title row, optional tabs, content. */
 export function HubPage({
-  icon,
+  eyebrow,
   title,
   subtitle,
   header,
@@ -35,9 +36,8 @@ export function HubPage({
       <main className={pageClass}>
         <div className={pageHeaderClass}>
           <div>
-            <h1>
-              <IconBox label={icon} compact /> {title}
-            </h1>
+            <Eyebrow>{eyebrow}</Eyebrow>
+            <h1>{title}</h1>
             {subtitle}
           </div>
         </div>

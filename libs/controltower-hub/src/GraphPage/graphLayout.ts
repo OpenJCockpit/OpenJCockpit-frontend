@@ -12,7 +12,7 @@ export interface GraphLayout {
   /** Specs that have a position, in graph order. */
   nodes: ControlTowerGraph['nodes'];
   /** One Bezier path per dependency whose two ends are both placed. */
-  edges: { key: string; path: string }[];
+  edges: { key: string; from: string; to: string; path: string }[];
   width: number;
   height: number;
 }
@@ -40,7 +40,7 @@ export function layoutGraph(graph: ControlTowerGraph): GraphLayout {
       const to = positions.get(node.id);
       if (!from || !to) return [];
       const path = `M${from.x + NODE_WIDTH},${from.y + EDGE_Y} C${from.x + NODE_WIDTH + 32},${from.y + EDGE_Y} ${to.x - 25},${to.y + EDGE_Y} ${to.x},${to.y + EDGE_Y}`;
-      return [{ key: `${dep}-${node.id}`, path }];
+      return [{ key: `${dep}-${node.id}`, from: dep, to: node.id, path }];
     }),
   );
   return {

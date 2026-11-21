@@ -1,8 +1,18 @@
 import { useState, type FormEvent } from 'react';
 import { useTranslation } from '@openjcockpit/i18n';
-import { ActionRow, Button, Icon, SelectField, TextAreaField } from '@openjcockpit/ui';
+import { Link } from 'react-router';
+import {
+  ActionRow,
+  Button,
+  EmptyState,
+  Icon,
+  SelectField,
+  TextAreaField,
+  buttonClass,
+} from '@openjcockpit/ui';
 import { startControlTowerInterview, type ControlTowerInterview } from '@openjcockpit/api';
 import { useRepositoryMutation, useTemplates } from '../hooks';
+import { CONTROLTOWER_TEMPLATES_PATH } from '../routePaths';
 import type { RunAction } from '../useAction';
 import { useWriteAccess } from '../useWriteAccess';
 import styles from './InterviewsPage.module.scss';
@@ -17,7 +27,8 @@ interface Props {
 export function StartInterviewForm({ repositoryId, run, onStarted }: Props) {
   const { t } = useTranslation('controltower');
   const canWrite = useWriteAccess();
-  const templates = useTemplates().data ?? [];
+  const loadedTemplates = useTemplates().data;
+  const templates = loadedTemplates ?? [];
   const [templateId, setTemplateId] = useState('');
   const [featureRequest, setFeatureRequest] = useState('');
   const start = useRepositoryMutation(repositoryId, startControlTowerInterview);
@@ -35,6 +46,20 @@ export function StartInterviewForm({ repositoryId, run, onStarted }: Props) {
     });
   }
 
+  if (loadedTemplates?.length === 0) {
+    return (
+      <EmptyState
+        title={t('interviews.noTemplatesTitle')}
+        hint={t('interviews.noTemplatesHint')}
+        action={
+          <Link className={buttonClass({ variant: 'primary' })} to={CONTROLTOWER_TEMPLATES_PATH}>
+            {t('interviews.noTemplatesAction')}
+          </Link>
+        }
+      />
+    );
+  }
+
   return (
     <form onSubmit={onSubmit} className={styles.session}>
       <SelectField
@@ -43,7 +68,7 @@ export function StartInterviewForm({ repositoryId, run, onStarted }: Props) {
         onChange={setTemplateId}
         options={[
           { value: '', label: t('interviews.selectTemplate') },
-          ...templates.map((c) => ({ value: c.id, label: `${c.name} (${c.kind})` })),
+          ...templates.map((c) => ({ value: c.id, label: `${c.name} (${t(`kind.${c.kind}`)})` })),
         ]}
       />
       {template?.kind === 'FEATURE' && (
@@ -62,7 +87,8 @@ export function StartInterviewForm({ repositoryId, run, onStarted }: Props) {
           type="submit"
           disabled={!templateId || start.isPending || !canWrite}
         >
-          <Icon name="plus" /> {t('interviews.start')}
+          <Icon name={start.isPending ? 'spinner' : 'plus'} />{' '}
+          {start.isPending ? t('interviews.starting') : t('interviews.start')}
         </Button>
       </ActionRow>
     </form>

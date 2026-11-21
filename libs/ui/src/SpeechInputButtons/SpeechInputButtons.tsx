@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '../Button/Button';
 import { Icon } from '../Icon/Icon';
 import { StatusMessage } from '../StatusMessage/StatusMessage';
@@ -7,7 +7,10 @@ interface Recognition {
   lang: string;
   onresult: ((event: { results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void) | null;
   onend: (() => void) | null;
+  onerror: (() => void) | null;
   start: () => void;
+  stop?: () => void;
+  abort?: () => void;
 }
 type RecognitionConstructor = new () => Recognition;
 
@@ -41,6 +44,24 @@ interface Props {
 export function SpeechInputButtons({ text, onTranscript, labels }: Props) {
   const [listening, setListening] = useState(false);
   const [unsupported, setUnsupported] = useState(false);
+  const active = useRef<Recognition | null>(null);
+
+  // Release the microphone and silence read-aloud if the component goes away mid-session.
+  useEffect(
+    () => () => {
+      const recognition = active.current;
+      if (recognition) {
+        recognition.onresult = null;
+        recognition.onend = null;
+        recognition.onerror = null;
+        if (recognition.abort) recognition.abort();
+        else recognition.stop?.();
+        active.current = null;
+      }
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    },
+    [],
+  );
 
   function speak() {
     if (!('speechSynthesis' in window)) return;
@@ -51,6 +72,11 @@ export function SpeechInputButtons({ text, onTranscript, labels }: Props) {
   }
 
   function listen() {
+    if (active.current) {
+      // Second click while the microphone is open: stop it, so the final result is delivered.
+      active.current.stop?.();
+      return;
+    }
     const speechWindow = window as unknown as SpeechWindow;
     const Constructor = speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition;
     if (!Constructor) {
@@ -65,7 +91,13 @@ export function SpeechInputButtons({ text, onTranscript, labels }: Props) {
           .map((result) => result[0]?.transcript ?? '')
           .join(' '),
       );
-    recognition.onend = () => setListening(false);
+    const finish = () => {
+      active.current = null;
+      setListening(false);
+    };
+    recognition.onend = finish;
+    recognition.onerror = finish;
+    active.current = recognition;
     setUnsupported(false);
     setListening(true);
     recognition.start();

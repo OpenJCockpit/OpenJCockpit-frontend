@@ -1,6 +1,6 @@
 import type { GitStatus, Project } from '@openjcockpit/api';
 import styles from './ProjectSelection.module.scss';
-import { AppHeader, AppShell, Button, Icon, cx } from '@openjcockpit/ui';
+import { AppHeader, AppShell, Button, ErrorState, Icon, cx } from '@openjcockpit/ui';
 import { useTranslation } from '@openjcockpit/i18n';
 import gitStyles from '../GitStatusBadge/GitStatusBadge.module.scss';
 
@@ -9,6 +9,9 @@ interface Props {
   onSelect: (project: Project) => void;
   onSettings: () => void;
   onBack?: () => void;
+  /** The project list could not be loaded: show an error with Retry instead of "no projects". */
+  loadFailed?: boolean;
+  onRetry?: () => void;
 }
 
 function GitStatusIndicator({ status }: { status: GitStatus }) {
@@ -46,7 +49,14 @@ export function canSelectProject(project: Project): boolean {
   );
 }
 
-export function ProjectSelection({ projects, onSelect, onSettings, onBack }: Props) {
+export function ProjectSelection({
+  projects,
+  onSelect,
+  onSettings,
+  onBack,
+  loadFailed,
+  onRetry,
+}: Props) {
   const { t } = useTranslation('project');
   const displayProjects = projects;
 
@@ -67,7 +77,11 @@ export function ProjectSelection({ projects, onSelect, onSettings, onBack }: Pro
           <p className={styles.projectSelectionSubtitle}>{t('selection.subtitle')}</p>
         </div>
 
-        {displayProjects.length === 0 ? (
+        {loadFailed ? (
+          <ErrorState onRetry={onRetry} retryLabel={t('selection.retry')}>
+            {t('selection.loadFailed')}
+          </ErrorState>
+        ) : displayProjects.length === 0 ? (
           <div className={styles.projectEmpty}>
             <p data-testid="project-selection-empty">{t('selection.empty')}</p>
             <Button variant="secondary" onClick={onSettings}>

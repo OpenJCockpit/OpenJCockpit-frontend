@@ -1,4 +1,5 @@
 import { Link } from 'react-router';
+import { isServiceUnavailable } from '@openjcockpit/api';
 import { useHubProject } from '@openjcockpit/hub-contract';
 import { useTranslation } from '@openjcockpit/i18n';
 import { ErrorState, LoadingState, StatusMessage } from '@openjcockpit/ui';
@@ -16,6 +17,16 @@ function QueueCount() {
   if (cockpitProjectId === null) {
     return (
       <StatusMessage data-testid="controltower-widget-no-project">{t('noProject')}</StatusMessage>
+    );
+  }
+  if (
+    (repository.isError && isServiceUnavailable(repository.error)) ||
+    (queue.isError && isServiceUnavailable(queue.error))
+  ) {
+    return (
+      <StatusMessage data-testid="controltower-widget-unavailable">
+        {t('unavailable.title')}
+      </StatusMessage>
     );
   }
   if (repository.isError || queue.isError) {

@@ -1,5 +1,5 @@
 import { TwoColumn } from '@openjcockpit/ui';
-import { useQueueProposal } from '../hooks';
+import { useQueueProposal, useSpecs } from '../hooks';
 import { useRepository } from '../RepositoryGate/RepositoryGate';
 import { DispatchPanel } from './DispatchPanel';
 import { QueueList } from './QueueList';
@@ -8,10 +8,11 @@ import { QueueList } from './QueueList';
 export function QueuePage() {
   const repository = useRepository();
   const queue = useQueueProposal(repository.id);
+  const specs = useSpecs(repository.id);
   return (
     <TwoColumn>
-      <QueueList query={queue} />
-      <DispatchPanel repositoryId={repository.id} readyCount={queue.data?.length ?? 0} />
+      <QueueList query={queue} specs={specs.data} />
+      <DispatchPanel repositoryId={repository.id} ready={queue.data ?? []} specs={specs.data} />
     </TwoColumn>
   );
 }

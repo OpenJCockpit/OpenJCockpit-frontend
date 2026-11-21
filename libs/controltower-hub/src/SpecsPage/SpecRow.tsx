@@ -1,65 +1,52 @@
+import { useNavigate } from 'react-router';
 import { useTranslation } from '@openjcockpit/i18n';
-import { ActionRow, Button, StatusChip, type StatusKind } from '@openjcockpit/ui';
-import type { ControlTowerSpec, ControlTowerSpecStatus } from '@openjcockpit/api';
-import { useWriteAccess } from '../useWriteAccess';
+import { CheckboxField, Icon, ListRow, StatusChip } from '@openjcockpit/ui';
+import type { ControlTowerSpec } from '@openjcockpit/api';
+import { specPath } from '../routePaths';
+import { STATUS_KIND } from './statusKind';
 import styles from './SpecsPage.module.scss';
 
-const STATUS_KIND: Record<ControlTowerSpecStatus, StatusKind> = {
-  DRAFT: 'open',
-  APPROVED: 'review',
-  DISPATCHED: 'active',
-  DONE: 'done',
-};
-
-interface Props {
+/** One specification in the registry list; picking it opens its detail screen. */
+export function SpecRow({
+  spec,
+  isNew = false,
+  selected = false,
+  onSelect,
+}: {
   spec: ControlTowerSpec;
-  completing: boolean;
-  onApprove: (spec: ControlTowerSpec) => void;
-  onComplete: (spec: ControlTowerSpec) => void;
-}
-
-/** One specification: summary line, dependencies, body and the actions its status allows. */
-export function SpecRow({ spec, completing, onApprove, onComplete }: Props) {
+  isNew?: boolean;
+  /** Shows a checkbox for bulk actions when given together with `onSelect`. */
+  selected?: boolean;
+  onSelect?: (selected: boolean) => void;
+}) {
   const { t } = useTranslation('controltower');
-  const canWrite = useWriteAccess();
+  const navigate = useNavigate();
   return (
-    <details className={styles.spec}>
-      <summary>
-        <div>
+    <ListRow>
+      {onSelect && (
+        <CheckboxField
+          label=""
+          aria-label={t('specs.select', { title: spec.title })}
+          checked={selected}
+          onChange={onSelect}
+        />
+      )}
+      <button
+        type="button"
+        className={styles.rowButton}
+        onClick={() => void navigate(specPath(spec.id))}
+      >
+        <span>
           <b>{spec.title}</b>
           <small>
-            {[
-              `${spec.id} · specs/${spec.specPath}`,
-              spec.branch && t('specs.branch', { branch: spec.branch }),
-            ]
-              .filter(Boolean)
-              .join(' · ')}
+            {spec.id} · <code>{`specs/${spec.specPath}`}</code>
+            {spec.branch && ` · ${t('specs.branch', { branch: spec.branch })}`}
           </small>
-        </div>
+        </span>
+        {isNew && <StatusChip label={t('specs.new')} kind="active" />}
         <StatusChip label={t(`specs.status.${spec.status}`)} kind={STATUS_KIND[spec.status]} />
-      </summary>
-      <div className={styles.specDetails}>
-        <p>
-          {t('specs.dependencies', {
-            list: spec.dependsOn.join(', ') || t('specs.noDependencies'),
-          })}
-        </p>
-        <pre>{spec.body}</pre>
-        {canWrite && (
-          <ActionRow>
-            {spec.status === 'DRAFT' && (
-              <Button variant="primary" onClick={() => onApprove(spec)}>
-                {t('specs.approveAndPush')}
-              </Button>
-            )}
-            {spec.status === 'DISPATCHED' && (
-              <Button variant="secondary" disabled={completing} onClick={() => onComplete(spec)}>
-                {t('specs.confirmDone')}
-              </Button>
-            )}
-          </ActionRow>
-        )}
-      </div>
-    </details>
+        <Icon name="arrow-right" />
+      </button>
+    </ListRow>
   );
 }

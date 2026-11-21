@@ -1,7 +1,6 @@
 {
   "controltower": {
     "title": "Control Tower",
-    "subtitle": "Interview-first requirements, dependency-aware specs and governed delivery.",
     "back": "Back to dashboard",
     "loading": "Loading…",
     "retry": "Retry",
@@ -55,6 +54,7 @@
       "interviews": "Interviews",
       "specs": "Specifications",
       "ready": "Ready to dispatch",
+      "needsReview": "Needs review",
       "howTitle": "How it works",
       "steps": {
         "repository": "Connect a repository and its OpenJCockpit workflow",
@@ -65,13 +65,35 @@
       },
       "ideasTitle": "From ideas to executable specs.",
       "ideasText": "Keep each change small, testable and traceable. The dependency graph blocks unsafe execution order. AI helps articulate requirements; the backend validates the rules.",
-      "start": "Start discovery"
+      "start": "Start discovery",
+      "ctaTemplates": "Create a template",
+      "ctaReview_one": "Review {{count}} draft",
+      "ctaReview_other": "Review {{count}} drafts",
+      "ctaDispatch": "Go to dispatch",
+      "ctaResume": "Resume interview",
+      "ctaGenerate": "Generate specs",
+      "ctaConfirm_one": "Confirm {{count}} spec done",
+      "ctaConfirm_other": "Confirm {{count}} specs done",
+      "stepDone": "Done",
+      "pipelineTitle": "Pipeline",
+      "pipelineLabel": "Specification pipeline",
+      "gettingStarted": "Getting started",
+      "stages": {
+        "interviews": "Interviews",
+        "drafts": "Drafts",
+        "approved": "Approved",
+        "dispatched": "Dispatched",
+        "done": "Done"
+      }
     },
     "interviews": {
       "session": "Discovery session",
       "previous": "Previous interviews",
       "template": "Interview template",
       "selectTemplate": "Select template",
+      "noTemplatesTitle": "Create a template first",
+      "noTemplatesHint": "An interview starts from a questionnaire template.",
+      "noTemplatesAction": "Go to templates",
       "featureRequest": "New feature request",
       "featurePlaceholder": "Describe the feature you'd like to create…",
       "start": "Start interview",
@@ -80,6 +102,14 @@
       "submit": "Submit answer",
       "completed": "Interview completed",
       "enough": "The interview has enough information for a spec proposal.",
+      "progress": "Question {{current}} of {{total}}",
+      "progressLast": "Last question",
+      "progressLeft_one": "{{count}} question left after this one",
+      "progressLeft_other": "{{count}} questions left after this one",
+      "progressFollow": "Follow-up {{number}} of up to {{max}}",
+      "progressLabel": "Interview progress",
+      "backToList": "Back to interviews",
+      "transcript": "Questions and answers",
       "specTemplate": "Spec output template",
       "defaultSpecTemplate": "OpenJCockpit default",
       "generate": "Generate spec drafts",
@@ -93,7 +123,16 @@
         "ACTIVE": "In progress",
         "COMPLETE": "Complete",
         "GENERATED": "Specs generated"
-      }
+      },
+      "starting": "Starting…",
+      "submitting": "Submitting…",
+      "generating": "Generating…",
+      "answered_one": "{{count}} answered",
+      "answered_other": "{{count}} answered",
+      "submitShortcut": "to submit",
+      "shortcutCtrl": "Ctrl",
+      "shortcutEnter": "Enter",
+      "viewSpecs": "View generated specs"
     },
     "speech": {
       "speak": "Speak",
@@ -107,8 +146,14 @@
       "count_other": "{{count}} files",
       "empty": "Complete an interview and generate your first spec drafts.",
       "loadFailed": "Failed to load the specifications.",
+      "detailTitle": "Specification",
+      "backToList": "Back to specifications",
+      "notFound": "This specification no longer exists.",
+      "draftsCreated_one": "{{count}} draft created. Review it and approve it to push it to Git.",
+      "draftsCreated_other": "{{count}} drafts created. Review them and approve them to push them to Git.",
+      "toQueue": "Go to the dispatch queue",
       "branch": "branch {{branch}}",
-      "dependencies": "Dependencies: {{list}}",
+      "dependencies": "Dependencies:",
       "noDependencies": "None",
       "approveAndPush": "Approve and push branch",
       "approveTitle": "Approve this spec?",
@@ -116,14 +161,38 @@
       "approve": "Approve and push",
       "approving": "Pushing…",
       "approved": "Spec pushed to branch {{branch}}. Merge it into the branch OpenJCockpit reads before dispatch.",
-      "confirmDone": "Confirm externally completed",
+      "confirmDone": "Mark done manually",
       "completed": "Marked as done. Verify in OpenJCockpit first.",
       "status": {
         "DRAFT": "Draft",
         "APPROVED": "Approved",
         "DISPATCHED": "Dispatched",
         "DONE": "Done"
-      }
+      },
+      "filterAll": "All",
+      "filterLabel": "Filter by status",
+      "search": "Search by title or ID",
+      "noMatches": "No specifications match this filter.",
+      "blocks": "Blocks:",
+      "copied": "Copied",
+      "copyBranch": "Copy branch name",
+      "copyBody": "Copy spec body",
+      "emptyAction": "Start a discovery interview",
+      "new": "New",
+      "nextDraft": "Review next draft",
+      "fromInterview": "Showing the specifications generated from this interview.",
+      "showAll": "Show all",
+      "interview": "Interview:",
+      "viewInterview": "View interview",
+      "select": "Select {{title}}",
+      "selectAllDrafts": "Select all drafts",
+      "approveSelected": "Approve selected ({{count}})",
+      "bulkApproveTitle_one": "Approve {{count}} draft?",
+      "bulkApproveTitle_other": "Approve {{count}} drafts?",
+      "bulkApproveMessage": "Each spec is pushed to its own Git branch, in dependency order:",
+      "bulkApproved_one": "{{count}} spec pushed to Git. Merge its branch into the branch OpenJCockpit reads before dispatch.",
+      "bulkApproved_other": "{{count}} specs pushed to Git. Merge their branches into the branch OpenJCockpit reads before dispatch.",
+      "bulkApproveFailed": "\"{{title}}\" could not be approved: {{error}} ({{count}} approved before it.)"
     },
     "graph": {
       "title": "Dependency graph",
@@ -131,7 +200,22 @@
       "label": "Spec dependency graph",
       "empty": "No specifications yet. Generate your first interview.",
       "loadFailed": "Failed to load the dependency graph.",
-      "ready": "{{status}} · READY"
+      "ready": "{{status}} · Ready",
+      "legend": "Status",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "fit": "Fit to view",
+      "showList": "Show as list",
+      "showGraph": "Show as graph",
+      "open": "Open specification",
+      "selected": "Selected: {{title}}",
+      "clearSelection": "Clear selection",
+      "dependsOn": "{{title}} depends on {{dependencies}}",
+      "noDependencies": "{{title}} has no dependencies",
+      "tooltip": "{{id}} · {{title}}",
+      "listLabel": "Spec dependencies",
+      "openHint": "Press Enter to open",
+      "emptyAction": "Start a discovery interview"
     },
     "queue": {
       "ready": "Ready work",
@@ -145,8 +229,22 @@
       "published": "The spec branches are merged into the branch that OpenJCockpit reads.",
       "dispatch": "Dispatch ready specs",
       "openSpecQueue": "Open the spec queue",
-      "result": { "DISPATCHED": "Dispatched" },
-      "unknownHint": "Uncertain HTTP outcomes are recorded as UNKNOWN, never automatically retried."
+      "result": {
+        "DISPATCHED": "Dispatched",
+        "UNKNOWN": "Unknown"
+      },
+      "unknownHint": "Uncertain HTTP outcomes are recorded as UNKNOWN, never automatically retried.",
+      "waiting": "Waiting on predecessors",
+      "blockedBy": "Blocked by",
+      "disabledNothingReady": "Nothing to dispatch: no spec is ready yet.",
+      "disabledNotPublished": "Confirm that the spec branches are merged to enable dispatch.",
+      "confirmTitle": "Dispatch ready specs?",
+      "confirmMessage_one": "This sends {{count}} spec to OpenJCockpit:",
+      "confirmMessage_other": "This sends {{count}} specs to OpenJCockpit:",
+      "dispatching": "Dispatching…",
+      "emptyAction": "Review specifications",
+      "publishedHint": "Approving only pushes a branch. OpenJCockpit reads the spec files from the target branch, so dispatching before the merge sends it files that are not there yet.",
+      "branchesToMerge": "Branches to merge first:"
     },
     "templates": {
       "savedTitle": "Saved templates",
@@ -170,7 +268,37 @@
       "custom": "Custom spec template",
       "markdownTemplate": "Markdown template",
       "saveSpec": "Save spec template",
-      "specSaved": "Spec template saved."
+      "specSaved": "Spec template saved.",
+      "questionN": "Question {{number}}",
+      "questionText": "Question",
+      "completionCriteria": "Completion criteria",
+      "maxFollowUps": "Max follow-ups",
+      "required": "Required",
+      "moveUp": "Move question {{number}} up",
+      "moveDown": "Move question {{number}} down",
+      "removeQuestion": "Remove question {{number}}",
+      "up": "Up",
+      "down": "Down",
+      "remove": "Remove",
+      "addQuestion": "Add question",
+      "replaceTitle": "Replace edited questions?",
+      "replaceMessage": "Changing the interview type replaces the questions you edited with the sample questions of that type.",
+      "replace": "Replace",
+      "deleteTitle": "Delete template?",
+      "deleteMessage": "Delete \"{{name}}\"? This cannot be undone.",
+      "delete": "Delete",
+      "deleting": "Deleting…",
+      "deleted": "Template deleted.",
+      "edit": "Edit",
+      "editNamed": "Edit {{name}}",
+      "duplicate": "Duplicate",
+      "duplicateNamed": "Duplicate {{name}}",
+      "deleteNamed": "Delete {{name}}",
+      "copyName": "{{name}} (copy)",
+      "editing": "Edit template: {{name}}",
+      "update": "Update template",
+      "useEditor": "Use question editor",
+      "editAsJson": "Edit as JSON"
     },
     "policy": {
       "loadFailed": "Failed to load the policy settings.",
@@ -217,6 +345,17 @@
           "text": "Only these roles may send specs to OpenJCockpit."
         }
       }
+    },
+    "dismiss": "Dismiss",
+    "repositorySettings": "Repository settings",
+    "readOnly": "Only operators and administrators can make changes here. You can view this page.",
+    "kind": {
+      "PROJECT": "Initial project",
+      "FEATURE": "New feature"
+    },
+    "unavailable": {
+      "title": "Control Tower is not reachable",
+      "hint": "The Control Tower service is not responding. Check that it is running, then try again."
     }
   }
 }

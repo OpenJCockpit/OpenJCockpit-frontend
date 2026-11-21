@@ -5,7 +5,7 @@ import type { ConfirmDialogProps } from './ConfirmDialog';
 
 export interface ConfirmRequest extends Pick<
   ConfirmDialogProps,
-  'title' | 'message' | 'confirmLabel' | 'cancelLabel' | 'busyLabel' | 'tone'
+  'title' | 'message' | 'details' | 'confirmLabel' | 'cancelLabel' | 'busyLabel' | 'tone'
 > {
   /** Runs on confirm; the dialog stays open and busy until it settles. */
   onConfirm: () => void | Promise<void>;

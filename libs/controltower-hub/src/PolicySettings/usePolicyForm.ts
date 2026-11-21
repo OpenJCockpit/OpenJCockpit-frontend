@@ -65,5 +65,6 @@ export function usePolicyForm(initial: ControlTowerPolicySettings) {
     saving: save.isPending,
     testing: pending && !save.isPending,
     feedback,
+    clearFeedback: clear,
   };
 }

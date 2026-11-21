@@ -2,6 +2,7 @@ import { screen, waitFor } from '@testing-library/react';
 import { chooseOption } from '@openjcockpit/ui/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ROUTES } from './routes';
+import { FEATURE_FLAGS } from './featureFlags';
 import { renderRoutedApp } from './testUtils/renderRoutedApp';
 import { specsRemotes } from './testUtils/specsRemoteStubs';
 import { clickAsync } from './testUtils/dom';
@@ -68,8 +69,15 @@ vi.mock('./lazyViews', async () => {
       projects: { id: string; name: string }[];
       onSelect: (p: { id: string; name: string }) => void;
       onSettings: () => void;
+      loadFailed?: boolean;
+      onRetry?: () => void;
     }) => (
       <section data-testid="view-projects">
+        {props.loadFailed && (
+          <button type="button" onClick={props.onRetry}>
+            Load failed, retry
+          </button>
+        )}
         {props.projects.map((p) => (
           <button key={p.id} type="button" onClick={() => props.onSelect(p)}>
             Select {p.name}
@@ -239,6 +247,15 @@ describe('App routing', () => {
     expect(await screen.findByText('Start')).toBeInTheDocument();
   });
 
+  it('shows a load error with Retry instead of an empty list when the projects fail to load', async () => {
+    vi.mocked(api.loadProjects).mockRejectedValueOnce(new Error('down'));
+    renderRoutedApp('/projects');
+    const retry = await screen.findByRole('button', { name: 'Load failed, retry' });
+    await clickAsync(retry);
+    expect(await screen.findByRole('button', { name: 'Select Test Project' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Load failed, retry' })).not.toBeInTheDocument();
+  });
+
   it('keeps the workflow the user picked in the launcher', async () => {
     const second = { ...WORKFLOW, id: 'wf-2', name: 'Second workflow' };
     vi.mocked(api.listWorkflows).mockResolvedValue([WORKFLOW, second]);
@@ -286,5 +303,22 @@ describe('App remote apps', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'You do not have access to this page.',
     );
+  });
+
+  describe('without the ControlTower remote', () => {
+    beforeEach(() => localStorage.setItem(FEATURE_FLAGS.hub, '1'));
+
+    it('shows no Control Tower app, no notice and no error when it is not in the manifest', async () => {
+      renderRoutedApp('/home', specsRemotes);
+      expect(await screen.findByTestId('home')).toBeInTheDocument();
+      expect(screen.queryByText(/control tower/i)).not.toBeInTheDocument();
+      expect(screen.queryByTestId('remote-failures')).not.toBeInTheDocument();
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    });
+
+    it('names the remote on Home when it is in the manifest but failed to load', async () => {
+      renderRoutedApp('/home', { ...specsRemotes, failed: ['controltower'] });
+      expect(await screen.findByTestId('remote-failures')).toHaveTextContent('controltower');
+    });
   });
 });

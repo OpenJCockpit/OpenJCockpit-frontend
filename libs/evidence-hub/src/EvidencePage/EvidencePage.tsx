@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
-import { HubPage, Icon, Panel, QueryState, StatusChip } from '@openjcockpit/ui';
+import { HubPage, Panel, QueryState, StatusChip } from '@openjcockpit/ui';
+import { useHubProject } from '@openjcockpit/hub-contract';
 import { useTranslation } from '@openjcockpit/i18n';
 import { EvidenceList } from '../EvidenceList/EvidenceList';
 import { useWorkspace } from '../useWorkspace';
@@ -13,12 +14,13 @@ interface Props {
 /** The full page of the app: the same list as the widget, with the page chrome around it. */
 export function EvidencePage({ onBack, header }: Props) {
   const { t } = useTranslation('evidence');
+  const project = useHubProject().selected;
   const workspace = useWorkspace();
 
   return (
     <HubPage
-      icon={<Icon name="pulse" />}
-      title={t('title')}
+      eyebrow={t('title')}
+      title={project?.name}
       subtitle={<StatusChip label={t('sampleData')} kind="waiting" />}
       header={header}
       onBack={onBack}

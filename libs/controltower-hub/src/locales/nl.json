@@ -1,7 +1,6 @@
 {
   "controltower": {
     "title": "Control Tower",
-    "subtitle": "Interviewgestuurde requirements, specs met afhankelijkheden en beheerste oplevering.",
     "back": "Terug naar het dashboard",
     "loading": "Laden…",
     "retry": "Opnieuw proberen",
@@ -55,6 +54,7 @@
       "interviews": "Interviews",
       "specs": "Specificaties",
       "ready": "Klaar om te dispatchen",
+      "needsReview": "Te beoordelen",
       "howTitle": "Zo werkt het",
       "steps": {
         "repository": "Koppel een repository en de bijbehorende OpenJCockpit-workflow",
@@ -65,13 +65,35 @@
       },
       "ideasTitle": "Van ideeën naar uitvoerbare specs.",
       "ideasText": "Houd elke wijziging klein, testbaar en traceerbaar. De afhankelijkhedengraaf voorkomt een onveilige uitvoervolgorde. AI helpt requirements te formuleren; de backend valideert de regels.",
-      "start": "Discovery starten"
+      "start": "Discovery starten",
+      "ctaTemplates": "Sjabloon maken",
+      "ctaReview_one": "{{count}} concept beoordelen",
+      "ctaReview_other": "{{count}} concepten beoordelen",
+      "ctaDispatch": "Naar dispatch",
+      "ctaResume": "Interview hervatten",
+      "ctaGenerate": "Specs genereren",
+      "ctaConfirm_one": "{{count}} spec als klaar bevestigen",
+      "ctaConfirm_other": "{{count}} specs als klaar bevestigen",
+      "stepDone": "Klaar",
+      "pipelineTitle": "Pijplijn",
+      "pipelineLabel": "Specificatiepijplijn",
+      "gettingStarted": "Aan de slag",
+      "stages": {
+        "interviews": "Interviews",
+        "drafts": "Concepten",
+        "approved": "Goedgekeurd",
+        "dispatched": "Verzonden",
+        "done": "Klaar"
+      }
     },
     "interviews": {
       "session": "Discovery-sessie",
       "previous": "Eerdere interviews",
       "template": "Interviewsjabloon",
       "selectTemplate": "Kies een sjabloon",
+      "noTemplatesTitle": "Maak eerst een sjabloon",
+      "noTemplatesHint": "Een interview start vanuit een vragenlijstsjabloon.",
+      "noTemplatesAction": "Naar sjablonen",
       "featureRequest": "Nieuw featureverzoek",
       "featurePlaceholder": "Beschrijf de feature die je wilt maken…",
       "start": "Interview starten",
@@ -80,6 +102,14 @@
       "submit": "Antwoord versturen",
       "completed": "Interview voltooid",
       "enough": "Het interview bevat genoeg informatie voor een spec-voorstel.",
+      "progress": "Vraag {{current}} van {{total}}",
+      "progressLast": "Laatste vraag",
+      "progressLeft_one": "Nog {{count}} vraag na deze",
+      "progressLeft_other": "Nog {{count}} vragen na deze",
+      "progressFollow": "Vervolgvraag {{number}} van maximaal {{max}}",
+      "progressLabel": "Voortgang van het interview",
+      "backToList": "Terug naar de interviews",
+      "transcript": "Vragen en antwoorden",
       "specTemplate": "Sjabloon voor de spec-uitvoer",
       "defaultSpecTemplate": "OpenJCockpit-standaard",
       "generate": "Spec-concepten genereren",
@@ -93,7 +123,16 @@
         "ACTIVE": "Bezig",
         "COMPLETE": "Voltooid",
         "GENERATED": "Specs gegenereerd"
-      }
+      },
+      "starting": "Starten…",
+      "submitting": "Verzenden…",
+      "generating": "Genereren…",
+      "answered_one": "{{count}} beantwoord",
+      "answered_other": "{{count}} beantwoord",
+      "submitShortcut": "om te verzenden",
+      "shortcutCtrl": "Ctrl",
+      "shortcutEnter": "Enter",
+      "viewSpecs": "Bekijk gegenereerde specs"
     },
     "speech": {
       "speak": "Spreken",
@@ -107,8 +146,14 @@
       "count_other": "{{count}} bestanden",
       "empty": "Rond een interview af en genereer je eerste spec-concepten.",
       "loadFailed": "De specificaties konden niet worden geladen.",
+      "detailTitle": "Specificatie",
+      "backToList": "Terug naar de specificaties",
+      "notFound": "Deze specificatie bestaat niet meer.",
+      "draftsCreated_one": "{{count}} concept gemaakt. Beoordeel het en keur het goed om het naar Git te pushen.",
+      "draftsCreated_other": "{{count}} concepten gemaakt. Beoordeel ze en keur ze goed om ze naar Git te pushen.",
+      "toQueue": "Naar de dispatchwachtrij",
       "branch": "branch {{branch}}",
-      "dependencies": "Afhankelijkheden: {{list}}",
+      "dependencies": "Afhankelijkheden:",
       "noDependencies": "Geen",
       "approveAndPush": "Goedkeuren en branch pushen",
       "approveTitle": "Deze spec goedkeuren?",
@@ -116,14 +161,38 @@
       "approve": "Goedkeuren en pushen",
       "approving": "Pushen…",
       "approved": "Spec gepusht naar branch {{branch}}. Merge die vóór het dispatchen in de branch die OpenJCockpit leest.",
-      "confirmDone": "Extern afgerond bevestigen",
+      "confirmDone": "Handmatig als klaar markeren",
       "completed": "Als klaar gemarkeerd. Controleer dit eerst in OpenJCockpit.",
       "status": {
         "DRAFT": "Concept",
         "APPROVED": "Goedgekeurd",
         "DISPATCHED": "Gedispatcht",
         "DONE": "Klaar"
-      }
+      },
+      "filterAll": "Alle",
+      "filterLabel": "Filter op status",
+      "search": "Zoek op titel of ID",
+      "noMatches": "Geen specificaties voldoen aan dit filter.",
+      "blocks": "Blokkeert:",
+      "copied": "Gekopieerd",
+      "copyBranch": "Branchnaam kopiëren",
+      "copyBody": "Spec-tekst kopiëren",
+      "emptyAction": "Een discovery-interview starten",
+      "new": "Nieuw",
+      "nextDraft": "Volgend concept beoordelen",
+      "fromInterview": "Toont de specificaties die uit dit interview zijn gegenereerd.",
+      "showAll": "Alles tonen",
+      "interview": "Interview:",
+      "viewInterview": "Interview bekijken",
+      "select": "Selecteer {{title}}",
+      "selectAllDrafts": "Selecteer alle concepten",
+      "approveSelected": "Geselecteerde goedkeuren ({{count}})",
+      "bulkApproveTitle_one": "{{count}} concept goedkeuren?",
+      "bulkApproveTitle_other": "{{count}} concepten goedkeuren?",
+      "bulkApproveMessage": "Elke spec wordt in afhankelijkheidsvolgorde naar een eigen Git-branch gepusht:",
+      "bulkApproved_one": "{{count}} spec naar Git gepusht. Merge de branch in de branch die OpenJCockpit leest vóór het verzenden.",
+      "bulkApproved_other": "{{count}} specs naar Git gepusht. Merge de branches in de branch die OpenJCockpit leest vóór het verzenden.",
+      "bulkApproveFailed": "\"{{title}}\" kon niet worden goedgekeurd: {{error}} ({{count}} eerder goedgekeurd.)"
     },
     "graph": {
       "title": "Afhankelijkhedengraaf",
@@ -131,7 +200,22 @@
       "label": "Afhankelijkhedengraaf van de specs",
       "empty": "Nog geen specificaties. Start je eerste interview.",
       "loadFailed": "De afhankelijkhedengraaf kon niet worden geladen.",
-      "ready": "{{status}} · KLAAR"
+      "ready": "{{status}} · Klaar",
+      "legend": "Status",
+      "zoomIn": "Inzoomen",
+      "zoomOut": "Uitzoomen",
+      "fit": "Passend maken",
+      "showList": "Als lijst tonen",
+      "showGraph": "Als grafiek tonen",
+      "open": "Specificatie openen",
+      "selected": "Geselecteerd: {{title}}",
+      "clearSelection": "Selectie wissen",
+      "dependsOn": "{{title}} hangt af van {{dependencies}}",
+      "noDependencies": "{{title}} heeft geen afhankelijkheden",
+      "tooltip": "{{id}} · {{title}}",
+      "listLabel": "Specificatie-afhankelijkheden",
+      "openHint": "Druk op Enter om te openen",
+      "emptyAction": "Een discovery-interview starten"
     },
     "queue": {
       "ready": "Klaar werk",
@@ -145,8 +229,22 @@
       "published": "De spec-branches zijn gemerged in de branch die OpenJCockpit leest.",
       "dispatch": "Klare specs dispatchen",
       "openSpecQueue": "Spec-wachtrij openen",
-      "result": { "DISPATCHED": "Verzonden" },
-      "unknownHint": "Onzekere HTTP-uitkomsten worden als UNKNOWN vastgelegd en nooit automatisch opnieuw geprobeerd."
+      "result": {
+        "DISPATCHED": "Verzonden",
+        "UNKNOWN": "Onbekend"
+      },
+      "unknownHint": "Onzekere HTTP-uitkomsten worden als UNKNOWN vastgelegd en nooit automatisch opnieuw geprobeerd.",
+      "waiting": "Wacht op voorgangers",
+      "blockedBy": "Geblokkeerd door",
+      "disabledNothingReady": "Niets te verzenden: nog geen spec is gereed.",
+      "disabledNotPublished": "Bevestig dat de spec-branches zijn samengevoegd om verzenden mogelijk te maken.",
+      "confirmTitle": "Gereedstaande specs verzenden?",
+      "confirmMessage_one": "Dit verzendt {{count}} spec naar OpenJCockpit:",
+      "confirmMessage_other": "Dit verzendt {{count}} specs naar OpenJCockpit:",
+      "dispatching": "Verzenden…",
+      "emptyAction": "Specificaties beoordelen",
+      "publishedHint": "Goedkeuren pusht alleen een branch. OpenJCockpit leest de spec-bestanden uit de doelbranch; verzenden vóór de merge stuurt het bestanden die er nog niet staan.",
+      "branchesToMerge": "Eerst te mergen branches:"
     },
     "templates": {
       "savedTitle": "Opgeslagen sjablonen",
@@ -170,7 +268,37 @@
       "custom": "Eigen spec-sjabloon",
       "markdownTemplate": "Markdown-sjabloon",
       "saveSpec": "Spec-sjabloon opslaan",
-      "specSaved": "Spec-sjabloon opgeslagen."
+      "specSaved": "Spec-sjabloon opgeslagen.",
+      "questionN": "Vraag {{number}}",
+      "questionText": "Vraag",
+      "completionCriteria": "Afrondingscriteria",
+      "maxFollowUps": "Max. vervolgvragen",
+      "required": "Verplicht",
+      "moveUp": "Vraag {{number}} omhoog",
+      "moveDown": "Vraag {{number}} omlaag",
+      "removeQuestion": "Vraag {{number}} verwijderen",
+      "up": "Omhoog",
+      "down": "Omlaag",
+      "remove": "Verwijderen",
+      "addQuestion": "Vraag toevoegen",
+      "replaceTitle": "Bewerkte vragen vervangen?",
+      "replaceMessage": "Als je het interviewtype wijzigt, worden je bewerkte vragen vervangen door de voorbeeldvragen van dat type.",
+      "replace": "Vervangen",
+      "deleteTitle": "Sjabloon verwijderen?",
+      "deleteMessage": "\"{{name}}\" verwijderen? Dit kan niet ongedaan worden gemaakt.",
+      "delete": "Verwijderen",
+      "deleting": "Verwijderen…",
+      "deleted": "Sjabloon verwijderd.",
+      "edit": "Bewerken",
+      "editNamed": "{{name}} bewerken",
+      "duplicate": "Dupliceren",
+      "duplicateNamed": "{{name}} dupliceren",
+      "deleteNamed": "{{name}} verwijderen",
+      "copyName": "{{name}} (kopie)",
+      "editing": "Sjabloon bewerken: {{name}}",
+      "update": "Sjabloon bijwerken",
+      "useEditor": "Vrageneditor gebruiken",
+      "editAsJson": "Bewerken als JSON"
     },
     "policy": {
       "loadFailed": "De beleidsinstellingen konden niet worden geladen.",
@@ -217,6 +345,17 @@
           "text": "Alleen deze rollen mogen specs naar OpenJCockpit sturen."
         }
       }
+    },
+    "dismiss": "Sluiten",
+    "repositorySettings": "Repository-instellingen",
+    "readOnly": "Alleen operators en beheerders kunnen hier wijzigingen aanbrengen. U kunt deze pagina bekijken.",
+    "kind": {
+      "PROJECT": "Eerste project",
+      "FEATURE": "Nieuwe functie"
+    },
+    "unavailable": {
+      "title": "Control Tower is niet bereikbaar",
+      "hint": "De Control Tower-service reageert niet. Controleer of hij draait en probeer het opnieuw."
     }
   }
 }

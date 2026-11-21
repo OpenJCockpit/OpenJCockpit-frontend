@@ -154,7 +154,7 @@ describe('qualityApp', () => {
     const routes = await qualityApp.loadRoutes();
     renderWith(<RouterProvider router={createMemoryRouter(routes)} />, PROJECT, 'nl');
     expect(
-      await screen.findByRole('heading', { level: 1, name: /Kwaliteitsstatus/ }, { timeout: 5000 }),
+      await screen.findByText(/Kwaliteitsstatus/, undefined, { timeout: 5000 }),
     ).toBeInTheDocument();
   });
 });

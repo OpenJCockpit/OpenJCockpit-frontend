@@ -1,5 +1,6 @@
 import { fireEvent, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import { ApiError } from '@openjcockpit/api';
 import { controltowerApp } from '../index';
 import { ct, renderRoutes, renderWith } from '../testUtils';
 
@@ -41,5 +42,17 @@ describe('queue widget', () => {
     renderRoutes([{ index: true, element: <W /> }]);
     fireEvent.click(await screen.findByRole('button', { name: 'Retry' }));
     expect(await screen.findByRole('link')).toBeInTheDocument();
+  });
+
+  it('shows a muted unavailable state, not an error card, when the backend is down', async () => {
+    const W = await Widget();
+    ct.getControlTowerProjectByCockpitProject.mockRejectedValue(
+      new ApiError('down', 502, 'SERVICE_UNAVAILABLE'),
+    );
+    renderRoutes([{ index: true, element: <W /> }]);
+    expect(await screen.findByTestId('controltower-widget-unavailable')).toHaveTextContent(
+      'Control Tower is not reachable',
+    );
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 });

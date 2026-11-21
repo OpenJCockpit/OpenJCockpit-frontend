@@ -282,6 +282,11 @@
       "controltower": {
         "widgetTitle": "Listas para despachar"
       }
+    },
+    "remoteFailures": {
+      "title": "Algunas aplicaciones no están disponibles",
+      "body": "No se pudieron cargar estas aplicaciones y faltan en esta página: {{apps}}. Recargue para volver a intentarlo o pida a un administrador que compruebe que están en ejecución.",
+      "dismiss": "Descartar"
     }
   }
 }

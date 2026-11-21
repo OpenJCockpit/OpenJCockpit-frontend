@@ -53,7 +53,8 @@
       "EMBABEL_UNAVAILABLE": "Der Agentendienst ist nicht verfügbar",
       "NOT_FOUND": "Verbindung nicht gefunden",
       "NAME_CONFLICT": "Eine Verbindung mit diesem Namen existiert bereits",
-      "API_KEY_REQUIRED": "Ein API-Schlüssel ist erforderlich"
+      "API_KEY_REQUIRED": "Ein API-Schlüssel ist erforderlich",
+      "SERVICE_UNAVAILABLE": "Der Dienst ist nicht erreichbar"
     }
   }
 }

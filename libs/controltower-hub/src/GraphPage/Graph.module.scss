@@ -29,3 +29,91 @@
   overflow-x: auto;
   padding: 8px 16px 16px;
 }
+
+.nodeGroup {
+  cursor: pointer;
+  outline: none;
+
+  &:focus-visible .node {
+    stroke: var(--text);
+    stroke-width: 2.5;
+  }
+}
+.nodeDraft {
+  stroke: var(--muted);
+  fill: var(--surface);
+}
+.nodeApproved {
+  stroke: var(--warn);
+  fill: var(--status-warn-soft);
+}
+.nodeDispatched {
+  stroke: rgb(var(--accent-rgb) / 0.9);
+  fill: var(--surface-glow);
+}
+.nodeDone {
+  stroke: var(--teal);
+  fill: var(--status-ok-soft);
+}
+.nodeSelected {
+  stroke-width: 3;
+}
+.dimmed {
+  opacity: 0.25;
+}
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  padding: 8px 16px 0;
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.legendItem {
+  align-items: center;
+  display: flex;
+  font-size: 12px;
+  gap: 6px;
+}
+.swatch {
+  border: 2px solid;
+  border-radius: 3px;
+  display: inline-block;
+  height: 12px;
+  width: 18px;
+}
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.selection {
+  margin: 8px 16px 0;
+}
+.edgeList {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 12px 16px 16px 32px;
+}
+.listStatus {
+  color: var(--muted);
+}
+.visuallyHidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}

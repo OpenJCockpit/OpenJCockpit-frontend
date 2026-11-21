@@ -13,8 +13,19 @@ import { useRepositoryForm } from './useRepositoryForm';
 function RepositoryForm({ data }: { data: ControlTowerProject | null }) {
   const { t } = useTranslation('controltower');
   const canWrite = useWriteAccess();
-  const { form, set, onSubmit, onCheck, saving, checking, checkFeedback, submitFeedback, project } =
-    useRepositoryForm(data);
+  const {
+    form,
+    set,
+    onSubmit,
+    onCheck,
+    saving,
+    checking,
+    checkFeedback,
+    submitFeedback,
+    project,
+    clearCheckFeedback,
+    clearSubmitFeedback,
+  } = useRepositoryForm(data);
   const keepsSecret = !!data?.hasSecret && data.credentialType !== 'NONE';
 
   return (
@@ -43,8 +54,8 @@ function RepositoryForm({ data }: { data: ControlTowerProject | null }) {
           </Button>
         </div>
       )}
-      <ActionFeedback feedback={checkFeedback} />
-      <ActionFeedback feedback={submitFeedback} />
+      <ActionFeedback feedback={checkFeedback} onDismiss={clearCheckFeedback} />
+      <ActionFeedback feedback={submitFeedback} onDismiss={clearSubmitFeedback} />
     </form>
   );
 }

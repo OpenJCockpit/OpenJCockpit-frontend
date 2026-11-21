@@ -282,6 +282,11 @@
       "controltower": {
         "widgetTitle": "Bereit zum Dispatch"
       }
+    },
+    "remoteFailures": {
+      "title": "Einige Apps sind nicht verfügbar",
+      "body": "Diese Apps konnten nicht geladen werden und fehlen auf dieser Seite: {{apps}}. Laden Sie die Seite neu oder bitten Sie eine Administratorin oder einen Administrator zu prüfen, ob sie laufen.",
+      "dismiss": "Schließen"
     }
   }
 }

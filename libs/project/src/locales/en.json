@@ -20,7 +20,9 @@
       "manageGear": "Manage projects",
       "owner": "Owner: {{owner}}",
       "branch": "Branch: {{branch}}",
-      "notReachableNotice": "Repository not reachable. Update the project via Manage projects."
+      "notReachableNotice": "Repository not reachable. Update the project via Manage projects.",
+      "loadFailed": "Failed to load your projects. The backend may be unavailable.",
+      "retry": "Retry"
     },
     "settings": {
       "loading": "Loading projects…",

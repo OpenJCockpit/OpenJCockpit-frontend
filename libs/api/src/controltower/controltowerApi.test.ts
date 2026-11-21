@@ -8,6 +8,7 @@ import {
   createControlTowerProject,
   createControlTowerSpecTemplate,
   createControlTowerTemplate,
+  deleteControlTowerTemplate,
   dispatchControlTowerSpecs,
   generateControlTowerSpecs,
   getControlTowerGraph,
@@ -16,6 +17,7 @@ import {
   getControlTowerQueueProposal,
   getControlTowerSettings,
   listControlTowerInterviews,
+  reconcileControlTowerSpecs,
   listControlTowerProjects,
   listControlTowerSpecs,
   listControlTowerSpecTemplates,
@@ -24,6 +26,7 @@ import {
   startControlTowerInterview,
   testControlTowerPolicy,
   updateControlTowerProject,
+  updateControlTowerTemplate,
 } from './controltowerApi';
 import type { ControlTowerPolicySettings, ControlTowerProjectRequest } from './controltowerTypes';
 
@@ -122,6 +125,12 @@ describe('controltowerApi', () => {
       '/templates',
     ],
     [
+      'updateTemplate',
+      () => updateControlTowerTemplate('t 1', { name: 'T', kind: 'FEATURE', questions: [] }),
+      'PUT',
+      '/templates/t%201',
+    ],
+    [
       'createSpecTemplate',
       () => createControlTowerSpecTemplate({ name: 'S', content: '# S' }),
       'POST',
@@ -157,6 +166,15 @@ describe('controltowerApi', () => {
     expect(init.headers['Content-Type']).toBe('application/json');
   });
 
+  it('posts the reconcile request without a body', async () => {
+    mockFetch.mockResolvedValueOnce(ok([]));
+    await reconcileControlTowerSpecs('p1');
+    const { url, init } = lastCall();
+    expect(url).toContain(`${CONTROLTOWER_API_PREFIX}/projects/p1/queue/reconcile`);
+    expect(init.method).toBe('POST');
+    expect(init.body).toBeUndefined();
+  });
+
   it('sends the answer and the dispatch flag as the body', async () => {
     mockFetch.mockResolvedValueOnce(ok({}));
     await answerControlTowerInterview('i1', 'yes');
@@ -170,6 +188,13 @@ describe('controltowerApi', () => {
     mockFetch.mockResolvedValueOnce(ok([]));
     await generateControlTowerSpecs('i1');
     expect(lastCall().init.body).toBeUndefined();
+  });
+
+  it('DELETEs a template by its encoded id', async () => {
+    mockFetch.mockResolvedValue({ ok: true, status: 204 });
+    await deleteControlTowerTemplate('t 1');
+    expect(lastCall().url).toContain('/controltower-api/templates/t%201');
+    expect(lastCall().init.method).toBe('DELETE');
   });
 
   it('POSTs approve and complete without a body', async () => {
