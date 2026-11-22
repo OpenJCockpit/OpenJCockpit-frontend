@@ -1,0 +1,119 @@
+// Section body blocks for the Settings screens. :where() keeps specificity at zero so a section can still adjust a block.
+:where(.group) {
+  display: grid;
+  gap: 12px;
+  scroll-margin-top: 16px;
+  & + & {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line-soft);
+  }
+}
+:where(.groupHeader) {
+  display: grid;
+  gap: 4px;
+}
+:where(.groupTitle) {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+:where(.description) {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+:where(.row) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line-soft);
+  @media (max-width: 720px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+:where(.rowText) {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+:where(.rowLabel) {
+  font-size: 14px;
+}
+:where(.rowControl) {
+  flex: none;
+  @media (max-width: 720px) {
+    flex: initial;
+  }
+}
+
+:where(.form) {
+  display: grid;
+  gap: 16px;
+}
+:where(.formBody) {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  @media (max-width: 720px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  // Same label look as `formGridClass`, which the sections used before.
+  & label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.03em;
+  }
+}
+:where(.formFooter) {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  background: var(--panel-bg);
+  border-top: 1px solid var(--line-soft);
+}
+:where(.formMessage) {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+:where(.status) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+:where(.statusDetail) {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+:where(.danger) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  padding: 16px;
+  border: 1px solid rgb(var(--danger-rgb) / 0.35);
+  border-radius: 10px;
+}
+:where(.dangerTitle) {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--error-text);
+}

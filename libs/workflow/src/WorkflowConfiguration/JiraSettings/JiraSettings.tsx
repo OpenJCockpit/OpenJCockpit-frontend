@@ -1,15 +1,22 @@
-import { useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getJiraConfig, queryKeys, saveJiraConfig } from '@openjcockpit/api';
-import type { JiraConfig, JiraConfigRequest } from '@openjcockpit/api';
+import type { JiraConfig } from '@openjcockpit/api';
 import { useTranslation } from '@openjcockpit/i18n';
-import { CheckboxField, SecretField, TextField, StatusMessage } from '@openjcockpit/ui';
-import { IntegrationConfigForm } from '../IntegrationConfigForm/IntegrationConfigForm';
+import { useSettingsFormLabels, useSettingsResource } from '@openjcockpit/settings';
+import {
+  CheckboxField,
+  SecretField,
+  SettingsForm,
+  SettingsGroup,
+  StatusMessage,
+  TextField,
+} from '@openjcockpit/ui';
 
 interface JiraFormState {
   enabled: boolean;
   baseUrl: string;
   projectKey: string;
+  /** Read-only: whether the server already holds a token. Not sent on save. */
+  hasAuthToken: boolean;
   authToken: string;
   issueTypeMapping: string;
   workflowId: string;
@@ -19,20 +26,12 @@ interface Props {
   projectId: string;
 }
 
-const DEFAULT_FORM: JiraFormState = {
-  enabled: false,
-  baseUrl: '',
-  projectKey: '',
-  authToken: '',
-  issueTypeMapping: '',
-  workflowId: '',
-};
-
 function toFormState(jira: JiraConfig): JiraFormState {
   return {
     enabled: jira.enabled,
     baseUrl: jira.baseUrl ?? '',
     projectKey: jira.projectKey ?? '',
+    hasAuthToken: jira.hasAuthToken,
     authToken: '',
     issueTypeMapping: jira.issueTypeMapping ?? '',
     workflowId: jira.workflowId ?? '',
@@ -41,98 +40,79 @@ function toFormState(jira: JiraConfig): JiraFormState {
 
 export function JiraSettings({ projectId }: Props) {
   const { t } = useTranslation('workflow');
-  const queryClient = useQueryClient();
-  const queryKey = queryKeys.jiraConfig(projectId);
-  const configQuery = useQuery({ queryKey, queryFn: () => getJiraConfig(projectId) });
-  const hasAuthToken = configQuery.data?.hasAuthToken ?? false;
-  // null until the operator edits; the displayed form is then derived from the server config.
-  const [edited, setEdited] = useState<JiraFormState | null>(null);
-  const form = edited ?? (configQuery.data ? toFormState(configQuery.data) : DEFAULT_FORM);
-  const update = (patch: Partial<JiraFormState>) => setEdited({ ...form, ...patch });
-  const loaded = configQuery.isSuccess;
-  const loadError = configQuery.isError;
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [savedMessage, setSavedMessage] = useState<string | null>(null);
-
-  const saveMutation = useMutation({
-    mutationFn: (request: JiraConfigRequest) => saveJiraConfig(projectId, request),
-  });
-
-  async function handleSave() {
-    setSaving(true);
-    setError(null);
-    setSavedMessage(null);
-    try {
-      const result = await saveMutation.mutateAsync({
-        enabled: form.enabled,
-        baseUrl: form.baseUrl,
-        projectKey: form.projectKey,
-        authToken: form.authToken || null,
-        issueTypeMapping: form.issueTypeMapping,
-        workflowId: form.workflowId,
-      });
-      queryClient.setQueryData(queryKey, result);
-      setEdited(null);
-      setSavedMessage(t('jira.saved'));
-    } catch (err) {
-      setError(t('jira.saveFailed'));
-      console.warn(err);
-    } finally {
-      setSaving(false);
-    }
-  }
+  const labels = useSettingsFormLabels();
+  const { draft, setDraft, loadError, error, dirty, saving, saved, submit, reset } =
+    useSettingsResource({
+      queryKey: queryKeys.jiraConfig(projectId),
+      load: () => getJiraConfig(projectId),
+      save: (form: JiraFormState) =>
+        saveJiraConfig(projectId, {
+          enabled: form.enabled,
+          baseUrl: form.baseUrl,
+          projectKey: form.projectKey,
+          authToken: form.authToken || null,
+          issueTypeMapping: form.issueTypeMapping,
+          workflowId: form.workflowId,
+        }),
+      toDraft: toFormState,
+    });
 
   if (loadError) {
     return <StatusMessage variant="error">{t('jira.loadFailed')}</StatusMessage>;
   }
+  if (!draft) return <StatusMessage variant="loading">{t('config.loading')}</StatusMessage>;
 
-  if (!loaded) return <StatusMessage variant="loading">{t('config.loading')}</StatusMessage>;
+  const update = (patch: Partial<JiraFormState>) => setDraft({ ...draft, ...patch });
 
   return (
-    <IntegrationConfigForm
-      title={t('jira.title')}
-      saveLabel={t('jira.save')}
-      saving={saving}
-      error={error}
-      savedMessage={savedMessage}
-      onSave={() => void handleSave()}
-    >
-      <CheckboxField
-        label={t('config.enabled')}
-        checked={form.enabled}
-        onChange={(v) => update({ enabled: v })}
-      />
-      <TextField
-        label={t('jira.baseUrl')}
-        value={form.baseUrl}
-        onChange={(v) => update({ baseUrl: v })}
-        placeholder={t('jira.baseUrlPlaceholder')}
-      />
-      <TextField
-        label={t('jira.projectKey')}
-        value={form.projectKey}
-        onChange={(v) => update({ projectKey: v })}
-        placeholder={t('jira.projectKeyPlaceholder')}
-      />
-      <TextField
-        label={t('jira.issueTypeMapping')}
-        value={form.issueTypeMapping}
-        onChange={(v) => update({ issueTypeMapping: v })}
-        placeholder={t('jira.issueTypeMappingPlaceholder')}
-      />
-      <TextField
-        label={t('config.workflowIdToStart')}
-        value={form.workflowId}
-        onChange={(v) => update({ workflowId: v })}
-        placeholder={t('config.workflowIdPlaceholder')}
-      />
-      <SecretField
-        label={t('config.authToken')}
-        hasValue={hasAuthToken}
-        value={form.authToken}
-        onChange={(v) => update({ authToken: v })}
-      />
-    </IntegrationConfigForm>
+    <SettingsGroup title={t('jira.title')}>
+      <SettingsForm
+        {...labels}
+        saveLabel={t('jira.save')}
+        savedLabel={t('jira.saved')}
+        dirty={dirty}
+        saving={saving}
+        saved={saved}
+        error={error ? t('jira.saveFailed') : null}
+        onSubmit={submit}
+        onReset={reset}
+      >
+        <CheckboxField
+          label={t('config.enabled')}
+          checked={draft.enabled}
+          onChange={(v) => update({ enabled: v })}
+        />
+        <TextField
+          label={t('jira.baseUrl')}
+          value={draft.baseUrl}
+          onChange={(v) => update({ baseUrl: v })}
+          placeholder={t('jira.baseUrlPlaceholder')}
+        />
+        <TextField
+          label={t('jira.projectKey')}
+          value={draft.projectKey}
+          onChange={(v) => update({ projectKey: v })}
+          placeholder={t('jira.projectKeyPlaceholder')}
+        />
+        <TextField
+          label={t('jira.issueTypeMapping')}
+          value={draft.issueTypeMapping}
+          onChange={(v) => update({ issueTypeMapping: v })}
+          placeholder={t('jira.issueTypeMappingPlaceholder')}
+        />
+        <TextField
+          label={t('config.workflowIdToStart')}
+          value={draft.workflowId}
+          onChange={(v) => update({ workflowId: v })}
+          placeholder={t('config.workflowIdPlaceholder')}
+        />
+        <SecretField
+          label={t('config.authToken')}
+          hasValue={draft.hasAuthToken}
+          value={draft.authToken}
+          onChange={(v) => update({ authToken: v })}
+        />
+      </SettingsForm>
+    </SettingsGroup>
   );
 }

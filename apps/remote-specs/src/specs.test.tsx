@@ -4,7 +4,12 @@ import { createMemoryRouter, RouterProvider, useLocation } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 import type { Project } from '@openjcockpit/api';
 import { DASHBOARD_PATH, HubHeaderContext, isAppDefinition } from '@openjcockpit/hub-contract';
-import { FakeHubProjectProvider } from '@openjcockpit/hub-contract/testing';
+import {
+  FakeHubProjectProvider,
+  FakeHubSession,
+  FakeHubSessionProvider,
+  FakeSettingsRegistry,
+} from '@openjcockpit/hub-contract/testing';
 import { specsApps } from './specsApps';
 
 // The feature libs are stood in for by plain views, so these tests cover only what this remote
@@ -42,11 +47,11 @@ vi.mock('@openjcockpit/spec-queue', () => ({
     project: Project;
     onBack: () => void;
     onOpenRun: (workflowId: string, runId: string) => void;
-    onSettings: () => void;
+    onSettings?: () => void;
   }) => (
     <section>
       <p>spec-queue of {props.project.name}</p>
-      <button onClick={props.onSettings}>queue settings</button>
+      {props.onSettings && <button onClick={props.onSettings}>queue settings</button>}
       <button onClick={props.onBack}>queue back</button>
       <button onClick={() => props.onOpenRun('wf 1', 'r/2')}>open run</button>
     </section>
@@ -73,7 +78,11 @@ function Where() {
   return <p data-testid="where">{useLocation().pathname}</p>;
 }
 
-async function open(path: string, selected: Project | null = PROJECT) {
+async function open(
+  path: string,
+  selected: Project | null = PROJECT,
+  sections = [{ id: 'spec-queue', screen: 'project' as const }],
+) {
   const routes = await Promise.all(
     specsApps.map(async (app) => ({ path: `${app.route}/*`, children: await app.loadRoutes() })),
   );
@@ -83,9 +92,13 @@ async function open(path: string, selected: Project | null = PROJECT) {
   await act(async () => {
     render(
       <HubHeaderContext.Provider value={<p>host header</p>}>
-        <FakeHubProjectProvider selected={selected}>
-          <RouterProvider router={router} />
-        </FakeHubProjectProvider>
+        <FakeHubSessionProvider session={new FakeHubSession([])}>
+          <FakeSettingsRegistry sections={sections}>
+            <FakeHubProjectProvider selected={selected}>
+              <RouterProvider router={router} />
+            </FakeHubProjectProvider>
+          </FakeSettingsRegistry>
+        </FakeHubSessionProvider>
       </HubHeaderContext.Provider>,
     );
   });
@@ -135,6 +148,12 @@ describe('spec queue', () => {
     const router = await open('/spec-queue');
     await act(async () => screen.getByText('queue settings').click());
     expect(router.state.location.pathname).toBe('/project-settings/spec-queue');
+  });
+
+  it('offers no settings button when the queue section is not available', async () => {
+    await open('/spec-queue', PROJECT, []);
+    expect(screen.getByText('queue back')).toBeInTheDocument();
+    expect(screen.queryByText('queue settings')).not.toBeInTheDocument();
   });
 
   it('goes back to the dashboard', async () => {

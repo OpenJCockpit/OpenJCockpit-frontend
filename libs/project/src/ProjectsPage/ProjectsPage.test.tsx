@@ -157,6 +157,11 @@ describe('ProjectsPage: select and settings', () => {
     expect(screen.getByTestId('location')).toHaveTextContent('/project-settings/general');
   });
 
+  it('offers no Settings button when the general section is not available', async () => {
+    await renderAdmin([project()], { settingsSections: [] });
+    expect(within(row('Beta')).queryByText('Settings')).not.toBeInTheDocument();
+  });
+
   it('marks the selected project and shows its git message', async () => {
     await renderAdmin([project({ gitStatusMessage: 'all good', gitStatus: 'ACCESSIBLE' })], {
       selected: project(),

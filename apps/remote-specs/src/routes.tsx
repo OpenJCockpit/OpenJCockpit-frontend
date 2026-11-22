@@ -12,8 +12,9 @@ import {
   RequireProject,
   useHubHeader,
   useSelectedProject,
+  useSettingsLink,
 } from '@openjcockpit/hub-contract';
-import { SPEC_QUEUE_SETTINGS_PATH, workflowRunPath } from './routePaths';
+import { workflowRunPath } from './routePaths';
 
 /** Every page needs a project: without one the user is sent to project selection and back. */
 function projectRoute(translations: (props: { children: ReactNode }) => ReactNode): {
@@ -60,13 +61,14 @@ function SpecFilesPage() {
 function SpecQueuePage() {
   const project = useSelectedProject();
   const navigate = useNavigate();
+  const settingsLink = useSettingsLink('spec-queue');
   return (
     <SpecQueueDashboard
       project={project}
       onBack={useBack()}
       header={useHubHeader()}
       onOpenRun={(workflowId, runId) => void navigate(workflowRunPath(workflowId, runId))}
-      onSettings={() => void navigate(SPEC_QUEUE_SETTINGS_PATH)}
+      onSettings={settingsLink ? () => void navigate(settingsLink) : undefined}
     />
   );
 }

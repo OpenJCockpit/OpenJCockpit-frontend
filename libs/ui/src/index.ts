@@ -38,3 +38,8 @@ export * from './StatusChip/StatusChip';
 export * from './StatusMessage/StatusMessage';
 export * from './States/States';
 export * from './Tooltip/Tooltip';
+export * from './Settings/DangerZone';
+export * from './Settings/SettingsForm';
+export * from './Settings/SettingsGroup';
+export * from './Settings/SettingsRow';
+export * from './Settings/SettingsStatus';

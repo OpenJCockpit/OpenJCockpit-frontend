@@ -22,6 +22,8 @@ export function useProjectDetails(project: Project) {
   const { t } = useTranslation('project');
   const updateProjects = useProjectCache();
   const [form, setFormState] = useState<ProjectRequest>(() => toRequest(project));
+  // What the server holds: the project as loaded, then the last saved form.
+  const [baseline, setBaseline] = useState<ProjectRequest>(() => toRequest(project));
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,6 +33,13 @@ export function useProjectDetails(project: Project) {
   function setForm(update: (f: ProjectRequest) => ProjectRequest) {
     setFormState(update);
     setSaved(false);
+  }
+
+  function reset() {
+    setFormState(baseline);
+    setSaved(false);
+    setError(null);
+    setNameInvalid(false);
   }
 
   async function save() {
@@ -47,6 +56,7 @@ export function useProjectDetails(project: Project) {
     try {
       const updated = await updateProject(project.id, form);
       updateProjects((prev) => prev.map((p) => (p.id === project.id ? updated : p)));
+      setBaseline(form);
       setSaved(true);
     } catch {
       setError(t('settings.errors.saveFailed'));
@@ -55,5 +65,7 @@ export function useProjectDetails(project: Project) {
     }
   }
 
-  return { form, setForm, saving, saved, error, nameInvalid, nameInputRef, save };
+  const dirty = JSON.stringify(form) !== JSON.stringify(baseline);
+
+  return { form, setForm, dirty, saving, saved, error, nameInvalid, nameInputRef, save, reset };
 }

@@ -29,7 +29,7 @@ function section(
     titleKey: `settings.sections.${id}.title`,
     requiredPermissions: [],
     order: 10,
-    groupKey: 'settings.groups.workspace',
+    groupKey: 'settings.groups.general',
     component: () => Promise.resolve({ default: body }),
     ...over,
   };
@@ -189,6 +189,16 @@ describe('SettingsLayout', () => {
     const prompt = await screen.findByTestId('settings-select-project');
     fireEvent.click(prompt.querySelector('button') as HTMLButtonElement);
     expect(screen.getByTestId('where')).toHaveTextContent('/projects');
+  });
+
+  it('draws a known section icon in the nav and skips an unknown one', async () => {
+    await renderSettings(
+      [app([section('a', { icon: 'settings' }), section('b', { icon: 'nope', order: 20 })])],
+      '/settings/a',
+    );
+    await screen.findByTestId('body-a');
+    expect(screen.getByTestId('settings-nav-a').querySelector('svg')).not.toBeNull();
+    expect(screen.getByTestId('settings-nav-b').querySelector('svg')).toBeNull();
   });
 
   it('lists a section without a group under the default group', async () => {

@@ -4,49 +4,43 @@ import { useTranslation } from '@openjcockpit/i18n';
 import {
   FORBIDDEN_PATH,
   useAppRegistry,
+  settingsPath,
   useHubHeader,
+  type SettingsGroupKey,
   type SettingsScreen,
   type SettingsSectionDefinition,
 } from '@openjcockpit/hub-contract';
 import {
   AppShell,
   Eyebrow,
+  Icon,
   Panel,
   StatusMessage,
   cx,
+  isIconName,
   pageClass,
   pageHeaderClass,
 } from '@openjcockpit/ui';
 import { NotFound } from '../routeViews/NotFound';
-import { ROUTES } from '../routes';
 import { SectionFrame } from './SectionFrame';
 import styles from './SettingsLayout.module.scss';
 
-const DEFAULT_GROUP = 'settings.groups.other';
+const DEFAULT_GROUP: SettingsGroupKey = 'settings.groups.other';
 
 export interface SettingsGroup {
-  key: string;
+  key: SettingsGroupKey;
   sections: SettingsSectionDefinition[];
 }
 
 /** Groups by `groupKey`, ordered by the lowest `order` of their sections; sections are pre-sorted. */
 export function groupSections(sections: readonly SettingsSectionDefinition[]): SettingsGroup[] {
-  const groups = new Map<string, SettingsSectionDefinition[]>();
+  const groups = new Map<SettingsGroupKey, SettingsSectionDefinition[]>();
   for (const section of sections) {
     const key = section.groupKey ?? DEFAULT_GROUP;
     groups.set(key, [...(groups.get(key) ?? []), section]);
   }
   return [...groups].map(([key, list]) => ({ key, sections: list }));
 }
-
-/** Where each screen is mounted. */
-export const SCREEN_BASE: Record<SettingsScreen, string> = {
-  settings: ROUTES.settings,
-  project: ROUTES.projectSettings,
-};
-
-export const settingsPath = (section: Pick<SettingsSectionDefinition, 'id' | 'screen'>) =>
-  `${SCREEN_BASE[section.screen ?? 'settings']}/${section.id}`;
 
 /** The sections one screen shows: `visibleSettings` already holds only what the session may open. */
 export function useScreenSections(screen: SettingsScreen) {
@@ -90,6 +84,9 @@ function SettingsNav({
               className={({ isActive }) => cx(styles.link, isActive && styles.active)}
               data-testid={`settings-nav-${section.id}`}
             >
+              {section.icon && isIconName(section.icon) ? (
+                <Icon name={section.icon} className={styles.linkIcon} />
+              ) : null}
               {text(section.titleKey)}
             </NavLink>
           ))}

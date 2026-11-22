@@ -7,8 +7,7 @@ import {
   useTranslation,
 } from '@openjcockpit/i18n';
 import { HubThemeContext, isThemePreference, THEME_PREFERENCES } from '@openjcockpit/hub-contract';
-import { Select } from '@openjcockpit/ui';
-import styles from './PreferencesSection.module.scss';
+import { Select, SettingsGroup, SettingsRow } from '@openjcockpit/ui';
 
 /** Per-user display preferences: the language and the colour theme. */
 export default function PreferencesSection() {
@@ -18,33 +17,35 @@ export default function PreferencesSection() {
   const theme = useContext(HubThemeContext);
 
   return (
-    <div className={styles.preferences}>
-      <Select
-        block
-        label={t('siteHeader.language')}
-        value={locale}
-        options={SUPPORTED_LOCALES.map((code) => ({
-          value: code,
-          label: LOCALE_NAMES[code],
-          lang: code,
-        }))}
-        // A failed locale download keeps the current language; the select stays on it.
-        onChange={(code) => void setLocale(code as Locale).catch(() => undefined)}
-        data-testid="locale-select"
-      />
-      {theme && (
+    <SettingsGroup>
+      <SettingsRow label={t('siteHeader.language')} htmlFor="locale-select">
         <Select
-          block
-          label={t('siteHeader.theme')}
-          value={theme.preference}
-          options={THEME_PREFERENCES.map((preference) => ({
-            value: preference,
-            label: t(`siteHeader.themes.${preference}`),
+          id="locale-select"
+          value={locale}
+          options={SUPPORTED_LOCALES.map((code) => ({
+            value: code,
+            label: LOCALE_NAMES[code],
+            lang: code,
           }))}
-          onChange={(value) => isThemePreference(value) && theme.setPreference(value)}
-          data-testid="theme-select"
+          // A failed locale download keeps the current language; the select stays on it.
+          onChange={(code) => void setLocale(code as Locale).catch(() => undefined)}
+          data-testid="locale-select"
         />
+      </SettingsRow>
+      {theme && (
+        <SettingsRow label={t('siteHeader.theme')} htmlFor="theme-select">
+          <Select
+            id="theme-select"
+            value={theme.preference}
+            options={THEME_PREFERENCES.map((preference) => ({
+              value: preference,
+              label: t(`siteHeader.themes.${preference}`),
+            }))}
+            onChange={(value) => isThemePreference(value) && theme.setPreference(value)}
+            data-testid="theme-select"
+          />
+        </SettingsRow>
       )}
-    </div>
+    </SettingsGroup>
   );
 }

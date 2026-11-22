@@ -47,12 +47,21 @@ export interface WidgetDefinition {
 /** Which host screen shows a section: the global Settings, or the selected project's settings. */
 export type SettingsScreen = 'settings' | 'project';
 
+/** The nav groups a section may join; the host translates each under `settings.groups.*`. A typo fails `tsc`. */
+export type SettingsGroupKey =
+  | 'settings.groups.general'
+  | 'settings.groups.integrations'
+  | 'settings.groups.project'
+  | 'settings.groups.projectIntegrations'
+  | 'settings.groups.other';
+
 export interface SettingsSectionDefinition {
   /** Unique across all apps; also the URL segment: /settings/<id> or /project-settings/<id>. */
   id: string;
   sourceAppId: string;
   titleKey: string;
   descriptionKey?: string;
+  /** Name from the shared `Icon` set, drawn left of the label in the sub-navigation; unknown names are skipped. */
   icon?: string;
   /** Any-of; empty means every signed-in user. */
   requiredPermissions: readonly string[];
@@ -60,8 +69,8 @@ export interface SettingsSectionDefinition {
   order: number;
   /** Screen the section appears on; defaults to the global Settings. */
   screen?: SettingsScreen;
-  /** Group heading key, e.g. 'settings.groups.project'. Sections without one go in a default group. */
-  groupKey?: string;
+  /** Group heading. Sections without one go in 'settings.groups.other'. */
+  groupKey?: SettingsGroupKey;
   /** Needs a selected project; the host shows the project-required empty state otherwise. */
   requiresProject?: boolean;
   /** Content only: no header, no back button, no page chrome. Registers its own translations. */

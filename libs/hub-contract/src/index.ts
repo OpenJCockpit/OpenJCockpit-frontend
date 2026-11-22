@@ -2,6 +2,7 @@ export { HUB_CONTRACT_VERSION, isAppDefinition, OPT_IN_ONLY } from './appDefinit
 export type {
   AppDefinition,
   LazyComponent,
+  SettingsGroupKey,
   SettingsScreen,
   SettingsSectionDefinition,
   WidgetDefinition,
@@ -29,3 +30,4 @@ export {
   useHubTheme,
 } from './theme';
 export type { HubTheme, ThemeMode, ThemePreference } from './theme';
+export { SETTINGS_SCREEN_BASE, SettingsLink, settingsPath, useSettingsLink } from './settingsLink';
