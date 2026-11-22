@@ -244,8 +244,6 @@ export function PuffsBackground({
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      // eslint-disable-next-line jsx-a11y/no-interactive-element-to-noninteractive-role -- DOM kept identical to the pre-conversion output
-      role="presentation"
       className={cx(styles.puffsBackground, visible && styles.isVisible, className)}
       {...cssVars({ '--puffs-fade-duration': `${fadeInSeconds}s` })}
     />
