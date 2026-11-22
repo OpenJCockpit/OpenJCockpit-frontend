@@ -60,6 +60,7 @@ import { CircleIcon as Circle } from '@phosphor-icons/react/dist/csr/Circle';
 import { CloudIcon as Cloud } from '@phosphor-icons/react/dist/csr/Cloud';
 import { BroadcastIcon as Broadcast } from '@phosphor-icons/react/dist/csr/Broadcast';
 import { MicrophoneIcon as Microphone } from '@phosphor-icons/react/dist/csr/Microphone';
+import { LockSimpleIcon as LockSimple } from '@phosphor-icons/react/dist/csr/LockSimple';
 import { PaperPlaneTiltIcon as PaperPlaneTilt } from '@phosphor-icons/react/dist/csr/PaperPlaneTilt';
 import { SpeakerHighIcon as SpeakerHigh } from '@phosphor-icons/react/dist/csr/SpeakerHigh';
 import { cx } from '../cx';
@@ -133,6 +134,7 @@ const ICONS = {
   cloud: Cloud,
   controltower: Broadcast,
   microphone: Microphone,
+  lock: LockSimple,
   send: PaperPlaneTilt,
   speaker: SpeakerHigh,
 } as const satisfies Record<string, ComponentType<PhosphorIconProps>>;

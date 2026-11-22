@@ -1,4 +1,4 @@
-import { act, fireEvent, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 import {
@@ -13,6 +13,7 @@ import {
   FakeHubSession,
   FakeHubSessionProvider,
 } from '@openjcockpit/hub-contract/testing';
+import { SettingsForm } from '@openjcockpit/ui';
 import { render } from '../testUtils/render';
 import { SettingsLayout } from './SettingsLayout';
 
@@ -234,5 +235,92 @@ describe('SettingsLayout', () => {
     );
     expect(await screen.findByTestId('body-general')).toBeInTheDocument();
     expect(screen.getByText('Select a project to configure this section.')).toBeInTheDocument();
+  });
+
+  describe('unsaved changes', () => {
+    const form = () => (
+      <SettingsForm
+        dirty
+        onSubmit={() => undefined}
+        saveLabel="Save"
+        savingLabel="Saving"
+        savedLabel="Saved"
+        resetLabel="Reset"
+      >
+        <p data-testid="body-dirty">editing</p>
+      </SettingsForm>
+    );
+    const apps = () => [app([section('dirty', {}, form), section('other', { order: 20 })])];
+
+    it('asks before leaving a dirty section through the nav and stays on cancel', async () => {
+      await renderSettings(apps(), '/settings/dirty');
+      await screen.findByTestId('body-dirty');
+      await act(async () => {
+        fireEvent.click(screen.getByTestId('settings-nav-other'));
+      });
+      expect(await screen.findByText('Unsaved changes')).toBeInTheDocument();
+      expect(screen.getByTestId('where')).toHaveTextContent('/settings/dirty');
+      fireEvent.click(screen.getByRole('button', { name: 'Keep editing' }));
+      expect(screen.queryByText('Unsaved changes')).not.toBeInTheDocument();
+      expect(screen.getByTestId('where')).toHaveTextContent('/settings/dirty');
+    });
+
+    it('leaves once the user confirms', async () => {
+      await renderSettings(apps(), '/settings/dirty');
+      await screen.findByTestId('body-dirty');
+      await act(async () => {
+        fireEvent.click(screen.getByTestId('settings-nav-other'));
+      });
+      const leave = await screen.findByRole('button', { name: 'Leave without saving' });
+      await act(async () => {
+        fireEvent.click(leave);
+      });
+      await waitFor(() => expect(screen.getByTestId('where')).toHaveTextContent('/settings/other'));
+    });
+
+    it('navigates freely when nothing is dirty', async () => {
+      await renderSettings(
+        [app([section('general'), section('other', { order: 20 })])],
+        '/settings/general',
+      );
+      await screen.findByTestId('body-general');
+      await act(async () => {
+        fireEvent.click(screen.getByTestId('settings-nav-other'));
+      });
+      await waitFor(() => expect(screen.getByTestId('where')).toHaveTextContent('/settings/other'));
+      expect(screen.queryByText('Unsaved changes')).not.toBeInTheDocument();
+    });
+
+    it('warns before the tab closes only while dirty', async () => {
+      await renderSettings(apps(), '/settings/dirty');
+      await screen.findByTestId('body-dirty');
+      const event = new Event('beforeunload', { cancelable: true });
+      window.dispatchEvent(event);
+      expect(event.defaultPrevented).toBe(true);
+    });
+  });
+
+  it('marks project sections with a lock while no project is selected', async () => {
+    const jira = section('jira', { screen: 'project', requiresProject: true });
+    await renderSettings([app([jira])], '/project-settings/jira', { project: false });
+    expect(await screen.findByTestId('settings-select-project')).toBeInTheDocument();
+    expect(within(screen.getByTestId('settings-nav-jira')).getByRole('img')).toHaveAccessibleName(
+      'Project required',
+    );
+  });
+
+  it('shows no lock once a project is selected', async () => {
+    const jira = section('jira', { screen: 'project', requiresProject: true });
+    await renderSettings([app([jira])], '/project-settings/jira');
+    await screen.findByTestId('body-jira');
+    expect(within(screen.getByTestId('settings-nav-jira')).queryByRole('img')).toBeNull();
+  });
+
+  it('scrolls to the group named by the URL hash', async () => {
+    const scroll = vi.fn();
+    Element.prototype.scrollIntoView = scroll;
+    const body = () => <section id="advanced">advanced</section>;
+    await renderSettings([app([section('general', {}, body)])], '/settings/general#advanced');
+    await waitFor(() => expect(scroll).toHaveBeenCalled());
   });
 });

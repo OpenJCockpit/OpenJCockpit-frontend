@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { DangerZone } from './DangerZone';
+import { SettingsDirtyContext } from './SettingsDirty';
 import { SettingsForm } from './SettingsForm';
 import { SettingsGroup } from './SettingsGroup';
 import { SettingsRow } from './SettingsRow';
@@ -196,5 +197,33 @@ describe('DangerZone', () => {
     expect(await screen.findByText('Deleting')).toBeInTheDocument();
     finish();
     await waitFor(() => expect(screen.queryByText('Really?')).not.toBeInTheDocument());
+  });
+});
+
+describe('SettingsForm dirty reporting', () => {
+  it('reports its dirty state to the screen and clears it on unmount', () => {
+    const report = vi.fn();
+    const form = (dirty: boolean) => (
+      <SettingsDirtyContext.Provider value={report}>
+        <SettingsForm
+          dirty={dirty}
+          onSubmit={() => undefined}
+          saveLabel="Save"
+          savingLabel="Saving"
+          savedLabel="Saved"
+          resetLabel="Reset"
+        >
+          x
+        </SettingsForm>
+      </SettingsDirtyContext.Provider>
+    );
+    const { rerender, unmount } = render(form(true));
+    const source = report.mock.calls[0]?.[0];
+    expect(report).toHaveBeenLastCalledWith(source, true);
+    rerender(form(false));
+    expect(report).toHaveBeenLastCalledWith(source, false);
+    rerender(form(true));
+    unmount();
+    expect(report).toHaveBeenLastCalledWith(source, false);
   });
 });

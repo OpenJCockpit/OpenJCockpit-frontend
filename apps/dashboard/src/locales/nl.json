@@ -207,6 +207,14 @@
       "empty": "Er zijn geen instellingen om te tonen.",
       "selectProject": "Selecteer een project om deze sectie te configureren.",
       "chooseProject": "Project selecteren",
+      "projectRequired": "Project vereist",
+      "unsaved": {
+        "title": "Niet-opgeslagen wijzigingen",
+        "message": "Je hebt niet-opgeslagen wijzigingen in deze sectie. Als je weggaat, gaan ze verloren.",
+        "leave": "Verlaten zonder op te slaan",
+        "stay": "Verder bewerken",
+        "leaving": "Bezig met verlaten…"
+      },
       "groups": {
         "general": "Algemeen",
         "project": "Project",

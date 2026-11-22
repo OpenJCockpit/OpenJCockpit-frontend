@@ -67,6 +67,13 @@
   flex: none;
 }
 
+.lockIcon {
+  display: inline-flex;
+  flex: none;
+  margin-left: auto;
+  color: var(--nav-faint);
+}
+
 .active {
   color: var(--cyan);
   background: var(--cyan-a12);

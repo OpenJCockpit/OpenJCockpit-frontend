@@ -1,5 +1,5 @@
 import { Component, Suspense, use, useEffect, type ReactNode } from 'react';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { useTranslation } from '@openjcockpit/i18n';
 import { useHubProject, type SettingsSectionDefinition } from '@openjcockpit/hub-contract';
 import { Button, LoadingState, Panel, StatusMessage } from '@openjcockpit/ui';
@@ -50,6 +50,12 @@ function loadOnce(section: SettingsSectionDefinition) {
 
 function Loaded({ section }: { section: SettingsSectionDefinition }) {
   const { default: Section } = use(loadOnce(section));
+  const { hash } = useLocation();
+  // `/settings/<section>#<group>` scrolls to the `SettingsGroup` with that id once the body is mounted.
+  useEffect(() => {
+    const id = decodeURIComponent(hash.slice(1));
+    if (id) document.getElementById(id)?.scrollIntoView?.({ block: 'start' });
+  }, [hash]);
   return <Section />;
 }
 

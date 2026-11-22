@@ -207,6 +207,14 @@
       "empty": "Es gibt keine Einstellungen anzuzeigen.",
       "selectProject": "Wähle ein Projekt, um diesen Bereich zu konfigurieren.",
       "chooseProject": "Projekt auswählen",
+      "projectRequired": "Projekt erforderlich",
+      "unsaved": {
+        "title": "Nicht gespeicherte Änderungen",
+        "message": "In diesem Bereich gibt es nicht gespeicherte Änderungen. Wenn du ihn verlässt, gehen sie verloren.",
+        "leave": "Ohne Speichern verlassen",
+        "stay": "Weiter bearbeiten",
+        "leaving": "Wird verlassen…"
+      },
       "groups": {
         "general": "Allgemein",
         "project": "Projekt",

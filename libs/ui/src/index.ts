@@ -39,6 +39,7 @@ export * from './StatusMessage/StatusMessage';
 export * from './States/States';
 export * from './Tooltip/Tooltip';
 export * from './Settings/DangerZone';
+export * from './Settings/SettingsDirty';
 export * from './Settings/SettingsForm';
 export * from './Settings/SettingsGroup';
 export * from './Settings/SettingsRow';

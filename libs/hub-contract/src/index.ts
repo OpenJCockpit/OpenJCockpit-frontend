@@ -31,3 +31,9 @@ export {
 } from './theme';
 export type { HubTheme, ThemeMode, ThemePreference } from './theme';
 export { SETTINGS_SCREEN_BASE, SettingsLink, settingsPath, useSettingsLink } from './settingsLink';
+export {
+  SettingsLeaveGuardContext,
+  useGuardedNavigation,
+  useSettingsLeaveGuard,
+} from './settingsGuard';
+export type { SettingsLeaveGuard } from './settingsGuard';

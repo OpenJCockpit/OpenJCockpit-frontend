@@ -207,6 +207,14 @@
       "empty": "There are no settings to show.",
       "selectProject": "Select a project to configure this section.",
       "chooseProject": "Select project",
+      "projectRequired": "Project required",
+      "unsaved": {
+        "title": "Unsaved changes",
+        "message": "You have unsaved changes in this section. If you leave, they are lost.",
+        "leave": "Leave without saving",
+        "stay": "Keep editing",
+        "leaving": "Leaving…"
+      },
       "groups": {
         "general": "General",
         "project": "Project",

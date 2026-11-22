@@ -2,6 +2,7 @@ import type { FormEvent, FormHTMLAttributes, ReactNode } from 'react';
 import { Button } from '../Button/Button';
 import { cx } from '../cx';
 import { StatusMessage } from '../StatusMessage/StatusMessage';
+import { useReportSettingsDirty } from './SettingsDirty';
 import styles from './Settings.module.scss';
 
 interface SettingsFormProps extends Omit<FormHTMLAttributes<HTMLFormElement>, 'onSubmit'> {
@@ -38,6 +39,7 @@ export function SettingsForm({
   children,
   ...rest
 }: SettingsFormProps) {
+  useReportSettingsDirty(dirty);
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (dirty && !saving) onSubmit();

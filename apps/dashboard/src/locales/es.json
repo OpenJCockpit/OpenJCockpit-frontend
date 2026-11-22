@@ -207,6 +207,14 @@
       "empty": "No hay ajustes que mostrar.",
       "selectProject": "Selecciona un proyecto para configurar esta sección.",
       "chooseProject": "Seleccionar proyecto",
+      "projectRequired": "Proyecto necesario",
+      "unsaved": {
+        "title": "Cambios sin guardar",
+        "message": "Hay cambios sin guardar en esta sección. Si sales, se perderán.",
+        "leave": "Salir sin guardar",
+        "stay": "Seguir editando",
+        "leaving": "Saliendo…"
+      },
       "groups": {
         "general": "General",
         "project": "Proyecto",
