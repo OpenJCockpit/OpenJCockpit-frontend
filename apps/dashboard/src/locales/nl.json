@@ -80,11 +80,28 @@
     },
     "sampleData": "Voorbeelddata",
     "statusBar": {
-      "environment": "Omgeving: {{value}}",
-      "region": "Regio: {{value}}",
-      "classification": "Classificatie: {{value}}",
-      "embabelVersion": "Embabel-versie: {{value}}",
-      "springAiControlVersion": "Spring AI Control Service: {{value}}",
+      "queue": "Wachtrij: {{state}}",
+      "queueLink": "Open de specwachtrij",
+      "queueEmpty": "Niets in de wachtrij",
+      "queueUnavailable": "Wachtrij niet beschikbaar",
+      "queueState": {
+        "ACTIVE": "actief",
+        "PAUSED": "gepauzeerd",
+        "HALTED": "gestopt"
+      },
+      "count": {
+        "running": "{{count}} actief",
+        "queued": "{{count}} in wachtrij",
+        "awaitingMerge": "{{count}} wacht op merge",
+        "failed": "{{count}} mislukt"
+      },
+      "gitLink": "Open de Git-instellingen van het project",
+      "git": {
+        "ACCESSIBLE": "Git verbonden",
+        "NOT_ACCESSIBLE": "Git niet bereikbaar",
+        "CHECK_FAILED": "Git-controle mislukt",
+        "UNKNOWN": "Git niet gecontroleerd"
+      },
       "copyright": "© 2026 Metafactory B.V."
     },
     "workspace": {

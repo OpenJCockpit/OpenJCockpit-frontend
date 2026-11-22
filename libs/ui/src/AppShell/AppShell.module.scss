@@ -1,5 +1,5 @@
 .appShell {
-  min-height: 100vh;
+  min-height: calc(100vh - var(--status-bar-height, 0px));
   display: flex;
   flex-direction: column;
   position: relative;

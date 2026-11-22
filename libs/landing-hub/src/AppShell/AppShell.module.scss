@@ -2,7 +2,7 @@
 // outside the shell's isolated stacking context so blend modes and backdrop filters inside
 // the shell still see a transparent backdrop, exactly as they did against <body>.
 .root {
-  height: 100vh;
+  height: calc(100vh - var(--status-bar-height, 0px));
   overflow: hidden;
   background:
     radial-gradient(circle at 18% 24%, rgb(var(--accent-rgb) / 0.16), transparent 32%),
@@ -12,7 +12,7 @@
 
 .shell {
   position: relative;
-  min-height: 100vh;
+  min-height: calc(100vh - var(--status-bar-height, 0px));
   isolation: isolate;
   overflow: hidden;
   padding: 28px;

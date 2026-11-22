@@ -2,7 +2,7 @@
   position: relative;
   z-index: 3;
   display: grid;
-  min-height: calc(100vh - 132px);
+  min-height: calc(100vh - 132px - var(--status-bar-height, 0px));
   place-items: center;
   padding: 38px 0 12px;
 

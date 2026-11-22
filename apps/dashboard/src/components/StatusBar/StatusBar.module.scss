@@ -1,3 +1,8 @@
+/* Layout height reserved by the shells so the page never overflows the viewport. */
+:global(:root) {
+  --status-bar-height: 40px;
+}
+
 .statusBar {
   /* Stays at the bottom of the viewport on every screen. */
   position: sticky;
@@ -5,20 +10,30 @@
   z-index: 20;
   display: flex;
   align-items: center;
-  gap: 42px;
-  min-height: 40px;
+  gap: 28px;
+  min-height: var(--status-bar-height);
   padding: 0 34px;
   color: var(--nav-faint);
   font-size: 12px;
   border-top: 1px solid rgb(var(--accent-rgb) / 0.08);
   background: rgb(var(--base-rgb) / 0.58);
   backdrop-filter: blur(18px);
-  & span:first-child {
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: inherit;
+  text-decoration: none;
+  &:hover,
+  &:focus-visible {
     color: var(--teal);
   }
-  & span:nth-last-child(1) {
-    margin-left: auto;
-  }
+}
+
+.copyright {
+  margin-left: auto;
 }
 
 /* Only spans the content: a page with a fixed sidebar (see AppShell) keeps it clear. */

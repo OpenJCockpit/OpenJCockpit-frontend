@@ -80,11 +80,28 @@
     },
     "sampleData": "Datos de ejemplo",
     "statusBar": {
-      "environment": "Entorno: {{value}}",
-      "region": "Región: {{value}}",
-      "classification": "Clasificación: {{value}}",
-      "embabelVersion": "Versión de Embabel: {{value}}",
-      "springAiControlVersion": "Spring AI Control Service: {{value}}",
+      "queue": "Cola: {{state}}",
+      "queueLink": "Abrir la cola de specs",
+      "queueEmpty": "Nada en cola",
+      "queueUnavailable": "Cola no disponible",
+      "queueState": {
+        "ACTIVE": "activa",
+        "PAUSED": "en pausa",
+        "HALTED": "detenida"
+      },
+      "count": {
+        "running": "{{count}} en ejecución",
+        "queued": "{{count}} en cola",
+        "awaitingMerge": "{{count}} esperando merge",
+        "failed": "{{count}} fallidos"
+      },
+      "gitLink": "Abrir la configuración de Git del proyecto",
+      "git": {
+        "ACCESSIBLE": "Git conectado",
+        "NOT_ACCESSIBLE": "Git no accesible",
+        "CHECK_FAILED": "Comprobación de Git fallida",
+        "UNKNOWN": "Git sin comprobar"
+      },
       "copyright": "© 2026 Metafactory B.V."
     },
     "workspace": {

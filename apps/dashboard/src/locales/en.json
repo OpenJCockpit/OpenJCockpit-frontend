@@ -80,11 +80,28 @@
     },
     "sampleData": "Sample data",
     "statusBar": {
-      "environment": "Environment: {{value}}",
-      "region": "Region: {{value}}",
-      "classification": "Classification: {{value}}",
-      "embabelVersion": "Embabel version: {{value}}",
-      "springAiControlVersion": "Spring AI Control Service: {{value}}",
+      "queue": "Queue: {{state}}",
+      "queueLink": "Open the spec queue",
+      "queueEmpty": "Nothing queued",
+      "queueUnavailable": "Queue unavailable",
+      "queueState": {
+        "ACTIVE": "active",
+        "PAUSED": "paused",
+        "HALTED": "halted"
+      },
+      "count": {
+        "running": "{{count}} running",
+        "queued": "{{count}} queued",
+        "awaitingMerge": "{{count}} awaiting merge",
+        "failed": "{{count}} failed"
+      },
+      "gitLink": "Open the project's Git settings",
+      "git": {
+        "ACCESSIBLE": "Git connected",
+        "NOT_ACCESSIBLE": "Git not reachable",
+        "CHECK_FAILED": "Git check failed",
+        "UNKNOWN": "Git not checked"
+      },
       "copyright": "© 2026 Metafactory B.V."
     },
     "workspace": {
