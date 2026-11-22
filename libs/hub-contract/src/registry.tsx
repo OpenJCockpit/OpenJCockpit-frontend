@@ -1,3 +1,4 @@
+import { logger } from '@openjcockpit/api';
 import {
   createContext,
   useCallback,
@@ -89,7 +90,7 @@ export function AppRegistryProvider({
       .filter(permitted)
       .filter((section) => {
         if (seen.has(section.id)) {
-          console.warn(`Duplicate settings section "${section.id}" ignored`);
+          logger.warn(`Duplicate settings section "${section.id}" ignored`);
           return false;
         }
         seen.add(section.id);

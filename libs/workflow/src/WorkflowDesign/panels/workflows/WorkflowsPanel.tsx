@@ -1,3 +1,4 @@
+import { logger } from '@openjcockpit/api';
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from '@openjcockpit/i18n';
@@ -153,7 +154,7 @@ export function WorkflowsPanel() {
       // Surfaces the server's actual message (e.g. the approval-gate placement validation
       // naming the offending stage) instead of a generic failure (AC-03).
       setError(err instanceof Error ? err.message : t('workflows.saveFailed'));
-      console.warn(err);
+      logger.warn(err);
     } finally {
       setSaving(false);
     }
@@ -165,7 +166,7 @@ export function WorkflowsPanel() {
       updateItems((prev) => prev.filter((i) => i.id !== id));
     } catch (err) {
       setError(err instanceof Error ? err.message : t('workflows.deleteFailed'));
-      console.warn(err);
+      logger.warn(err);
     }
   }
 
@@ -176,7 +177,7 @@ export function WorkflowsPanel() {
       downloadWorkflowBundle(await exportWorkflows());
     } catch (err) {
       setError(t('workflows.exportFailed'));
-      console.warn(err);
+      logger.warn(err);
     }
   }
 
@@ -200,7 +201,7 @@ export function WorkflowsPanel() {
       setImportViolations(result.violations ?? []);
     } catch (err) {
       setError(t('workflows.importFailed'));
-      console.warn(err);
+      logger.warn(err);
     }
   }
 

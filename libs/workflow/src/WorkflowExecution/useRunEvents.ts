@@ -1,3 +1,4 @@
+import { logger } from '@openjcockpit/api';
 import { useEffect, useRef, useState } from 'react';
 import {
   getApprovalGateContext,
@@ -66,7 +67,7 @@ export function useRunEvents({
       setDecisionError(null);
       setApprovalLoadError(null);
     } catch (err) {
-      console.warn('Failed to load approval gate context', err);
+      logger.warn('Failed to load approval gate context', err);
       setApprovalLoadError('The approval request could not be loaded. Retrying…');
       // Forget the status so the next poll tick sees a fresh AWAITING_APPROVAL and retries.
       previousStatusRef.current = null;

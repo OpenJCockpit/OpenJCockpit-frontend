@@ -1,3 +1,4 @@
+import { logger } from '@openjcockpit/api';
 import { useEffect, useState } from 'react';
 import {
   getOpaConfig,
@@ -111,7 +112,7 @@ export function useWorkflowOverview(
       const entries = await getWorkflowDecisionLogs(workflow.id);
       downloadDecisionLogs(workflow.id, entries);
     } catch (error) {
-      console.warn('Failed to export decision logs', error);
+      logger.warn('Failed to export decision logs', error);
       setFeedback((prev) => ({
         ...prev,
         [workflow.id]:
@@ -162,7 +163,7 @@ export function useWorkflowOverview(
       const message =
         error instanceof Error && error.message ? error.message : 'Failed to start workflow';
       setFeedback((prev) => ({ ...prev, [workflow.id]: message }));
-      console.warn('Failed to start workflow', error);
+      logger.warn('Failed to start workflow', error);
     } finally {
       setStartingId(null);
     }

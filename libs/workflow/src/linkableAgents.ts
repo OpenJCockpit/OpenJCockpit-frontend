@@ -1,3 +1,4 @@
+import { logger } from '@openjcockpit/api';
 import { getAgentCatalog } from '@openjcockpit/api';
 import type { AgentCatalog, AgentDefinition } from '@openjcockpit/api';
 
@@ -42,7 +43,7 @@ export async function loadLinkableAgents(): Promise<AgentDefinition[]> {
   try {
     return await fetchLinkableAgents();
   } catch (error) {
-    console.warn('Could not load the agent catalog', error);
+    logger.warn('Could not load the agent catalog', error);
     return [];
   }
 }

@@ -1,3 +1,4 @@
+import { logger } from '@openjcockpit/api';
 import { useState } from 'react';
 import { useTranslation } from '@openjcockpit/i18n';
 import { Button, StatusMessage, fieldHintClass } from '@openjcockpit/ui';
@@ -58,7 +59,7 @@ export function GroupsPanel() {
       setEditingId(null);
     } catch (err) {
       setError(t('groups.saveFailed'));
-      console.warn(err);
+      logger.warn(err);
     } finally {
       setSaving(false);
     }
@@ -70,7 +71,7 @@ export function GroupsPanel() {
       setItems((prev) => prev.filter((i) => i.id !== id));
     } catch (err) {
       setError(t('groups.deleteFailed'));
-      console.warn(err);
+      logger.warn(err);
     }
   }
 

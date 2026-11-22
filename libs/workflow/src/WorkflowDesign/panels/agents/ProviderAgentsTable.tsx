@@ -1,3 +1,4 @@
+import { logger } from '@openjcockpit/api';
 import { Fragment, useState } from 'react';
 import { getProviderAgentCard } from '@openjcockpit/api';
 import type { A2AAgentCard, ProviderCatalogAgent } from '@openjcockpit/api';
@@ -27,7 +28,7 @@ export function ProviderAgentsTable({ provider, agents }: ProviderAgentsTablePro
     getProviderAgentCard(provider.type, agent.name)
       .then((card) => setCards((prev) => ({ ...prev, [agent.name]: { card } })))
       .catch((err: unknown) => {
-        console.warn(err);
+        logger.warn(err);
         setCards((prev) => ({
           ...prev,
           [agent.name]: { error: t('providerAgents.cardFailed', { name: provider.name }) },

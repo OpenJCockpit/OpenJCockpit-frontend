@@ -1,4 +1,5 @@
 import { apiRequest, apiRequestVoid } from '../core/http';
+import { logger } from '../core/logger';
 import {
   A2AAgentCard,
   A2AService,
@@ -185,7 +186,7 @@ export async function checkOpaHealth(): Promise<boolean> {
     });
     return Boolean(body.reachable);
   } catch (error) {
-    console.warn('Failed to check OPA health', error);
+    logger.warn('Failed to check OPA health', error);
     return false;
   }
 }
@@ -215,7 +216,7 @@ export async function listAgentSpecs(): Promise<AgentSpec[]> {
       errorMessage: 'Failed to load agent definitions',
     });
   } catch (error) {
-    console.warn('Falling back to empty agent specs', error);
+    logger.warn('Falling back to empty agent specs', error);
     return [];
   }
 }
