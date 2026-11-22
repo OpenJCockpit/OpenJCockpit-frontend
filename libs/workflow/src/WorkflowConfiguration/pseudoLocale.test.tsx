@@ -59,12 +59,20 @@ describe('workflow configuration in the pseudo locale', () => {
       hasAuthToken: false,
     };
 
+    // Save stays disabled until something is edited; Save is the first of the form's buttons.
+    async function clickSave() {
+      const field = (await screen.findAllByRole('textbox'))[0]!;
+      fireEvent.change(field, { target: { value: 'edited' } });
+      const save = (await screen.findAllByRole('button', { name: /^\[.*~+\]$/ }))[0]!;
+      await clickAsync(save);
+    }
+
     it('translates the saved message', async () => {
       vi.mocked(api.getHermesConfig).mockResolvedValue(config);
       vi.mocked(api.saveHermesConfig).mockResolvedValue(config);
       await renderPseudo(<HermesSettings projectId="p1" />);
 
-      await clickAsync(await screen.findByRole('button', { name: /^\[.*~+\]$/ }));
+      await clickSave();
 
       expect(
         await screen.findByText(pseudoLocalize('Hermes configuration saved.')),
@@ -77,7 +85,7 @@ describe('workflow configuration in the pseudo locale', () => {
       vi.mocked(api.saveHermesConfig).mockRejectedValue(new Error('boom'));
       await renderPseudo(<HermesSettings projectId="p1" />);
 
-      fireEvent.click(await screen.findByRole('button', { name: /^\[.*~+\]$/ }));
+      await clickSave();
 
       expect(
         await screen.findByText(pseudoLocalize('Failed to save the Hermes configuration.')),

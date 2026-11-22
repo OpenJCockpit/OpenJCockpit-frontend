@@ -3,6 +3,7 @@ import {
   Button,
   CheckboxField,
   Icon,
+  SettingsGroup,
   StatusMessage,
   TextField,
   formActionsClass,
@@ -25,7 +26,7 @@ function PolicyForm({ data }: { data: ControlTowerSettingsView }) {
   const editable = data.editable;
 
   return (
-    <>
+    <SettingsGroup>
       <form onSubmit={(event) => void onSubmit(event)}>
         <StatusMessage>{t('policy.hint')}</StatusMessage>
         {!editable && <StatusMessage>{t('policy.readOnly')}</StatusMessage>}
@@ -74,7 +75,7 @@ function PolicyForm({ data }: { data: ControlTowerSettingsView }) {
         <ActionFeedback feedback={feedback} onDismiss={clearFeedback} />
       </form>
       <StandardPolicyList />
-    </>
+    </SettingsGroup>
   );
 }
 

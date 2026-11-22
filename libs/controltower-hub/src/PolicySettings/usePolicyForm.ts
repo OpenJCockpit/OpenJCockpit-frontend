@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { useTranslation } from '@openjcockpit/i18n';
+import { useReportSettingsDirty } from '@openjcockpit/ui';
 import {
   saveControlTowerPolicy,
   testControlTowerPolicy,
@@ -26,6 +27,10 @@ export const DECISION_PATH_PLACEHOLDER = 'openjcontroltower/decision';
 export function usePolicyForm(initial: ControlTowerPolicySettings) {
   const { t } = useTranslation('controltower');
   const [policy, setPolicy] = useState<ControlTowerPolicySettings>(initial);
+  // What the server holds: the loaded value, then the last saved one.
+  const [baseline, setBaseline] = useState(initial);
+  const dirty = JSON.stringify(policy) !== JSON.stringify(baseline);
+  useReportSettingsDirty(dirty);
   const { run, feedback, pending, clear } = useAction();
   const save = useGlobalMutation(saveControlTowerPolicy);
 
@@ -40,6 +45,7 @@ export function usePolicyForm(initial: ControlTowerPolicySettings) {
       () => save.mutateAsync(policy),
       (saved) => {
         setPolicy(saved);
+        setBaseline(saved);
         return saved.enabled ? t('policy.savedOn') : t('policy.savedOff');
       },
     );

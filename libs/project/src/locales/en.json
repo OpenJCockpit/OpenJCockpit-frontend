@@ -53,7 +53,6 @@
       "description": "Description",
       "descriptionPlaceholder": "Short description",
       "newProjectCheckbox": "New project (repository does not exist yet — skip Git check)",
-      "save": "Save",
       "saving": "⟳ Saving…",
       "cancel": "Cancel"
     },

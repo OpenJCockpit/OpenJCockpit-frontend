@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { useSelectedProject } from '@openjcockpit/hub-contract';
 import { useTranslation } from '@openjcockpit/i18n';
+import { useReportSettingsDirty } from '@openjcockpit/ui';
 import {
   checkControlTowerConnection,
   createControlTowerProject,
@@ -44,7 +45,11 @@ const fromRepository = (repository: ControlTowerProject): RepositoryFormValues =
 export function useRepositoryForm(data: ControlTowerProject | null) {
   const { t } = useTranslation('controltower');
   const project = useSelectedProject();
-  const [form, setForm] = useState<RepositoryFormValues>(data ? fromRepository(data) : EMPTY);
+  const initial = data ? fromRepository(data) : EMPTY;
+  const [form, setForm] = useState<RepositoryFormValues>(initial);
+  // What the server holds: the loaded value, then the last saved one (the secret is write-only).
+  const [baseline, setBaseline] = useState<RepositoryFormValues>(initial);
+  useReportSettingsDirty(JSON.stringify(form) !== JSON.stringify(baseline));
   const check = useAction();
   const submit = useAction();
   const save = useGlobalMutation((body: ControlTowerProjectRequest) =>
@@ -68,6 +73,7 @@ export function useRepositoryForm(data: ControlTowerProject | null) {
         }),
       () => {
         setForm((f) => ({ ...f, secret: '' }));
+        setBaseline({ ...form, secret: '' });
         return data ? t('repository.saved') : t('repository.registered');
       },
     );

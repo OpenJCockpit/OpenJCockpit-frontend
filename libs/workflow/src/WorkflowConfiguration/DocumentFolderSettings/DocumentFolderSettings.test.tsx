@@ -97,6 +97,7 @@ describe('DocumentFolderSettings', () => {
     vi.mocked(api.saveDocumentFolderConfig).mockRejectedValue(new Error('500'));
     await renderAsync(<DocumentFolderSettings project={PROJECT} />);
     await screen.findByDisplayValue('/data/docs');
+    fireEvent.change(field('Allowed document types'), { target: { value: 'md' } });
     await clickAsync(screen.getByRole('button', { name: SAVE }));
     expect(
       await screen.findByText('Failed to save the document folder configuration.'),

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { deleteGitCredentials, getGitCredentials, saveGitCredentials } from '@openjcockpit/api';
 import type { ProjectGitCredentialRequest } from '@openjcockpit/api';
 import { useTranslation } from '@openjcockpit/i18n';
+import { useReportSettingsDirty } from '@openjcockpit/ui';
 import { useProjectCache } from './projectCache';
 
 const EMPTY_CRED_FORM: ProjectGitCredentialRequest = {
@@ -16,6 +17,10 @@ export function useGitCredentials(projectId: string) {
   const { t } = useTranslation('project');
   const updateProjects = useProjectCache();
   const [form, setForm] = useState<ProjectGitCredentialRequest>(EMPTY_CRED_FORM);
+  // What the server holds: the loaded value, then the last saved one (the secret is write-only).
+  const [baseline, setBaseline] = useState<ProjectGitCredentialRequest>(EMPTY_CRED_FORM);
+  const dirty = JSON.stringify(form) !== JSON.stringify(baseline);
+  useReportSettingsDirty(dirty);
   const [hasSecret, setHasSecret] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -26,12 +31,14 @@ export function useGitCredentials(projectId: string) {
     getGitCredentials(projectId)
       .then((existing) => {
         if (cancelled) return;
-        setForm({
+        const loaded = {
           credentialType: existing.credentialType,
           username: existing.username ?? '',
           secret: '',
           githubApiUrl: existing.githubApiUrl ?? '',
-        });
+        };
+        setForm(loaded);
+        setBaseline(loaded);
         setHasSecret(existing.hasSecret);
       })
       .catch(() => {
@@ -59,6 +66,7 @@ export function useGitCredentials(projectId: string) {
       setHasSecret(hasSecret || !!form.secret);
       // The secret is not kept in the form once it is stored.
       setForm((f) => ({ ...f, secret: '' }));
+      setBaseline({ ...form, secret: '' });
     } catch (err) {
       setError(err instanceof Error ? err.message : t('settings.errors.credentialsSaveFailed'));
     } finally {
@@ -74,11 +82,12 @@ export function useGitCredentials(projectId: string) {
         prev.map((p) => (p.id === projectId ? { ...p, hasCredentials: false } : p)),
       );
       setForm(EMPTY_CRED_FORM);
+      setBaseline(EMPTY_CRED_FORM);
       setHasSecret(false);
     } catch {
       setError(t('settings.errors.credentialsDeleteFailed'));
     }
   }
 
-  return { form, setForm, hasSecret, loading, saving, error, save, remove };
+  return { form, setForm, dirty, hasSecret, loading, saving, error, save, remove };
 }

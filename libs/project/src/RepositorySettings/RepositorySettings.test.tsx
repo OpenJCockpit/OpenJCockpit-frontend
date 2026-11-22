@@ -50,6 +50,7 @@ describe('RepositorySettings: repository', () => {
   it('shows a save error', async () => {
     await renderRepository();
     vi.mocked(api.updateProject).mockRejectedValue(new Error('500'));
+    fireEvent.change(screen.getByLabelText(/Branch/), { target: { value: 'dev' } });
     await clickAsync(screen.getAllByRole('button', { name: 'Save' })[0]!);
     expect(await screen.findByRole('alert')).toHaveTextContent('Failed to save the project.');
   });
@@ -77,9 +78,7 @@ describe('RepositorySettings: repository', () => {
     await clickAsync(screen.getByRole('button', { name: 'Git check' }));
     expect(screen.getByRole('button', { name: 'Git check' })).toBeDisabled();
     resolve({ gitStatus: 'ACCESSIBLE' } as api.ProjectGitStatusDto);
-    await waitFor(() =>
-      expect(screen.getByRole('button', { name: 'Git check' })).toBeEnabled(),
-    );
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Git check' })).toBeEnabled());
   });
 
   it('shows an error when the git check fails', async () => {

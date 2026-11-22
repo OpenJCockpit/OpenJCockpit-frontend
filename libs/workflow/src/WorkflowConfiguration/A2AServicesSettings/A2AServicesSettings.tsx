@@ -6,13 +6,12 @@ import {
   StatusMessage,
   Button,
   Actions,
+  SettingsGroup,
   DataTable,
   cx,
   fieldHintClass,
   formActionsClass,
-  formClass,
   formGridClass,
-  formTitleClass,
 } from '@openjcockpit/ui';
 import { useConfirmDelete } from '../../WorkflowDesign/panels/shared/useConfirmDelete';
 import { a2aServiceStatus } from './a2aServiceStatus';
@@ -45,9 +44,7 @@ export function A2AServicesSettings() {
   const { askDelete, dialog } = useConfirmDelete();
 
   return (
-    <div className={formClass}>
-      <h2 className={formTitleClass}>{t('a2aServices.title')}</h2>
-      <StatusMessage>{t('a2aServices.intro')}</StatusMessage>
+    <SettingsGroup title={t('a2aServices.title')} description={t('a2aServices.intro')}>
       {error && (
         <StatusMessage variant="error" role="alert">
           {error}
@@ -235,6 +232,6 @@ export function A2AServicesSettings() {
         )
       )}
       {dialog}
-    </div>
+    </SettingsGroup>
   );
 }

@@ -7,9 +7,8 @@ import {
   StatusChip,
   fieldErrorClass,
   fieldHintClass,
-  formClass,
   formGridClass,
-  formTitleClass,
+  SettingsGroup,
   Button,
   StatusMessage,
   useConfirmDialog,
@@ -55,10 +54,7 @@ export function SkillsHubSettings() {
         {status}
       </p>
 
-      <div className={formClass}>
-        <h2 className={formTitleClass}>
-          {editingId === null ? t('settings.formNew') : t('settings.formEdit')}
-        </h2>
+      <SettingsGroup title={editingId === null ? t('settings.formNew') : t('settings.formEdit')}>
         <div className={formGridClass}>
           <TextField
             label={t('settings.name')}
@@ -109,68 +105,70 @@ export function SkillsHubSettings() {
             {t('settings.cancel')}
           </Button>
         </Actions>
-      </div>
+      </SettingsGroup>
 
-      <DataTable>
-        <thead>
-          <tr>
-            <th>{t('settings.columnName')}</th>
-            <th>{t('settings.columnUrl')}</th>
-            <th>{t('settings.columnApiKey')}</th>
-            <th>{t('settings.columnStatus')}</th>
-            <th>{t('settings.columnCreated')}</th>
-            <th>{t('settings.columnActions')}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {connections.map((connection) => (
-            <tr key={connection.id}>
-              <td>
-                <strong>{connection.name}</strong>
-                {connection.description && (
-                  <span className={fieldHintClass}>{connection.description}</span>
-                )}
-              </td>
-              <td>{connection.marketplaceUrl}</td>
-              <td>{connection.hasApiKey ? t('settings.apiKeySet') : t('settings.noApiKey')}</td>
-              <td>
-                <StatusChip
-                  label={connection.enabled ? t('settings.enabled') : t('settings.disabled')}
-                  kind={connection.enabled ? 'ok' : 'neutral'}
-                />
-              </td>
-              <td>{formatDate(connection.createdAt)}</td>
-              <Actions as="td">
-                <Button variant="secondary" onClick={() => startEdit(connection)}>
-                  {t('settings.edit')}
-                </Button>
-                <Button
-                  variant="danger"
-                  onClick={() =>
-                    confirm({
-                      title: t('settings.confirmDelete.title', { name: connection.name }),
-                      message: t('settings.confirmDelete.message'),
-                      confirmLabel: t('settings.delete'),
-                      cancelLabel: t('settings.cancel'),
-                      busyLabel: t('settings.deleting'),
-                      onConfirm: () => handleDelete(connection),
-                    })
-                  }
-                >
-                  {t('settings.delete')}
-                </Button>
-              </Actions>
-            </tr>
-          ))}
-          {!error && connections.length === 0 && (
+      <SettingsGroup>
+        <DataTable>
+          <thead>
             <tr>
-              <td colSpan={6} className={fieldHintClass}>
-                {t('settings.empty')}
-              </td>
+              <th>{t('settings.columnName')}</th>
+              <th>{t('settings.columnUrl')}</th>
+              <th>{t('settings.columnApiKey')}</th>
+              <th>{t('settings.columnStatus')}</th>
+              <th>{t('settings.columnCreated')}</th>
+              <th>{t('settings.columnActions')}</th>
             </tr>
-          )}
-        </tbody>
-      </DataTable>
+          </thead>
+          <tbody>
+            {connections.map((connection) => (
+              <tr key={connection.id}>
+                <td>
+                  <strong>{connection.name}</strong>
+                  {connection.description && (
+                    <span className={fieldHintClass}>{connection.description}</span>
+                  )}
+                </td>
+                <td>{connection.marketplaceUrl}</td>
+                <td>{connection.hasApiKey ? t('settings.apiKeySet') : t('settings.noApiKey')}</td>
+                <td>
+                  <StatusChip
+                    label={connection.enabled ? t('settings.enabled') : t('settings.disabled')}
+                    kind={connection.enabled ? 'ok' : 'neutral'}
+                  />
+                </td>
+                <td>{formatDate(connection.createdAt)}</td>
+                <Actions as="td">
+                  <Button variant="secondary" onClick={() => startEdit(connection)}>
+                    {t('settings.edit')}
+                  </Button>
+                  <Button
+                    variant="danger"
+                    onClick={() =>
+                      confirm({
+                        title: t('settings.confirmDelete.title', { name: connection.name }),
+                        message: t('settings.confirmDelete.message'),
+                        confirmLabel: t('settings.delete'),
+                        cancelLabel: t('settings.cancel'),
+                        busyLabel: t('settings.deleting'),
+                        onConfirm: () => handleDelete(connection),
+                      })
+                    }
+                  >
+                    {t('settings.delete')}
+                  </Button>
+                </Actions>
+              </tr>
+            ))}
+            {!error && connections.length === 0 && (
+              <tr>
+                <td colSpan={6} className={fieldHintClass}>
+                  {t('settings.empty')}
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </DataTable>
+      </SettingsGroup>
       {dialog}
     </>
   );

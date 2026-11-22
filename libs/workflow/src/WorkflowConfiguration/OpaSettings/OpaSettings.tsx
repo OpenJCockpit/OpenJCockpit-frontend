@@ -1,17 +1,18 @@
-import { useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { checkOpaHealth, getOpaConfig, saveOpaConfig } from '@openjcockpit/api';
-import type { OpaConfig, OpaConfigRequest } from '@openjcockpit/api';
+import type { OpaConfig } from '@openjcockpit/api';
 import { useTranslation } from '@openjcockpit/i18n';
+import { useSettingsFormLabels, useSettingsResource } from '@openjcockpit/settings';
 import {
   StatusChip,
   CheckboxField,
   SecretField,
   SelectField,
+  SettingsForm,
+  SettingsGroup,
   StatusMessage,
   TextField,
 } from '@openjcockpit/ui';
-import { IntegrationConfigForm } from '../IntegrationConfigForm/IntegrationConfigForm';
 import { OPA_STATUS_KINDS, OPA_STATUS_LABEL_KEYS, opaStatusFor } from './opaStatus';
 
 interface OpaFormState {
@@ -28,21 +29,6 @@ interface OpaFormState {
   projectLabel: string;
   authToken: string;
 }
-
-const DEFAULT_FORM: OpaFormState = {
-  enabled: false,
-  baseUrl: '',
-  policyPath: '',
-  healthPath: '',
-  timeoutSeconds: '3',
-  failMode: 'FAIL_CLOSED',
-  decisionLoggingEnabled: true,
-  decisionLogExportEnabled: true,
-  environment: '',
-  customerLabel: '',
-  projectLabel: '',
-  authToken: '',
-};
 
 function toFormState(config: OpaConfig): OpaFormState {
   return {
@@ -66,68 +52,49 @@ const OPA_HEALTH_KEY = ['opa-config', 'health'];
 
 export function OpaSettings() {
   const { t } = useTranslation('workflow');
+  const labels = useSettingsFormLabels();
   const queryClient = useQueryClient();
-  const configQuery = useQuery({ queryKey: OPA_CONFIG_KEY, queryFn: () => getOpaConfig() });
+  const { draft, setDraft, server, loadError, error, dirty, saving, saved, submit, reset } =
+    useSettingsResource({
+      queryKey: OPA_CONFIG_KEY,
+      load: () => getOpaConfig(),
+      save: async (form: OpaFormState) => {
+        const result = await saveOpaConfig({
+          enabled: form.enabled,
+          baseUrl: form.baseUrl,
+          policyPath: form.policyPath,
+          healthPath: form.healthPath,
+          timeoutSeconds: Number(form.timeoutSeconds) || undefined,
+          failMode: form.failMode,
+          decisionLoggingEnabled: form.decisionLoggingEnabled,
+          decisionLogExportEnabled: form.decisionLogExportEnabled,
+          environment: form.environment,
+          customerLabel: form.customerLabel,
+          projectLabel: form.projectLabel,
+          authToken: form.authToken || null,
+        });
+        queryClient.setQueryData(OPA_HEALTH_KEY, await checkOpaHealth());
+        return result;
+      },
+      toDraft: toFormState,
+    });
   const healthQuery = useQuery({
     queryKey: OPA_HEALTH_KEY,
     queryFn: () => checkOpaHealth(),
-    enabled: configQuery.isSuccess,
+    enabled: server !== undefined,
     staleTime: 0,
   });
-  const reachable = healthQuery.data ?? null;
-  const hasAuthToken = configQuery.data?.hasAuthToken ?? false;
-  // null until the operator edits; the displayed form is then derived from the server config.
-  const [edited, setEdited] = useState<OpaFormState | null>(null);
-  const form = edited ?? (configQuery.data ? toFormState(configQuery.data) : DEFAULT_FORM);
-  const update = (patch: Partial<OpaFormState>) => setEdited({ ...form, ...patch });
-  const loadError = configQuery.isError;
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [savedMessage, setSavedMessage] = useState<string | null>(null);
-
-  const saveMutation = useMutation({
-    mutationFn: (request: OpaConfigRequest) => saveOpaConfig(request),
-  });
-
-  async function handleSave() {
-    setSaving(true);
-    setError(null);
-    setSavedMessage(null);
-    try {
-      const result = await saveMutation.mutateAsync({
-        enabled: form.enabled,
-        baseUrl: form.baseUrl,
-        policyPath: form.policyPath,
-        healthPath: form.healthPath,
-        timeoutSeconds: Number(form.timeoutSeconds) || undefined,
-        failMode: form.failMode,
-        decisionLoggingEnabled: form.decisionLoggingEnabled,
-        decisionLogExportEnabled: form.decisionLogExportEnabled,
-        environment: form.environment,
-        customerLabel: form.customerLabel,
-        projectLabel: form.projectLabel,
-        authToken: form.authToken || null,
-      });
-      queryClient.setQueryData(OPA_CONFIG_KEY, result);
-      setEdited(null);
-      setSavedMessage(t('opa.saved'));
-      queryClient.setQueryData(OPA_HEALTH_KEY, await checkOpaHealth());
-    } catch (err) {
-      setError(t('opa.saveFailed'));
-      console.warn(err);
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  const status = opaStatusFor(form.enabled, form.baseUrl, reachable);
 
   if (loadError) {
     return <StatusMessage variant="error">{t('opa.loadFailed')}</StatusMessage>;
   }
+  if (!draft) return <StatusMessage variant="loading">{t('config.loading')}</StatusMessage>;
+
+  const update = (patch: Partial<OpaFormState>) => setDraft({ ...draft, ...patch });
+  const status = opaStatusFor(draft.enabled, draft.baseUrl, healthQuery.data ?? null);
 
   return (
-    <IntegrationConfigForm
+    <SettingsGroup
       title={
         <>
           {t('opa.title')}{' '}
@@ -138,85 +105,92 @@ export function OpaSettings() {
         </>
       }
       description={t('opa.description')}
-      error={error}
-      savedMessage={savedMessage}
-      saveLabel={t('opa.save')}
-      saving={saving}
-      onSave={() => void handleSave()}
     >
-      <CheckboxField
-        label={t('config.enabled')}
-        checked={form.enabled}
-        onChange={(v) => update({ enabled: v })}
-      />
-      <TextField
-        label={t('opa.baseUrl')}
-        value={form.baseUrl}
-        onChange={(v) => update({ baseUrl: v })}
-        placeholder={t('opa.baseUrlPlaceholder')}
-      />
-      <TextField
-        label={t('opa.healthPath')}
-        value={form.healthPath}
-        onChange={(v) => update({ healthPath: v })}
-        placeholder={t('opa.healthPathPlaceholder')}
-      />
-      <TextField
-        label={t('opa.policyPath')}
-        value={form.policyPath}
-        onChange={(v) => update({ policyPath: v })}
-        placeholder={t('opa.policyPathPlaceholder')}
-      />
-      <TextField
-        label={t('opa.timeout')}
-        type="number"
-        min="1"
-        value={form.timeoutSeconds}
-        onChange={(v) => update({ timeoutSeconds: v })}
-      />
-      <SelectField
-        label={t('opa.failMode')}
-        value={form.failMode}
-        onChange={(v) => update({ failMode: v })}
-        options={[
-          { value: 'FAIL_CLOSED', label: t('opa.failClosed') },
-          { value: 'FAIL_OPEN', label: t('opa.failOpen') },
-        ]}
-      />
-      <TextField
-        label={t('opa.environment')}
-        value={form.environment}
-        onChange={(v) => update({ environment: v })}
-        placeholder={t('opa.environmentPlaceholder')}
-      />
-      <TextField
-        label={t('opa.customer')}
-        value={form.customerLabel}
-        onChange={(v) => update({ customerLabel: v })}
-        placeholder={t('opa.customerPlaceholder')}
-      />
-      <TextField
-        label={t('opa.projectLabel')}
-        value={form.projectLabel}
-        onChange={(v) => update({ projectLabel: v })}
-        placeholder={t('opa.projectLabelPlaceholder')}
-      />
-      <CheckboxField
-        label={t('opa.decisionLogging')}
-        checked={form.decisionLoggingEnabled}
-        onChange={(v) => update({ decisionLoggingEnabled: v })}
-      />
-      <CheckboxField
-        label={t('opa.decisionLogExport')}
-        checked={form.decisionLogExportEnabled}
-        onChange={(v) => update({ decisionLogExportEnabled: v })}
-      />
-      <SecretField
-        label={t('config.authToken')}
-        hasValue={hasAuthToken}
-        value={form.authToken}
-        onChange={(v) => update({ authToken: v })}
-      />
-    </IntegrationConfigForm>
+      <SettingsForm
+        {...labels}
+        saveLabel={t('opa.save')}
+        savedLabel={t('opa.saved')}
+        dirty={dirty}
+        saving={saving}
+        saved={saved}
+        error={error ? t('opa.saveFailed') : null}
+        onSubmit={submit}
+        onReset={reset}
+      >
+        <CheckboxField
+          label={t('config.enabled')}
+          checked={draft.enabled}
+          onChange={(v) => update({ enabled: v })}
+        />
+        <TextField
+          label={t('opa.baseUrl')}
+          value={draft.baseUrl}
+          onChange={(v) => update({ baseUrl: v })}
+          placeholder={t('opa.baseUrlPlaceholder')}
+        />
+        <TextField
+          label={t('opa.healthPath')}
+          value={draft.healthPath}
+          onChange={(v) => update({ healthPath: v })}
+          placeholder={t('opa.healthPathPlaceholder')}
+        />
+        <TextField
+          label={t('opa.policyPath')}
+          value={draft.policyPath}
+          onChange={(v) => update({ policyPath: v })}
+          placeholder={t('opa.policyPathPlaceholder')}
+        />
+        <TextField
+          label={t('opa.timeout')}
+          type="number"
+          min="1"
+          value={draft.timeoutSeconds}
+          onChange={(v) => update({ timeoutSeconds: v })}
+        />
+        <SelectField
+          label={t('opa.failMode')}
+          value={draft.failMode}
+          onChange={(v) => update({ failMode: v })}
+          options={[
+            { value: 'FAIL_CLOSED', label: t('opa.failClosed') },
+            { value: 'FAIL_OPEN', label: t('opa.failOpen') },
+          ]}
+        />
+        <TextField
+          label={t('opa.environment')}
+          value={draft.environment}
+          onChange={(v) => update({ environment: v })}
+          placeholder={t('opa.environmentPlaceholder')}
+        />
+        <TextField
+          label={t('opa.customer')}
+          value={draft.customerLabel}
+          onChange={(v) => update({ customerLabel: v })}
+          placeholder={t('opa.customerPlaceholder')}
+        />
+        <TextField
+          label={t('opa.projectLabel')}
+          value={draft.projectLabel}
+          onChange={(v) => update({ projectLabel: v })}
+          placeholder={t('opa.projectLabelPlaceholder')}
+        />
+        <CheckboxField
+          label={t('opa.decisionLogging')}
+          checked={draft.decisionLoggingEnabled}
+          onChange={(v) => update({ decisionLoggingEnabled: v })}
+        />
+        <CheckboxField
+          label={t('opa.decisionLogExport')}
+          checked={draft.decisionLogExportEnabled}
+          onChange={(v) => update({ decisionLogExportEnabled: v })}
+        />
+        <SecretField
+          label={t('config.authToken')}
+          hasValue={server?.hasAuthToken ?? false}
+          value={draft.authToken}
+          onChange={(v) => update({ authToken: v })}
+        />
+      </SettingsForm>
+    </SettingsGroup>
   );
 }

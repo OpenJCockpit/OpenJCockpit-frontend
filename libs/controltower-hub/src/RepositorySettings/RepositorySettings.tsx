@@ -1,5 +1,5 @@
 import { useTranslation } from '@openjcockpit/i18n';
-import { Button, Icon, StatusMessage, formActionsClass } from '@openjcockpit/ui';
+import { Button, Icon, SettingsGroup, StatusMessage, formActionsClass } from '@openjcockpit/ui';
 import type { ControlTowerProject } from '@openjcockpit/api';
 import { useControlTowerRepository } from '../hooks';
 import { ControlTowerQuery } from '../ControlTowerQuery';
@@ -29,34 +29,36 @@ function RepositoryForm({ data }: { data: ControlTowerProject | null }) {
   const keepsSecret = !!data?.hasSecret && data.credentialType !== 'NONE';
 
   return (
-    <form onSubmit={(event) => void onSubmit(event)}>
-      <StatusMessage>{t('repository.hint', { project: project.name })}</StatusMessage>
-      {!canWrite && <StatusMessage>{t('repository.readOnly')}</StatusMessage>}
-      <RepositoryFields
-        form={form}
-        disabled={!canWrite}
-        hasStoredSecret={keepsSecret}
-        onChange={set}
-      />
-      {canWrite && (
-        <div className={formActionsClass}>
-          <Button variant="primary" type="submit" disabled={saving}>
-            {data ? t('repository.save') : t('repository.connectAction')}
-          </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            disabled={saving || checking || !form.gitUrl}
-            onClick={() => void onCheck()}
-          >
-            <Icon name={checking ? 'spinner' : 'cloud'} />{' '}
-            {checking ? t('repository.checking') : t('repository.check')}
-          </Button>
-        </div>
-      )}
-      <ActionFeedback feedback={checkFeedback} onDismiss={clearCheckFeedback} />
-      <ActionFeedback feedback={submitFeedback} onDismiss={clearSubmitFeedback} />
-    </form>
+    <SettingsGroup>
+      <form onSubmit={(event) => void onSubmit(event)}>
+        <StatusMessage>{t('repository.hint', { project: project.name })}</StatusMessage>
+        {!canWrite && <StatusMessage>{t('repository.readOnly')}</StatusMessage>}
+        <RepositoryFields
+          form={form}
+          disabled={!canWrite}
+          hasStoredSecret={keepsSecret}
+          onChange={set}
+        />
+        {canWrite && (
+          <div className={formActionsClass}>
+            <Button variant="primary" type="submit" disabled={saving}>
+              {data ? t('repository.save') : t('repository.connectAction')}
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              disabled={saving || checking || !form.gitUrl}
+              onClick={() => void onCheck()}
+            >
+              <Icon name={checking ? 'spinner' : 'cloud'} />{' '}
+              {checking ? t('repository.checking') : t('repository.check')}
+            </Button>
+          </div>
+        )}
+        <ActionFeedback feedback={checkFeedback} onDismiss={clearCheckFeedback} />
+        <ActionFeedback feedback={submitFeedback} onDismiss={clearSubmitFeedback} />
+      </form>
+    </SettingsGroup>
   );
 }
 
