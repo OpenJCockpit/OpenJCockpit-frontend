@@ -28,6 +28,9 @@
     "react-dom": "19.3.1",
     "react-router": "7.18.4"
   },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  },
   "nx": {
     "includedScripts": []
   }
