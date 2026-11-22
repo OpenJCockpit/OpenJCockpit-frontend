@@ -5,6 +5,8 @@ export type {
   ProjectGitCredentialRequest,
   ProjectGitCredentialDto,
   ProjectGitStatusDto,
+  GitConnectionCheckRequest,
+  GitConnectionCheckResult,
   AgentEventDto as AgentEvent,
   AgentRunDto as AgentRun,
   CustomerSummary,

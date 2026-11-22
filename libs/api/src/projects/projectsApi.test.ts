@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ApiError, setAuthToken } from '../core/http';
 import {
   activateProject,
+  checkGitConnection,
   createProject,
   deactivateProject,
   deleteGitCredentials,
@@ -108,6 +109,13 @@ describe('projectsApi', () => {
         method: 'POST',
       },
       { name: 'getGitStatus', call: () => getGitStatus('p1'), url: '/api/projects/p1/git-status' },
+      {
+        name: 'checkGitConnection',
+        call: () => checkGitConnection({ gitUrl: 'https://git.example.com/o/r' }),
+        url: '/api/projects/git-check',
+        method: 'POST',
+        body: { gitUrl: 'https://git.example.com/o/r' },
+      },
     ];
 
     it.each(cases)('$name sends an authenticated request', async (c) => {
@@ -151,5 +159,12 @@ describe('projectsApi', () => {
     await expect(saveGitCredentials('p1', credReq)).rejects.toThrow(
       'Failed to save git credentials: 401',
     );
+  });
+
+  it('checkGitConnection passes the abort signal', async () => {
+    mockFetch.mockResolvedValueOnce(ok({ gitStatus: 'ACCESSIBLE', warnings: [] }));
+    const controller = new AbortController();
+    await checkGitConnection({ gitUrl: 'https://g.example.com/o/r' }, controller.signal);
+    expect(mockFetch.mock.calls[0]![1].signal).toBe(controller.signal);
   });
 });
