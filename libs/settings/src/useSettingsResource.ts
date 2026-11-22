@@ -33,18 +33,21 @@ export interface SettingsResource<T, D = T> {
   reset: () => void;
 }
 
-const identity = <A, B>(value: A) => value as unknown as B;
 const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
 
 /**
  * Load, edit and save one settings object. Edits live beside the server value (`edited ?? derived`),
  * so a refetch never overwrites what the user is typing and a save replaces the cached value.
  */
+export function useSettingsResource<T>(options: SettingsResourceOptions<T>): SettingsResource<T>;
+export function useSettingsResource<T, D>(
+  options: SettingsResourceOptions<T, D> & { toDraft: (value: T) => D },
+): SettingsResource<T, D>;
 export function useSettingsResource<T, D = T>({
   queryKey,
   load,
   save,
-  toDraft = identity<T, D>,
+  toDraft,
 }: SettingsResourceOptions<T, D>): SettingsResource<T, D> {
   const client = useQueryClient();
   const query = useQuery({ queryKey, queryFn: load });
@@ -60,7 +63,9 @@ export function useSettingsResource<T, D = T>({
     },
   });
 
-  const base = query.data === undefined ? undefined : toDraft(query.data);
+  // Without `toDraft` the overloads guarantee D is T, which the implementation signature cannot express.
+  const base =
+    query.data === undefined ? undefined : toDraft ? toDraft(query.data) : (query.data as D);
   const draft = edited ?? base;
 
   return {
