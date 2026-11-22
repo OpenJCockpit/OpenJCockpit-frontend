@@ -14,6 +14,7 @@ export * from './Skeleton/Skeleton';
 export * from './Tabs/Tabs';
 export * from './Toast/Toast';
 export * from './cx';
+export * from './cssVars';
 export * from './backgrounds/PuffsBackground';
 export * from './frames/FrameOctagon';
 export * from './motion/Reveal';

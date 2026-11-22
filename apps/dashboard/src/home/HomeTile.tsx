@@ -1,7 +1,7 @@
-import type { CSSProperties, DragEvent } from 'react';
+import type { DragEvent } from 'react';
 import { useTranslation } from '@openjcockpit/i18n';
 import type { WidgetDefinition } from '@openjcockpit/hub-contract';
-import { Button, Panel, cx } from '@openjcockpit/ui';
+import { Button, Panel, cssVars, cx } from '@openjcockpit/ui';
 import { RemoteSlot } from '../federation/RemoteSlot';
 import { GLYPH, allowDrop } from './customiserShared';
 import { moveItem, removeItem, type LayoutItem } from './homeLayout';
@@ -69,8 +69,7 @@ export function HomeTile({
         dragging && styles.dragging,
         dropTarget && styles.dropTarget,
       )}
-      // eslint-disable-next-line no-restricted-syntax -- runtime grid spans passed as custom properties
-      style={{ '--cols': item.cols, '--rows': item.rows } as CSSProperties}
+      {...cssVars({ '--cols': item.cols, '--rows': item.rows })}
       onDragEnter={onDragEnter}
       onDragOver={allowDrop}
       onDrop={(e: DragEvent) => {

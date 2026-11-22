@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react';
-import type { CSSProperties } from 'react';
 import { cx } from '../cx';
+import { cssVars } from '../cssVars';
 import styles from './FrameOctagon.module.scss';
 
 // Faithful reimplementation of the octagonal frame previously rendered by
@@ -116,14 +116,12 @@ export function FrameOctagon({ className, duration = 1 }: FrameOctagonProps) {
   }, []);
 
   const { bg, lineA, lineB } = buildFrameOctagonPaths(size.width, size.height);
-  const style = { '--frame-duration': `${duration}s` } as CSSProperties;
 
   return (
     <svg
       ref={svgRef}
       className={cx(styles.frameOctagon, className)}
-      // eslint-disable-next-line no-restricted-syntax -- runtime-computed custom property (duration)
-      style={style}
+      {...cssVars({ '--frame-duration': `${duration}s` })}
       aria-hidden="true"
       role="presentation"
       focusable="false"

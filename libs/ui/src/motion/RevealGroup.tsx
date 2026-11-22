@@ -1,4 +1,5 @@
 import type { CSSProperties, ElementType, ReactNode } from 'react';
+import { cssVars } from '../cssVars';
 
 // Stagger scope for a group of <Reveal> descendants (architecture §3.2,
 // ADR-4). Sets only the `--reveal-stagger` CSS custom property on a real
@@ -27,14 +28,12 @@ export function RevealGroup({
   children,
   ...rest
 }: RevealGroupProps) {
-  const groupStyle = {
-    ...style,
-    '--reveal-stagger': `${stagger}s`,
-  } as CSSProperties;
-
   return (
-    // eslint-disable-next-line no-restricted-syntax -- runtime-computed custom property (stagger)
-    <Component className={className} style={groupStyle} {...rest}>
+    <Component
+      className={className}
+      {...cssVars({ '--reveal-stagger': `${stagger}s` }, style)}
+      {...rest}
+    >
       {children}
     </Component>
   );
