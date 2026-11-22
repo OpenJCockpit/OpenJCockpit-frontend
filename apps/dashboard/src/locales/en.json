@@ -272,7 +272,7 @@
           "description": "Git URL, branch, connection status and Git credentials of the selected project."
         },
         "overview": {
-          "title": "Overview",
+          "title": "Project setup checklist",
           "description": "Setup checklist of the selected project."
         }
       }

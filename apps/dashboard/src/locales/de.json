@@ -272,7 +272,7 @@
           "description": "Git-URL, Branch, Verbindungsstatus und Git-Zugangsdaten des ausgewählten Projekts."
         },
         "overview": {
-          "title": "Übersicht",
+          "title": "Einrichtungs-Checkliste des Projekts",
           "description": "Einrichtungs-Checkliste des ausgewählten Projekts."
         }
       }

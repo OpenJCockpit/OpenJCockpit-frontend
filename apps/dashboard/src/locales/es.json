@@ -272,7 +272,7 @@
           "description": "URL de Git, rama, estado de la conexión y credenciales de Git del proyecto seleccionado."
         },
         "overview": {
-          "title": "Resumen",
+          "title": "Lista de configuración del proyecto",
           "description": "Lista de configuración del proyecto seleccionado."
         }
       }

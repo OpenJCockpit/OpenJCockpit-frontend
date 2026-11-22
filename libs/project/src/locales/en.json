@@ -203,7 +203,7 @@
       }
     },
     "overview": {
-      "title": "Setup checklist",
+      "title": "Project setup checklist",
       "summary": "{{done}} of {{total}} steps done.",
       "complete": "This project is fully set up.",
       "items": {

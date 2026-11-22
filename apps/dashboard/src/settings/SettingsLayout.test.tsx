@@ -14,6 +14,7 @@ import {
   FakeHubSessionProvider,
 } from '@openjcockpit/hub-contract/testing';
 import { SettingsForm } from '@openjcockpit/ui';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '../testUtils/render';
 import { SettingsLayout } from './SettingsLayout';
 
@@ -62,20 +63,22 @@ async function renderSettings(
 ) {
   await act(async () => {
     render(
-      <MemoryRouter initialEntries={[at]}>
-        <FakeHubSessionProvider session={new FakeHubSession(permissions)}>
-          <FakeHubProjectProvider selected={project ? PROJECT : null}>
-            <AppRegistryProvider apps={apps}>
-              <Routes>
-                <Route path="/settings/*" element={<SettingsLayout screen="settings" />} />
-                <Route path="/project-settings/*" element={<SettingsLayout screen="project" />} />
-                <Route path={FORBIDDEN_PATH} element={<p data-testid="forbidden" />} />
-              </Routes>
-              <Where />
-            </AppRegistryProvider>
-          </FakeHubProjectProvider>
-        </FakeHubSessionProvider>
-      </MemoryRouter>,
+      <QueryClientProvider client={new QueryClient()}>
+        <MemoryRouter initialEntries={[at]}>
+          <FakeHubSessionProvider session={new FakeHubSession(permissions)}>
+            <FakeHubProjectProvider selected={project ? PROJECT : null}>
+              <AppRegistryProvider apps={apps}>
+                <Routes>
+                  <Route path="/settings/*" element={<SettingsLayout screen="settings" />} />
+                  <Route path="/project-settings/*" element={<SettingsLayout screen="project" />} />
+                  <Route path={FORBIDDEN_PATH} element={<p data-testid="forbidden" />} />
+                </Routes>
+                <Where />
+              </AppRegistryProvider>
+            </FakeHubProjectProvider>
+          </FakeHubSessionProvider>
+        </MemoryRouter>
+      </QueryClientProvider>,
     );
   });
 }

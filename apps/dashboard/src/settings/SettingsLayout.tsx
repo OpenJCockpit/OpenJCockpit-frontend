@@ -23,10 +23,14 @@ import {
   pageClass,
   pageHeaderClass,
 } from '@openjcockpit/ui';
+import { useProjectSetupComplete } from '@openjcockpit/project';
 import { NotFound } from '../routeViews/NotFound';
 import { SectionFrame } from './SectionFrame';
 import { SettingsDirtyProvider } from './SettingsDirtyProvider';
 import styles from './SettingsLayout.module.scss';
+
+/** Id of the project setup checklist section (contributed by the projects app). */
+const SETUP_CHECKLIST_ID = 'overview';
 
 const DEFAULT_GROUP: SettingsGroupKey = 'settings.groups.other';
 
@@ -121,7 +125,16 @@ export function SettingsLayout({ screen = 'settings' }: { screen?: SettingsScree
   const { t } = useTranslation('dashboard');
   const header = useHubHeader();
   const { allApps } = useAppRegistry();
-  const visibleSettings = useScreenSections(screen);
+  const screenSections = useScreenSections(screen);
+  const setupComplete = useProjectSetupComplete();
+  // The setup checklist has nothing left to show once the project is fully set up.
+  const visibleSettings = useMemo(
+    () =>
+      setupComplete
+        ? screenSections.filter((section) => section.id !== SETUP_CHECKLIST_ID)
+        : screenSections,
+    [screenSections, setupComplete],
+  );
   const first = visibleSettings[0];
 
   const known = useMemo(
@@ -161,6 +174,12 @@ export function SettingsLayout({ screen = 'settings' }: { screen?: SettingsScree
                       element={<SectionFrame section={section} />}
                     />
                   ))}
+                  {setupComplete ? (
+                    <Route
+                      path={SETUP_CHECKLIST_ID}
+                      element={<Navigate to=".." replace relative="path" />}
+                    />
+                  ) : null}
                   <Route path=":sectionId" element={<UnavailableSection known={known} />} />
                 </Routes>
               </div>
