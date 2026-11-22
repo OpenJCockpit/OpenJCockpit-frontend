@@ -11,10 +11,18 @@ interface SecretFieldProps {
   value: string;
   onChange: (value: string) => void;
   required?: boolean;
+  disabled?: boolean;
 }
 
 /** Password input for a write-only secret: blank means "keep the stored value". */
-export function SecretField({ label, hasValue, value, onChange, required }: SecretFieldProps) {
+export function SecretField({
+  label,
+  hasValue,
+  value,
+  onChange,
+  required,
+  disabled,
+}: SecretFieldProps) {
   const { t } = useTranslation();
   return (
     <label className={FormFieldsStyles.formFieldWide}>
@@ -23,6 +31,7 @@ export function SecretField({ label, hasValue, value, onChange, required }: Secr
       <input
         className={formInputClass}
         type="password"
+        disabled={disabled}
         aria-required={required ? true : undefined}
         value={value}
         onChange={(e) => onChange(e.target.value)}

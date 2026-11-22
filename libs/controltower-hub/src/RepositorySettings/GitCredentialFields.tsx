@@ -11,6 +11,7 @@ export interface GitCredentialValues {
 interface Props extends GitCredentialValues {
   /** A secret is already stored; leaving the field empty keeps it. */
   hasStoredSecret: boolean;
+  disabled?: boolean;
   onChange: (patch: Partial<GitCredentialValues>) => void;
 }
 
@@ -20,6 +21,7 @@ export function GitCredentialFields({
   gitUsername,
   secret,
   hasStoredSecret,
+  disabled,
   onChange,
 }: Props) {
   const { t } = useTranslation('controltower');
@@ -28,6 +30,7 @@ export function GitCredentialFields({
     <>
       <SelectField
         label={t('repository.authentication')}
+        disabled={disabled}
         value={credentialType}
         onChange={(value) => onChange({ credentialType: value as ControlTowerCredentialType })}
         options={[
@@ -42,6 +45,7 @@ export function GitCredentialFields({
             label={t('repository.username')}
             required={credentialType === 'USERNAME_PASSWORD'}
             autoComplete="off"
+            disabled={disabled}
             value={gitUsername}
             onChange={(value) => onChange({ gitUsername: value })}
             hint={token ? t('repository.usernameHint') : undefined}
@@ -49,6 +53,7 @@ export function GitCredentialFields({
           <SecretField
             label={token ? t('repository.token') : t('repository.password')}
             hasValue={hasStoredSecret}
+            disabled={disabled}
             required={!hasStoredSecret}
             value={secret}
             onChange={(value) => onChange({ secret: value })}
