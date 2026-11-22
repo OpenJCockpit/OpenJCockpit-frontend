@@ -1,6 +1,6 @@
 import type { SubagentSpec } from '@openjcockpit/api';
 import { useTranslation } from '@openjcockpit/i18n';
-import { Actions, DataTable, Button } from '@openjcockpit/ui';
+import { Actions, DataTable, IconButton, HiddenHeader } from '@openjcockpit/ui';
 
 interface SubagentsTableProps {
   items: SubagentSpec[];
@@ -17,7 +17,9 @@ export function SubagentsTable({ items, onEdit, onDelete }: SubagentsTableProps)
           <th>{t('shared.name')}</th>
           <th>{t('subagents.parentAgent')}</th>
           <th>{t('shared.skills')}</th>
-          <th></th>
+          <th>
+            <HiddenHeader>{t('shared.actions')}</HiddenHeader>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -28,12 +30,13 @@ export function SubagentsTable({ items, onEdit, onDelete }: SubagentsTableProps)
             <td>{item.skillNames.join(', ')}</td>
             <td>
               <Actions>
-                <Button variant="secondary" onClick={() => onEdit(item)}>
-                  {t('shared.edit')}
-                </Button>
-                <Button variant="danger" onClick={() => onDelete(item.name)}>
-                  {t('shared.delete')}
-                </Button>
+                <IconButton icon="edit" label={t('shared.edit')} onClick={() => onEdit(item)} />
+                <IconButton
+                  icon="delete"
+                  variant="danger"
+                  label={t('shared.delete')}
+                  onClick={() => onDelete(item.name)}
+                />
               </Actions>
             </td>
           </tr>

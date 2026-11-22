@@ -2,6 +2,7 @@
   "workflow": {
     "shared": {
       "cancel": "Abbrechen",
+      "actions": "Aktionen",
       "edit": "Bearbeiten",
       "delete": "Löschen",
       "retry": "Wiederholen",

@@ -6,6 +6,8 @@ import {
   fieldHintClass,
   SettingsGroup,
   Button,
+  HiddenHeader,
+  IconButton,
   StatusMessage,
   useConfirmDialog,
 } from '@openjcockpit/ui';
@@ -94,7 +96,9 @@ function MarketplaceList({
               <th>{t('settings.columnApiKey')}</th>
               <th>{t('settings.columnStatus')}</th>
               <th>{t('settings.columnCreated')}</th>
-              <th>{t('settings.columnActions')}</th>
+              <th>
+                <HiddenHeader>{t('settings.columnActions')}</HiddenHeader>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -116,17 +120,18 @@ function MarketplaceList({
                 </td>
                 <td>{formatDate(connection.createdAt)}</td>
                 <Actions as="td">
-                  <Button
-                    variant="secondary"
+                  <IconButton
+                    icon="edit"
+                    label={t('settings.edit')}
                     onClick={() => {
                       clearError();
                       void navigate(`${listPath}/${encodeURIComponent(connection.id)}/edit`);
                     }}
-                  >
-                    {t('settings.edit')}
-                  </Button>
-                  <Button
+                  />
+                  <IconButton
+                    icon="delete"
                     variant="danger"
+                    label={t('settings.delete')}
                     onClick={() =>
                       confirm({
                         title: t('settings.confirmDelete.title', { name: connection.name }),
@@ -137,9 +142,7 @@ function MarketplaceList({
                         onConfirm: () => handleDelete(connection),
                       })
                     }
-                  >
-                    {t('settings.delete')}
-                  </Button>
+                  />
                 </Actions>
               </tr>
             ))}

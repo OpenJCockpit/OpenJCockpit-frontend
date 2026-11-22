@@ -1,6 +1,6 @@
 import type { WorkflowGroup } from '@openjcockpit/api';
 import { useTranslation } from '@openjcockpit/i18n';
-import { Actions, DataTable, Button } from '@openjcockpit/ui';
+import { Actions, DataTable, IconButton, HiddenHeader } from '@openjcockpit/ui';
 
 interface GroupsTableProps {
   items: WorkflowGroup[];
@@ -18,7 +18,9 @@ export function GroupsTable({ items, onEdit, onDelete }: GroupsTableProps) {
           <th>{t('shared.name')}</th>
           <th>{t('shared.project')}</th>
           <th>{t('shared.description')}</th>
-          <th></th>
+          <th>
+            <HiddenHeader>{t('shared.actions')}</HiddenHeader>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -30,12 +32,13 @@ export function GroupsTable({ items, onEdit, onDelete }: GroupsTableProps) {
             <td>{item.description}</td>
             <td>
               <Actions>
-                <Button variant="secondary" onClick={() => onEdit(item)}>
-                  {t('shared.edit')}
-                </Button>
-                <Button variant="danger" onClick={() => onDelete(item)}>
-                  {t('shared.delete')}
-                </Button>
+                <IconButton icon="edit" label={t('shared.edit')} onClick={() => onEdit(item)} />
+                <IconButton
+                  icon="delete"
+                  variant="danger"
+                  label={t('shared.delete')}
+                  onClick={() => onDelete(item)}
+                />
               </Actions>
             </td>
           </tr>

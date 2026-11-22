@@ -29,6 +29,7 @@ export * from './FormFields/SelectField/SelectField';
 export * from './FormFields/TextAreaField/TextAreaField';
 export * from './FormFields/TextField/TextField';
 export * from './Icon/Icon';
+export * from './IconButton/IconButton';
 export * from './IconBox/IconBox';
 export * from './ModalShell/ModalShell';
 export * from './Select/Select';

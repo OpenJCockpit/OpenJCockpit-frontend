@@ -4,6 +4,8 @@ import {
   StatusChip,
   StatusMessage,
   Button,
+  HiddenHeader,
+  IconButton,
   Actions,
   SettingsGroup,
   DataTable,
@@ -102,7 +104,9 @@ function A2AServicesList({
                 <th>{t('a2aServices.columns.baseUrl')}</th>
                 <th>{t('a2aServices.columns.credentials')}</th>
                 <th>{t('a2aServices.columns.status')}</th>
-                <th>{t('a2aServices.columns.actions')}</th>
+                <th>
+                  <HiddenHeader>{t('a2aServices.columns.actions')}</HiddenHeader>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -142,23 +146,22 @@ function A2AServicesList({
                     <td>
                       {service.editable ? (
                         <Actions>
-                          <Button
-                            variant="secondary"
+                          <IconButton
+                            icon="edit"
+                            label={t('shared.edit')}
                             onClick={() => {
                               clearFeedback();
                               void navigate(`${listPath}/${encodeURIComponent(service.id)}/edit`);
                             }}
-                          >
-                            {t('shared.edit')}
-                          </Button>
-                          <Button
+                          />
+                          <IconButton
+                            icon="delete"
                             variant="danger"
+                            label={t('shared.delete')}
                             onClick={() =>
                               askDelete('a2aService', service.name, () => handleDelete(service))
                             }
-                          >
-                            {t('shared.delete')}
-                          </Button>
+                          />
                         </Actions>
                       ) : (
                         <span className={fieldHintClass}>{t('shared.readOnly')}</span>

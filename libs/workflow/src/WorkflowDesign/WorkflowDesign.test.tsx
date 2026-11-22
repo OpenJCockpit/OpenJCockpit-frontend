@@ -158,7 +158,7 @@ describe('workflow groups in the design tab', () => {
     await renderWorkflowsTab();
 
     await act(async () => {
-      within(screen.getByText('Customer Onboarding').closest('tr')!).getByText('Edit').click();
+      within(screen.getByText('Customer Onboarding').closest('tr')!).getByLabelText('Edit').click();
     });
 
     const groupSelect = screen
@@ -283,7 +283,7 @@ describe('workflow groups in the design tab', () => {
     await screen.findByText('Onboarding flows');
 
     await act(async () => {
-      within(screen.getByText('Onboarding flows').closest('tr')!).getByText('Delete').click();
+      within(screen.getByText('Onboarding flows').closest('tr')!).getByLabelText('Delete').click();
     });
 
     await act(async () => {
@@ -441,7 +441,7 @@ describe('human approval gate (designer)', () => {
     await screen.findByText('Gated workflow');
 
     await act(async () => {
-      within(screen.getByText('Gated workflow').closest('tr')!).getByText('Edit').click();
+      within(screen.getByText('Gated workflow').closest('tr')!).getByLabelText('Edit').click();
     });
 
     expect(screen.getByRole('checkbox', { name: /Human approval gate/ })).toBeChecked();
@@ -487,7 +487,9 @@ describe('human approval gate (designer)', () => {
     await screen.findByText('Customer Onboarding');
 
     await act(async () => {
-      within(screen.getByText('Customer Onboarding').closest('tr')!).getByText('Delete').click();
+      within(screen.getByText('Customer Onboarding').closest('tr')!)
+        .getByLabelText('Delete')
+        .click();
     });
 
     await act(async () => {
@@ -651,7 +653,7 @@ describe('workflow orb authoring', () => {
     // No workflowOrbs field at all — renders without throwing, shows zero orb rows,
     // and the "+ Add orb" control is present/usable (AC-54: degrades to "no orbs", no error).
     await act(async () => {
-      within(screen.getByText('Legacy workflow').closest('tr')!).getByText('Edit').click();
+      within(screen.getByText('Legacy workflow').closest('tr')!).getByLabelText('Edit').click();
     });
     expect(screen.getByText('+ Add orb')).toBeInTheDocument();
     expect(screen.queryByLabelText('Referenced workflow')).not.toBeInTheDocument();
@@ -815,7 +817,7 @@ describe('agents tab', () => {
     ).toBeInTheDocument();
 
     await act(async () => {
-      within(litellm).getByText('Details').click();
+      within(litellm).getByLabelText('Details').click();
     });
 
     expect(workflowApi.getProviderAgentCard).toHaveBeenCalledWith('litellm', 'qa-engineer');
@@ -1249,7 +1251,7 @@ describe('skills tab (local + marketplace catalog)', () => {
     const localRow = rows.find((row) => within(row).queryByText('Local'))!;
 
     await act(async () => {
-      fireEvent.click(within(localRow).getByText('Edit'));
+      fireEvent.click(within(localRow).getByLabelText('Edit'));
     });
     fireEvent.change(screen.getByLabelText('Input contract'), {
       target: { value: 'updated-input' },
@@ -1538,7 +1540,7 @@ describe('WorkflowsPanel agent catalogue and validation (workflow-designer-pipel
     await screen.findByText('Populated workflow');
 
     await act(async () => {
-      within(screen.getByText('Populated workflow').closest('tr')!).getByText('Edit').click();
+      within(screen.getByText('Populated workflow').closest('tr')!).getByLabelText('Edit').click();
     });
 
     for (const agent of PIPELINE_ORDERED_AGENTS) {
@@ -1630,7 +1632,7 @@ describe('WorkflowsPanel agent catalogue and validation (workflow-designer-pipel
     await screen.findByText('Unknown id workflow');
 
     await act(async () => {
-      within(screen.getByText('Unknown id workflow').closest('tr')!).getByText('Edit').click();
+      within(screen.getByText('Unknown id workflow').closest('tr')!).getByLabelText('Edit').click();
     });
 
     expect(screen.getByRole('checkbox', { name: /Requirement Agent/ })).toBeChecked();
@@ -1678,7 +1680,9 @@ describe('WorkflowsPanel agent catalogue and validation (workflow-designer-pipel
     await screen.findByText('Empty catalogue workflow');
 
     await act(async () => {
-      within(screen.getByText('Empty catalogue workflow').closest('tr')!).getByText('Edit').click();
+      within(screen.getByText('Empty catalogue workflow').closest('tr')!)
+        .getByLabelText('Edit')
+        .click();
     });
 
     expect(screen.getByText('Edit workflow')).toBeInTheDocument();
@@ -1813,7 +1817,7 @@ describe('workflows panel actions', () => {
     });
     await screen.findByText('Customer Onboarding');
     await act(async () => {
-      within(screen.getByText('Customer Onboarding').closest('tr')!).getByText('Edit').click();
+      within(screen.getByText('Customer Onboarding').closest('tr')!).getByLabelText('Edit').click();
     });
     await act(async () => {
       screen.getByText('Save').click();
@@ -1832,7 +1836,7 @@ describe('workflows panel actions', () => {
     });
     await screen.findByText('Customer Onboarding');
     await act(async () => {
-      within(screen.getByText('Customer Onboarding').closest('tr')!).getByText('Edit').click();
+      within(screen.getByText('Customer Onboarding').closest('tr')!).getByLabelText('Edit').click();
     });
     await act(async () => {
       screen.getByText('Save').click();
@@ -1844,7 +1848,9 @@ describe('workflows panel actions', () => {
     vi.mocked(workflowApi.deleteWorkflow).mockResolvedValue();
     await renderWorkflowsTab();
     await act(async () => {
-      within(screen.getByText('Customer Onboarding').closest('tr')!).getByText('Delete').click();
+      within(screen.getByText('Customer Onboarding').closest('tr')!)
+        .getByLabelText('Delete')
+        .click();
     });
     await act(async () => {
       screen.getByTestId('confirm-action-confirm').click();
@@ -1857,7 +1863,9 @@ describe('workflows panel actions', () => {
     vi.mocked(workflowApi.deleteWorkflow).mockRejectedValue('nope');
     await renderWorkflowsTab();
     await act(async () => {
-      within(screen.getByText('Customer Onboarding').closest('tr')!).getByText('Delete').click();
+      within(screen.getByText('Customer Onboarding').closest('tr')!)
+        .getByLabelText('Delete')
+        .click();
     });
     await act(async () => {
       screen.getByTestId('confirm-action-confirm').click();

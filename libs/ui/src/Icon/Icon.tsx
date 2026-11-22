@@ -63,6 +63,10 @@ import { MicrophoneIcon as Microphone } from '@phosphor-icons/react/dist/csr/Mic
 import { LockSimpleIcon as LockSimple } from '@phosphor-icons/react/dist/csr/LockSimple';
 import { PaperPlaneTiltIcon as PaperPlaneTilt } from '@phosphor-icons/react/dist/csr/PaperPlaneTilt';
 import { SpeakerHighIcon as SpeakerHigh } from '@phosphor-icons/react/dist/csr/SpeakerHigh';
+import { PencilSimpleIcon as PencilSimple } from '@phosphor-icons/react/dist/csr/PencilSimple';
+import { TrashIcon as Trash } from '@phosphor-icons/react/dist/csr/Trash';
+import { EyeIcon as Eye } from '@phosphor-icons/react/dist/csr/Eye';
+import { EyeSlashIcon as EyeSlash } from '@phosphor-icons/react/dist/csr/EyeSlash';
 import { cx } from '../cx';
 
 import styles from './Icon.module.scss';
@@ -137,6 +141,10 @@ const ICONS = {
   lock: LockSimple,
   send: PaperPlaneTilt,
   speaker: SpeakerHigh,
+  edit: PencilSimple,
+  delete: Trash,
+  view: Eye,
+  hide: EyeSlash,
 } as const satisfies Record<string, ComponentType<PhosphorIconProps>>;
 
 export type IconName = keyof typeof ICONS;

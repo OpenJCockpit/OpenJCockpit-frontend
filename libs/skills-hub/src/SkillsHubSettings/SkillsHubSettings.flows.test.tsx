@@ -122,7 +122,7 @@ describe('SkillsHubSettings — flows', () => {
     vi.mocked(api.updateSkillsMarketplace).mockImplementation(async (id, req) =>
       connection({ id, name: req.name }),
     );
-    await clickAsync(within(row('Acme Skills')).getByText('Edit'));
+    await clickAsync(within(row('Acme Skills')).getByLabelText('Edit'));
 
     expect(screen.getByText('Edit marketplace')).toBeInTheDocument();
     expect(screen.getByLabelText('Name *')).toHaveValue('Acme Skills');
@@ -145,7 +145,7 @@ describe('SkillsHubSettings — flows', () => {
     vi.mocked(api.updateSkillsMarketplace).mockImplementation(async (id, req) =>
       connection({ id, name: req.name }),
     );
-    await clickAsync(within(row('Acme Skills')).getByText('Edit'));
+    await clickAsync(within(row('Acme Skills')).getByLabelText('Edit'));
     type('Name *', 'Acme 2');
     await clickAsync(screen.getByRole('button', { name: 'Save' }));
 
@@ -155,7 +155,7 @@ describe('SkillsHubSettings — flows', () => {
 
   it('edits a connection that has no description as an empty field', async () => {
     await open([connection({ description: null })]);
-    await clickAsync(within(row('Acme Skills')).getByText('Edit'));
+    await clickAsync(within(row('Acme Skills')).getByLabelText('Edit'));
     expect(screen.getByLabelText('Description')).toHaveValue('');
   });
 
@@ -178,7 +178,7 @@ describe('SkillsHubSettings — flows', () => {
 
   it('asks for a key on edit when the connection has none', async () => {
     await open([connection({ hasApiKey: false })]);
-    await clickAsync(within(row('Acme Skills')).getByText('Edit'));
+    await clickAsync(within(row('Acme Skills')).getByLabelText('Edit'));
     expect(screen.getByPlaceholderText('Required — no API key set yet')).toBeInTheDocument();
   });
 
@@ -192,7 +192,7 @@ describe('SkillsHubSettings — flows', () => {
     await clickAsync(screen.getByRole('button', { name: 'Cancel' }));
     expect(screen.getByRole('table')).toBeInTheDocument();
 
-    await clickAsync(within(row('Acme Skills')).getByText('Edit'));
+    await clickAsync(within(row('Acme Skills')).getByLabelText('Edit'));
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
     await clickAsync(screen.getByRole('button', { name: 'Cancel' }));
     expect(screen.getByRole('table')).toBeInTheDocument();

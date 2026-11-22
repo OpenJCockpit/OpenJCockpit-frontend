@@ -148,7 +148,7 @@ test.describe('workflow-trigger-workflow-orb: chained-workflow authoring end to 
 
     // ---- 3. Reload the round trip: reopen the parent for edit and assert
     //         the orb persisted exactly as saved (AC-01) ----
-    await parentRow.getByText('Edit', { exact: true }).click();
+    await parentRow.getByRole('button', { name: 'Edit', exact: true }).click();
 
     await expect(page.getByLabel('Referenced workflow')).toHaveAttribute(
       'data-value',
@@ -162,16 +162,16 @@ test.describe('workflow-trigger-workflow-orb: chained-workflow authoring end to 
 
     // ---- 4. BR-13/AC-08: deleting the referenced child is refused while
     //         the parent's orb still references it ----
-    await childRow.getByText('Delete', { exact: true }).click();
+    await childRow.getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(page.locator('#workflow-save-error')).toBeVisible();
     await expect(childRow).toBeVisible();
 
     // ---- 5. Cleanup: delete the parent (removing the reference), then the
     //         child — both now succeed, leaving no state behind ----
-    await parentRow.getByText('Delete', { exact: true }).click();
+    await parentRow.getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(parentRow).toHaveCount(0);
 
-    await childRow.getByText('Delete', { exact: true }).click();
+    await childRow.getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(childRow).toHaveCount(0);
   });
 });

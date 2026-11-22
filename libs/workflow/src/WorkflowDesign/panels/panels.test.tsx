@@ -104,7 +104,7 @@ describe('SubagentsPanel', () => {
   it('edits a subagent: the name is locked and the row is replaced', async () => {
     vi.mocked(api.updateSubagentSpec).mockImplementation(async (_n, s) => s);
     await openPanel(<SubagentsPanel />, 'scanner');
-    await clickAsync(within(row('scanner')).getByText('Edit'));
+    await clickAsync(within(row('scanner')).getByLabelText('Edit'));
     expect(screen.getByText('Edit subagent')).toBeInTheDocument();
     expect(screen.getByLabelText('Name')).toBeDisabled();
 
@@ -122,7 +122,7 @@ describe('SubagentsPanel', () => {
     vi.mocked(api.listSubagentSpecs).mockResolvedValue([sub, { ...sub, name: 'other' }]);
     vi.mocked(api.updateSubagentSpec).mockImplementation(async (_n, s) => s);
     await openPanel(<SubagentsPanel />, 'scanner');
-    await clickAsync(within(row('scanner')).getByText('Edit'));
+    await clickAsync(within(row('scanner')).getByLabelText('Edit'));
     fireEvent.change(screen.getByLabelText('Parent agent'), { target: { value: 'chief' } });
     await clickAsync(screen.getByRole('button', { name: 'Save' }));
     expect(await screen.findByText('chief')).toBeInTheDocument();
@@ -148,7 +148,7 @@ describe('SubagentsPanel', () => {
   it('deletes a subagent', async () => {
     vi.mocked(api.deleteSubagentSpec).mockResolvedValue(undefined);
     await openPanel(<SubagentsPanel />, 'scanner');
-    await clickAsync(within(row('scanner')).getByText('Delete'));
+    await clickAsync(within(row('scanner')).getByLabelText('Delete'));
     await clickAsync(screen.getByTestId('confirm-action-confirm'));
     expect(api.deleteSubagentSpec).toHaveBeenCalledWith('scanner');
     await waitFor(() => expect(screen.queryByText('scanner')).not.toBeInTheDocument());
@@ -157,7 +157,7 @@ describe('SubagentsPanel', () => {
   it('shows an error and keeps the row when deleting fails', async () => {
     vi.mocked(api.deleteSubagentSpec).mockRejectedValue(new Error('x'));
     await openPanel(<SubagentsPanel />, 'scanner');
-    await clickAsync(within(row('scanner')).getByText('Delete'));
+    await clickAsync(within(row('scanner')).getByLabelText('Delete'));
     await clickAsync(screen.getByTestId('confirm-action-confirm'));
     expect(
       await screen.findByText('Failed to delete the subagent definition.'),
@@ -236,7 +236,7 @@ describe('SkillsPanel', () => {
     const ext = row('ext-skill');
     expect(within(ext).getByText('Market One')).toBeInTheDocument();
     expect(within(ext).getByText('Read-only')).toBeInTheDocument();
-    expect(within(ext).queryByText('Edit')).not.toBeInTheDocument();
+    expect(within(ext).queryByLabelText('Edit')).not.toBeInTheDocument();
     expect(screen.queryByText('orphan')).not.toBeInTheDocument();
   });
 
@@ -287,7 +287,7 @@ describe('SkillsPanel', () => {
   it('edits a local skill with the name locked', async () => {
     vi.mocked(api.updateSkillSpec).mockImplementation(async (_n, s) => s);
     await openPanel(<SkillsPanel />, 'summarise');
-    await clickAsync(within(row('summarise')).getByText('Edit'));
+    await clickAsync(within(row('summarise')).getByLabelText('Edit'));
     expect(screen.getByText('Edit skill')).toBeInTheDocument();
     expect(screen.getByLabelText('Name')).toBeDisabled();
     fireEvent.change(screen.getByLabelText('Output contract'), { target: { value: 'changelog' } });
@@ -306,7 +306,7 @@ describe('SkillsPanel', () => {
     });
     vi.mocked(api.updateSkillSpec).mockImplementation(async (_n, s) => s);
     await openPanel(<SkillsPanel />, 'summarise');
-    await clickAsync(within(row('summarise')).getByText('Edit'));
+    await clickAsync(within(row('summarise')).getByLabelText('Edit'));
     fireEvent.change(screen.getByLabelText('Output contract'), { target: { value: 'changelog' } });
     await clickAsync(screen.getByRole('button', { name: 'Save' }));
     expect(await screen.findByText('changelog')).toBeInTheDocument();
@@ -326,7 +326,7 @@ describe('SkillsPanel', () => {
   it('deletes a local skill', async () => {
     vi.mocked(api.deleteSkillSpec).mockResolvedValue(undefined);
     await openPanel(<SkillsPanel />, 'summarise');
-    await clickAsync(within(row('summarise')).getByText('Delete'));
+    await clickAsync(within(row('summarise')).getByLabelText('Delete'));
     await clickAsync(screen.getByTestId('confirm-action-confirm'));
     expect(api.deleteSkillSpec).toHaveBeenCalledWith('summarise');
     await waitFor(() => expect(screen.queryByText('summarise')).not.toBeInTheDocument());
@@ -335,7 +335,7 @@ describe('SkillsPanel', () => {
   it('shows an error when deleting fails', async () => {
     vi.mocked(api.deleteSkillSpec).mockRejectedValue(new Error('x'));
     await openPanel(<SkillsPanel />, 'summarise');
-    await clickAsync(within(row('summarise')).getByText('Delete'));
+    await clickAsync(within(row('summarise')).getByLabelText('Delete'));
     await clickAsync(screen.getByTestId('confirm-action-confirm'));
     expect(await screen.findByText('Failed to delete the skill definition.')).toBeInTheDocument();
     expect(screen.getByText('summarise')).toBeInTheDocument();
@@ -401,7 +401,7 @@ describe('GroupsPanel', () => {
     ]);
     vi.mocked(api.updateWorkflowGroup).mockImplementation(async (_id, g) => g);
     await renderAsync(<GroupsPanel />);
-    await clickAsync(within(row('Onboarding')).getByText('Edit'));
+    await clickAsync(within(row('Onboarding')).getByLabelText('Edit'));
     fireEvent.change(screen.getByLabelText('Group name'), { target: { value: 'Renamed' } });
     await clickAsync(screen.getByRole('button', { name: 'Save' }));
     expect(await screen.findByText('Renamed')).toBeInTheDocument();
@@ -411,7 +411,7 @@ describe('GroupsPanel', () => {
   it('edits a group with the id locked', async () => {
     vi.mocked(api.updateWorkflowGroup).mockImplementation(async (_id, g) => g);
     await renderAsync(<GroupsPanel />);
-    await clickAsync(within(row('Onboarding')).getByText('Edit'));
+    await clickAsync(within(row('Onboarding')).getByLabelText('Edit'));
     expect(screen.getByText('Edit group')).toBeInTheDocument();
     expect(screen.getByLabelText('Group ID')).toBeDisabled();
     fireEvent.change(screen.getByLabelText('Group name'), { target: { value: 'Renamed' } });
@@ -436,12 +436,12 @@ describe('GroupsPanel', () => {
   it('deletes a group, and reports a failed delete', async () => {
     vi.mocked(api.deleteWorkflowGroup).mockRejectedValueOnce(new Error('x'));
     await renderAsync(<GroupsPanel />);
-    await clickAsync(within(row('Onboarding')).getByText('Delete'));
+    await clickAsync(within(row('Onboarding')).getByLabelText('Delete'));
     await clickAsync(screen.getByTestId('confirm-action-confirm'));
     expect(await screen.findByText('Failed to delete the workflow group.')).toBeInTheDocument();
 
     vi.mocked(api.deleteWorkflowGroup).mockResolvedValueOnce(undefined);
-    await clickAsync(within(row('Onboarding')).getByText('Delete'));
+    await clickAsync(within(row('Onboarding')).getByLabelText('Delete'));
     await clickAsync(screen.getByTestId('confirm-action-confirm'));
     await waitFor(() => expect(screen.queryByText('Onboarding')).not.toBeInTheDocument());
   });

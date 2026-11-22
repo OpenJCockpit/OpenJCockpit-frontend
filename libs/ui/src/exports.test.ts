@@ -9,6 +9,7 @@ describe('public API', () => {
       'Button',
       'Panel',
       'DataTable',
+      'IconButton',
       'AppShell',
       'FrameOctagon',
       'cx',
