@@ -6,12 +6,20 @@
   gap: 16px;
 }
 .skills-hub-search {
+  position: relative;
   display: flex;
-  gap: 10px;
+  align-items: center;
+  max-width: 360px;
   margin-bottom: 20px;
+  & > svg {
+    position: absolute;
+    left: 12px;
+    color: var(--muted);
+    pointer-events: none;
+  }
   &__input {
     flex: 1;
-    max-width: 360px;
+    padding-left: 36px;
   }
 }
 .skills-hub-panel {
@@ -34,11 +42,11 @@
   grid-template-columns: 34px 1fr;
   gap: 12px;
   align-items: center;
-  & strong {
+  & > div strong {
     display: block;
     font-size: 14px;
   }
-  & span {
+  & > div span {
     display: block;
     margin-top: 4px;
     color: var(--muted);

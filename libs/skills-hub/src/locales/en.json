@@ -12,7 +12,6 @@
       "settings": "Settings",
       "searchPlaceholder": "Search for a skill…",
       "searchLabel": "Search for a skill",
-      "search": "Search",
       "columnCategory": "Category",
       "columnSkill": "Skill",
       "noResults": "No skills found for \"{{term}}\".",

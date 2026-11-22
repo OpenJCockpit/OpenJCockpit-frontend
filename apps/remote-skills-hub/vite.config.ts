@@ -1,13 +1,12 @@
 import { federation } from '@module-federation/vite';
-import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import { mergeConfig } from 'vite';
+import base from '../../vite.config.base';
 import { sharedModules } from '../../module-federation.shared';
 
 const PORT = 4403;
 
-export default defineConfig({
+export default mergeConfig(base, {
   plugins: [
-    react(),
     federation({
       name: 'skillsHub',
       filename: 'remoteEntry.js',
@@ -17,8 +16,6 @@ export default defineConfig({
       manifest: true,
     }),
   ],
-  // Served by the dashboard under /remotes/<name>/ in the container build (see vite.config.base.ts).
-  base: process.env.REMOTE_BASE ?? '/',
   build: { target: 'esnext' },
   server: {
     port: PORT,
