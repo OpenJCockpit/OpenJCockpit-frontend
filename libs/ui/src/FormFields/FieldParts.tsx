@@ -7,14 +7,15 @@ import styles from './FormFields.module.scss';
 /** Label text plus the one required marker every form uses. The asterisk is decoration; `aria-required` carries the meaning. */
 export function FieldLabelText({ label, required }: { label: ReactNode; required?: boolean }) {
   return (
-    <>
+    // One wrapper so a flex/grid column label keeps text and marker on the same line.
+    <span>
       {label}
       {required && (
         <span className={styles.requiredMark} aria-hidden="true">
           {' *'}
         </span>
       )}
-    </>
+    </span>
   );
 }
 

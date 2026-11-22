@@ -58,7 +58,11 @@ export function JiraSettings({ projectId }: Props) {
     });
 
   if (loadError) {
-    return <StatusMessage variant="error">{t('jira.loadFailed')}</StatusMessage>;
+    return (
+      <StatusMessage variant="error" role="alert">
+        {t('jira.loadFailed')}
+      </StatusMessage>
+    );
   }
   if (!draft) return <StatusMessage variant="loading">{t('config.loading')}</StatusMessage>;
 

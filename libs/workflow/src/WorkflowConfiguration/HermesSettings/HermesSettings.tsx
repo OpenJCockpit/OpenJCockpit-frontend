@@ -52,7 +52,11 @@ export function HermesSettings({ projectId }: Props) {
     });
 
   if (loadError) {
-    return <StatusMessage variant="error">{t('hermes.loadFailed')}</StatusMessage>;
+    return (
+      <StatusMessage variant="error" role="alert">
+        {t('hermes.loadFailed')}
+      </StatusMessage>
+    );
   }
   if (!draft) return <StatusMessage variant="loading">{t('config.loading')}</StatusMessage>;
 

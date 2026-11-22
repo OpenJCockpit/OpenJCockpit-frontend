@@ -20,6 +20,7 @@ export default function PreferencesSection() {
     <SettingsGroup>
       <SettingsRow label={t('siteHeader.language')} htmlFor="locale-select">
         <Select
+          field
           id="locale-select"
           value={locale}
           options={SUPPORTED_LOCALES.map((code) => ({
@@ -35,6 +36,7 @@ export default function PreferencesSection() {
       {theme && (
         <SettingsRow label={t('siteHeader.theme')} htmlFor="theme-select">
           <Select
+            field
             id="theme-select"
             value={theme.preference}
             options={THEME_PREFERENCES.map((preference) => ({

@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import type { KeyboardEvent } from 'react';
+import type { AriaAttributes, KeyboardEvent } from 'react';
 import { cx } from '../cx';
 import styles from './Select.module.scss';
 
@@ -20,8 +20,12 @@ interface Props {
   disabled?: boolean;
   /** Stretches the control to the full width of its container, as a form input does. */
   block?: boolean;
+  /** Renders the trigger like a text input (form fields, settings rows) instead of the compact cyan pill. */
+  field?: boolean;
   className?: string;
   'aria-describedby'?: string;
+  'aria-invalid'?: AriaAttributes['aria-invalid'];
+  'aria-required'?: boolean;
   'data-testid'?: string;
 }
 
@@ -34,6 +38,7 @@ export function Select({
   id,
   disabled,
   block,
+  field,
   className,
   ...rest
 }: Props) {
@@ -100,7 +105,10 @@ export function Select({
   };
 
   return (
-    <div ref={rootRef} className={cx(styles.select, block && styles.block, className)}>
+    <div
+      ref={rootRef}
+      className={cx(styles.select, block && styles.block, field && styles.field, className)}
+    >
       <button
         type="button"
         id={id}
@@ -113,6 +121,8 @@ export function Select({
         aria-expanded={open}
         aria-controls={listId}
         aria-describedby={rest['aria-describedby']}
+        aria-invalid={rest['aria-invalid']}
+        aria-required={rest['aria-required']}
         aria-activedescendant={open ? `${listId}-${active}` : undefined}
         onClick={() => (open ? setOpen(false) : openList())}
         onKeyDown={onKeyDown}

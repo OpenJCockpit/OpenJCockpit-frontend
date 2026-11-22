@@ -1,7 +1,7 @@
 import { useId, useState } from 'react';
 import { ADMIN_PERMISSION, useCan } from '@openjcockpit/hub-contract';
 import { useTranslation } from '@openjcockpit/i18n';
-import { SettingsGroup, SettingsRow, feedbackErrorClass } from '@openjcockpit/ui';
+import { SettingsGroup, SettingsRow, StatusMessage } from '@openjcockpit/ui';
 import { ConfirmActionDialog } from '../ConfirmActionDialog/ConfirmActionDialog';
 import { updateSpecQueueSettings } from '@openjcockpit/api';
 import type { SpecQueueSettings } from '@openjcockpit/api';
@@ -73,9 +73,9 @@ export function AutoMergeSettingToggle({ projectId, autoMergeAllowed, onChanged 
         />
       </SettingsRow>
       {error && !confirming && (
-        <p className={feedbackErrorClass} role="alert" data-testid="auto-merge-setting-error">
+        <StatusMessage variant="error" role="alert" data-testid="auto-merge-setting-error">
           {error}
-        </p>
+        </StatusMessage>
       )}
       {confirming && (
         <ConfirmActionDialog

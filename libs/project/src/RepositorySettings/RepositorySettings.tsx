@@ -6,7 +6,7 @@ import {
   Icon,
   SettingsForm,
   SettingsGroup,
-  fieldErrorClass,
+  StatusMessage,
   fieldHintClass,
   formActionsClass,
   useConfirmDialog,
@@ -54,9 +54,9 @@ export function RepositorySettings() {
           <span className={fieldHintClass}>{project.gitStatusMessage}</span>
         )}
         {gitCheck.error && (
-          <p role="alert" className={fieldErrorClass}>
+          <StatusMessage variant="error" role="alert">
             {gitCheck.error}
-          </p>
+          </StatusMessage>
         )}
         <div className={formActionsClass}>
           <Button
@@ -70,9 +70,9 @@ export function RepositorySettings() {
       </SettingsGroup>
 
       {credentials.error && (
-        <p role="alert" className={fieldErrorClass}>
+        <StatusMessage variant="error" role="alert">
           {credentials.error}
-        </p>
+        </StatusMessage>
       )}
       <CredentialsForm
         form={credentials.form}

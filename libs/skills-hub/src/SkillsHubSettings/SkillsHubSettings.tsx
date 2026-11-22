@@ -5,7 +5,6 @@ import {
   CheckboxField,
   DataTable,
   StatusChip,
-  fieldErrorClass,
   fieldHintClass,
   formGridClass,
   SettingsGroup,
@@ -46,9 +45,9 @@ export function SkillsHubSettings() {
   return (
     <>
       {error && (
-        <p className={fieldErrorClass} role="alert">
+        <StatusMessage variant="error" role="alert">
           {error}
-        </p>
+        </StatusMessage>
       )}
       <p className={fieldHintClass} role="status" aria-live="polite">
         {status}

@@ -62,7 +62,11 @@ export function DocumentFolderSettings({ project }: Props) {
     });
 
   if (loadError) {
-    return <StatusMessage variant="error">{t('documentFolder.loadFailed')}</StatusMessage>;
+    return (
+      <StatusMessage variant="error" role="alert">
+        {t('documentFolder.loadFailed')}
+      </StatusMessage>
+    );
   }
   if (!draft) return <StatusMessage variant="loading">{t('config.loading')}</StatusMessage>;
 

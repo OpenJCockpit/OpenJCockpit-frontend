@@ -7,6 +7,46 @@
     display: block;
     max-width: none;
   }
+
+  // Looks like `formInputClass` so selects and text fields sit side by side in one form.
+  &.field {
+    max-width: 320px;
+
+    &.block {
+      max-width: none;
+    }
+
+    .trigger {
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: normal;
+      color: var(--text);
+      background: var(--input-bg);
+      border: 1px solid rgb(var(--accent-rgb) / 0.22);
+      border-radius: 6px;
+      box-shadow: none;
+      transition: border-color 0.15s;
+
+      &:hover:not(:disabled),
+      &:focus-visible,
+      &[aria-expanded='true'] {
+        background: var(--input-bg);
+        border-color: var(--cyan-a55);
+        box-shadow: none;
+      }
+
+      &[aria-invalid='true'] {
+        border-color: rgb(var(--danger-rgb) / 0.6);
+      }
+    }
+
+    .list {
+      left: 0;
+      right: auto;
+      border-radius: 6px;
+    }
+  }
 }
 
 .trigger {
