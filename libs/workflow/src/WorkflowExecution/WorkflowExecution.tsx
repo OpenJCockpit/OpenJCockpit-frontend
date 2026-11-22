@@ -1,17 +1,7 @@
-import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 import { useTranslation } from '@openjcockpit/i18n';
-import {
-  buildAgentCards,
-  buildSequencerNodes,
-  isTerminalRunStatus,
-  listWorkflows,
-  queryKeys,
-  runStatusKind,
-  runStatusLabel,
-} from '@openjcockpit/api';
-import type { AgentDefinition, WorkflowDefinition } from '@openjcockpit/api';
-import { loadLinkableAgents } from '../linkableAgents';
+import { isTerminalRunStatus, runStatusKind, runStatusLabel } from '@openjcockpit/api';
+import type { WorkflowDefinition } from '@openjcockpit/api';
 import { AgentSequencer } from '../AgentSequencer/AgentSequencer';
 import { AgentLogConsole } from '../AgentLogConsole/AgentLogConsole';
 import {
@@ -27,21 +17,19 @@ import {
 } from '@openjcockpit/ui';
 import { ApprovalDecisionModal } from '../ApprovalDecisionModal/ApprovalDecisionModal';
 import { WorkflowExecutionHistory } from '../WorkflowExecutionHistory/WorkflowExecutionHistory';
-import { ArtifactList, parseArtifactLinks } from './ArtifactList';
+import { ArtifactList } from './ArtifactList';
 import { RunLostPanel } from './RunLostPanel';
 import { RunStatusAnnouncements } from './RunStatusAnnouncements';
 import { useRunHistory } from './useRunHistory';
 import { useRunActions } from './useRunActions';
 import { useRunEvents } from './useRunEvents';
+import { useRunView } from './useRunView';
 import styles from './WorkflowExecution.module.scss';
 
 // 'NOT_FOUND' is retained deliberately: it is what an OLDER backend (pre-dating this
 // feature) returns for an unknown run id, so a newer dashboard paired with it still
 // terminates instead of polling "waiting" forever (the exact bug this feature fixes
 // for 'RUN_STATE_LOST'). Both are non-additive-safe, forward/backward tolerant.
-const NO_DEFINITIONS: AgentDefinition[] = [];
-const NO_WORKFLOWS: WorkflowDefinition[] = [];
-
 const RUN_LOST_STATUSES = ['RUN_STATE_LOST', 'NOT_FOUND'];
 
 interface Props {
@@ -52,15 +40,6 @@ interface Props {
   onRestartRequested?: () => void;
   showHistory?: boolean;
 }
-
-// Cross-tier constant: mirrors EmbabelOrchestrator.WORKFLOW_DEFINITION_AGENT_ID on the backend,
-// and the existing 'workflow-orb' agentId convention already used in this file. A
-// workflow-definition read failure is never attributable to one pipeline agent, so its events
-// must stay visible in the log console even while another agent is actively RUNNING (BR-11/AC-08).
-// Scoped to exactly this one agentId — do NOT broaden this to "any FAILED event", which would
-// also un-hide unrelated existing events (e.g. an agentId: 'git' publication-failure event) whose
-// visibility nobody asked to change.
-const DEFINITION_FAILURE_AGENT_ID = 'workflow-definition';
 
 export function WorkflowExecution({
   workflow,
@@ -114,17 +93,6 @@ export function WorkflowExecution({
     onRunEnded,
   });
 
-  const { data: definitions = NO_DEFINITIONS } = useQuery({
-    queryKey: queryKeys.linkableAgents,
-    queryFn: loadLinkableAgents, // never rejects: a failed catalog degrades to []
-  });
-
-  // display-name lookup only (workflowNameById); [] degrades an orb label to its raw id, no functional loss
-  const { data: allWorkflows = NO_WORKFLOWS } = useQuery({
-    queryKey: queryKeys.workflows,
-    queryFn: ({ signal }) => listWorkflows(signal),
-  });
-
   // Keep selectedRunId in sync with a newly-provided runId prop (e.g. a fresh
   // "start workflow" flow), without clobbering a user's in-history selection when the
   // prop hasn't changed.
@@ -134,50 +102,16 @@ export function WorkflowExecution({
     setSelectedRunId(runId);
   }
 
-  const agentCards = useMemo(
-    () => buildAgentCards(workflow, definitions, latestEvents, tApi),
-    [workflow, definitions, latestEvents, tApi],
-  );
-
-  const workflowNameById = useMemo(
-    () => new Map(allWorkflows.map((w) => [w.id, w.name])),
-    [allWorkflows],
-  );
-
-  const sequencerNodes = useMemo(
-    () => buildSequencerNodes(workflow, agentCards, runEvents, runStatus, workflowNameById, tApi),
-    [workflow, agentCards, runEvents, runStatus, workflowNameById, tApi],
-  );
-
-  const activeAgent = useMemo(
-    () => agentCards.find((agent) => agent.statusKind === 'active') ?? null,
-    [agentCards],
-  );
-
-  const logEvents = useMemo(() => {
-    if (!activeAgent) return runEvents;
-    return runEvents.filter(
-      (event) => event.agentId === activeAgent.id || event.agentId === DEFINITION_FAILURE_AGENT_ID,
-    );
-  }, [runEvents, activeAgent]);
-
-  const definitionFailureEvent = useMemo(
-    () => runEvents.find((e) => e.agentId === DEFINITION_FAILURE_AGENT_ID) ?? null,
-    [runEvents],
-  );
-
-  const artifactLinks = useMemo(() => parseArtifactLinks(artifacts), [artifacts]);
-
-  const latestChildWorkflowEvent = useMemo(() => {
-    const matches = runEvents.filter(
-      (event) => event.agentId === 'workflow-orb' && event.evidenceRef.startsWith('run://'),
-    );
-    return matches.length > 0 ? matches[matches.length - 1] : null;
-  }, [runEvents]);
-
-  const childRunId = latestChildWorkflowEvent
-    ? latestChildWorkflowEvent.evidenceRef.slice('run://'.length)
-    : null;
+  const {
+    definitions,
+    sequencerNodes,
+    activeAgent,
+    logEvents,
+    definitionFailureEvent,
+    artifactLinks,
+    latestChildWorkflowEvent,
+    childRunId,
+  } = useRunView({ workflow, latestEvents, runEvents, runStatus, artifacts });
 
   // Derived during render (not in an effect): announce only on entering/leaving the waiting state.
   if (previousWaitingStatus !== runStatus) {
