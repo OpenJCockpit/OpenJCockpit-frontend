@@ -50,14 +50,15 @@ export function useAuthSession() {
         });
         setUser(getUserFromToken(keycloak.tokenParsed));
         setAuthenticated(true);
-        refreshTimer = window.setInterval(async () => {
+        const refreshToken = async () => {
           try {
             const refreshed = await keycloak.updateToken(60);
             if (refreshed && keycloak.token) setAuthToken(keycloak.token);
           } catch {
             void keycloak.login();
           }
-        }, TOKEN_REFRESH_INTERVAL_MS);
+        };
+        refreshTimer = window.setInterval(() => void refreshToken(), TOKEN_REFRESH_INTERVAL_MS);
       })
       .catch((error: unknown) => {
         // A failed init leaves keycloak-js without an adapter, so login() would throw and mask the real error.

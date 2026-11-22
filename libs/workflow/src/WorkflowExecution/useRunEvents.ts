@@ -169,7 +169,7 @@ export function useRunEvents({
     if (!workflow) return;
     const workflowId = workflow.id;
 
-    const interval = setInterval(async () => {
+    const tick = async () => {
       tickRef.current += 1;
       const isEvenTick = tickRef.current % 2 === 0;
 
@@ -195,7 +195,8 @@ export function useRunEvents({
           void refreshHistoryWindow(workflowId);
         }
       }
-    }, 1000);
+    };
+    const interval = setInterval(() => void tick(), 1000);
 
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- interval keyed only on the workflow identity; current selection is read via selectedRunIdRef
