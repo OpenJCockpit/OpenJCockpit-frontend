@@ -151,6 +151,48 @@ export function createConfig(tsconfigRootDir) {
       },
     },
 
+    // Settings section bodies are content only: the host owns the heading and page chrome
+    // (SectionFrame), and the body is built from SettingsGroup/SettingsRow/SettingsForm
+    // (docs/hub-app-integration-guide.md, "Settings sections"). This repeats the inline-style
+    // selector above because a later `no-restricted-syntax` replaces the earlier one.
+    {
+      files: [
+        'src/**/*Settings/**/*.tsx',
+        'src/**/*Settings*.tsx',
+        'src/**/*Section.tsx',
+        'src/settings/PreferencesSection.tsx',
+      ],
+      ignores: ['src/**/*.test.tsx', 'src/settings/SectionFrame.tsx', 'src/settings/Settings*.tsx'],
+      rules: {
+        'no-restricted-syntax': [
+          'error',
+          {
+            selector: "JSXAttribute[name.name='style']",
+            message:
+              'Inline styles are not allowed: use a CSS module class, or a custom property for runtime values.',
+          },
+          {
+            selector: "JSXOpeningElement[name.name='h1']",
+            message:
+              'Settings sections must not render an <h1>: the host renders the section heading. Use SettingsGroup for sub-headings.',
+          },
+        ],
+        'no-restricted-imports': [
+          'error',
+          {
+            paths: [
+              {
+                name: '@openjcockpit/ui',
+                importNames: ['Panel'],
+                message:
+                  'Settings sections must not build their own page chrome: use SettingsGroup, SettingsRow or SettingsForm from @openjcockpit/ui.',
+              },
+            ],
+          },
+        ],
+      },
+    },
+
     // Vitest globals for test files (forward-looking; all current tests import explicitly)
     {
       files: ['src/**/*.test.{ts,tsx}', 'src/setupTests.ts'],

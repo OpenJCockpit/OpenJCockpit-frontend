@@ -46,7 +46,17 @@ An app contributes forms to the host's Settings page through `AppDefinition.sett
 - `requiredPermissions` is any-of; a section the session may not open is hidden and its URL answers 403. Ids must be unique across apps (the first wins, the rest are ignored with a warning).
 - Order sections with `order` (bands: Workspace 10-99, Integrations 100-199, Project integrations 200-299) and group them with `groupKey`.
 - `screen` (`'settings'`, the default, or `'project'`) picks the screen: global Settings or the selected project's settings, each with its own sidebar entry and sub-navigation. Put sections that configure a project (or need one) on `'project'`.
+- `groupKey` is the typed `SettingsGroupKey` union (`settings.groups.general`, `.integrations`, `.project`, `.projectIntegrations`, `.other`), so a typo fails `tsc`.
 - An app that only contributes settings sets `showInNav: false`.
+
+### Building the section body
+
+Build the body from the `@openjcockpit/ui` settings blocks, not your own page chrome:
+
+- `SettingsGroup` for each concern (titled block, optional description; its id is a deep-link anchor), `SettingsRow` for a single toggle or select that applies immediately, `SettingsForm` for anything with an explicit Save (it supplies the grid, error summary, sticky Save/Reset footer and reports its dirty state to the host's unsaved-changes guard), `SettingsStatus` for connection health, `DangerZone` for destructive actions.
+- Load and save with `useSettingsResource` from `@openjcockpit/settings` (draft, dirty, saving, saved, error, reset) and take the button labels from `useSettingsFormLabels`.
+- No `<h1>`, no `Panel`, no own Save styling. ESLint enforces this on section body files (`*Settings*.tsx`, `*Settings/**`, `*Section.tsx`): `<h1>` and importing `Panel` from `@openjcockpit/ui` are errors, as are inline styles.
+- The guard covers the nav, `SettingsLink` and tab close. It does not cover the browser back button (the host uses `<BrowserRouter>`, not a data router). `e2e/specs/settings-unsaved-guard.spec.ts` proves the nav path.
 - A remote at contract version 1 keeps working but contributes no settings.
 
 ## Deployment
