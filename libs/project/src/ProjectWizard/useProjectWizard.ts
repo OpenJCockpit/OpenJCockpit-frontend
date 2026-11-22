@@ -42,6 +42,15 @@ const EMPTY_CREDENTIALS: ProjectGitCredentialRequest = {
   githubApiUrl: '',
 };
 
+/** Text fields the wizard always holds as strings: it starts from EMPTY_BASICS and its inputs only write strings. */
+type WizardForm = ProjectRequest &
+  Record<
+    'customerId' | 'description' | 'owner' | 'environment' | 'gitUrl' | 'defaultBranch',
+    string
+  >;
+type WizardCredentials = ProjectGitCredentialRequest &
+  Record<'username' | 'secret' | 'githubApiUrl', string>;
+
 type StepStates = Record<CreateStepId, CreateStepState>;
 
 const IDLE: StepStates = {
@@ -62,9 +71,11 @@ export function useProjectWizard() {
   const { t } = useTranslation('project');
   const updateProjects = useProjectCache();
   const [stepIndex, setStepIndex] = useState(0);
-  const [form, setForm] = useState<ProjectRequest>(EMPTY_BASICS);
+  const [rawForm, setForm] = useState<ProjectRequest>(EMPTY_BASICS);
+  const form = rawForm as WizardForm;
   const [mode, setMode] = useState<RepositoryMode>('existing');
-  const [credentials, setCredentials] = useState<ProjectGitCredentialRequest>(EMPTY_CREDENTIALS);
+  const [rawCredentials, setCredentials] = useState<ProjectGitCredentialRequest>(EMPTY_CREDENTIALS);
+  const credentials = rawCredentials as WizardCredentials;
   const [initSpecs, setInitSpecs] = useState(false);
   const [errors, setErrors] = useState<WizardErrors>({});
 
@@ -91,8 +102,8 @@ export function useProjectWizard() {
     form.owner !== '' ||
     form.environment !== '' ||
     form.customerId !== '' ||
-    (form.gitUrl ?? '') !== '' ||
-    (credentials.secret ?? '') !== '';
+    form.gitUrl !== '' ||
+    credentials.secret !== '';
 
   function resetTest() {
     // A tested result describes the URL and credentials as they were.
@@ -122,7 +133,7 @@ export function useProjectWizard() {
   function validate(target: WizardStep): WizardErrors {
     const found: WizardErrors = {};
     if (target === 'basics' && !form.name.trim()) found.name = t('wizard.errors.nameRequired');
-    if (target === 'repository' && !isNewRepo && !(form.gitUrl ?? '').trim()) {
+    if (target === 'repository' && !isNewRepo && !form.gitUrl.trim()) {
       found.gitUrl = t('wizard.errors.gitUrlRequired');
     }
     return found;
@@ -150,10 +161,10 @@ export function useProjectWizard() {
     try {
       setTestResult(
         await checkGitConnection({
-          gitUrl: (form.gitUrl ?? '').trim(),
+          gitUrl: form.gitUrl.trim(),
           credentialType: credentials.credentialType,
           username: credentials.username || undefined,
-          secret: credentials.secret ? credentials.secret : null,
+          secret: credentials.secret || null,
           githubApiUrl: credentials.githubApiUrl || undefined,
         }),
       );
@@ -197,7 +208,7 @@ export function useProjectWizard() {
         const project = await createProject({
           ...form,
           name: form.name.trim(),
-          gitUrl: isNewRepo ? '' : (form.gitUrl ?? '').trim(),
+          gitUrl: isNewRepo ? '' : form.gitUrl.trim(),
           newProject: isNewRepo ? 1 : 0,
         });
         createdRef.current = project;
@@ -210,7 +221,7 @@ export function useProjectWizard() {
       const credentialsOk = await runStep('credentials', !hasCredentials, async () => {
         await saveGitCredentials(project.id, {
           ...credentials,
-          secret: credentials.secret === '' ? null : credentials.secret,
+          secret: credentials.secret || null,
         });
         updateProjects((prev) =>
           prev.map((p) => (p.id === project.id ? { ...p, hasCredentials: true } : p)),
@@ -251,6 +262,7 @@ export function useProjectWizard() {
     setFinished(true);
   }
 
+  const completed = finished ? created : null;
   const failedStep = (Object.keys(steps) as CreateStepId[]).find((id) => steps[id] === 'failed');
 
   return {
@@ -281,6 +293,7 @@ export function useProjectWizard() {
     createError,
     created,
     finished,
+    completed,
     submit,
     continueAnyway,
   };

@@ -77,7 +77,9 @@ describe('RepositorySettings: repository', () => {
     await clickAsync(screen.getByRole('button', { name: 'Git check' }));
     expect(screen.getByRole('button', { name: 'Git check' })).toBeDisabled();
     resolve({ gitStatus: 'ACCESSIBLE' } as api.ProjectGitStatusDto);
-    expect(await screen.findByRole('button', { name: 'Git check' })).toBeEnabled();
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Git check' })).toBeEnabled(),
+    );
   });
 
   it('shows an error when the git check fails', async () => {

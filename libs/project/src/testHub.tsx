@@ -9,6 +9,7 @@ import {
   FakeHubSession,
   FakeHubSessionProvider,
 } from '@openjcockpit/hub-contract/testing';
+import type { QueryClient } from '@tanstack/react-query';
 import { createTestQueryClient, withQueryClient } from './testQueryClient';
 
 export function project(overrides: Partial<Project> = {}): Project {
@@ -44,6 +45,8 @@ interface HubOptions {
   onSelect?: (id: string) => void;
   /** Router location state, e.g. where `RequireProject` came from. */
   state?: unknown;
+  /** A query cache the test has seeded; a fresh one by default. */
+  client?: QueryClient;
 }
 
 /** Renders a view as a remote sees it: host session, project and router, plus a probe showing the path. */
@@ -54,8 +57,8 @@ export async function renderHub(ui: ReactElement, options: HubOptions = {}) {
     selected = null,
     onSelect = vi.fn(),
     state,
+    client = createTestQueryClient(),
   } = options;
-  const client = createTestQueryClient();
   let unmount!: () => void;
   await act(async () => {
     ({ unmount } = render(

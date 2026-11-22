@@ -24,7 +24,7 @@ import {
   formGridClass,
   useConfirmDialog,
 } from '@openjcockpit/ui';
-import type { ProjectGitCredentialRequest } from '@openjcockpit/api';
+import type { Project, ProjectGitCredentialRequest } from '@openjcockpit/api';
 import { GeneralFields } from '../forms/ProjectFields';
 import { WithTranslations } from '../registerTranslations';
 import { WIZARD_STEPS, useProjectWizard } from './useProjectWizard';
@@ -96,7 +96,7 @@ function RepositoryStep({ wizard }: { wizard: ProjectWizardState }) {
           <>
             <TextField
               label={t('form.gitUrl')}
-              value={form.gitUrl ?? ''}
+              value={form.gitUrl}
               onChange={(v) => wizard.updateForm((f) => ({ ...f, gitUrl: v }))}
               placeholder={t('form.gitUrlPlaceholder')}
               required
@@ -106,7 +106,7 @@ function RepositoryStep({ wizard }: { wizard: ProjectWizardState }) {
             />
             <TextField
               label={t('form.branch')}
-              value={form.defaultBranch ?? ''}
+              value={form.defaultBranch}
               onChange={(v) => wizard.updateForm((f) => ({ ...f, defaultBranch: v }))}
               placeholder={t('form.branchPlaceholder')}
             />
@@ -126,7 +126,7 @@ function RepositoryStep({ wizard }: { wizard: ProjectWizardState }) {
             />
             <TextField
               label={t('credentials.username')}
-              value={credentials.username ?? ''}
+              value={credentials.username}
               onChange={(v) => wizard.updateCredentials((c) => ({ ...c, username: v }))}
               placeholder={t('credentials.usernamePlaceholder')}
             />
@@ -134,12 +134,12 @@ function RepositoryStep({ wizard }: { wizard: ProjectWizardState }) {
               label={t('credentials.secret')}
               type="password"
               autoComplete="new-password"
-              value={credentials.secret ?? ''}
+              value={credentials.secret}
               onChange={(v) => wizard.updateCredentials((c) => ({ ...c, secret: v }))}
             />
             <TextField
               label={t('credentials.githubApiUrl')}
-              value={credentials.githubApiUrl ?? ''}
+              value={credentials.githubApiUrl}
               onChange={(v) => wizard.updateCredentials((c) => ({ ...c, githubApiUrl: v }))}
               placeholder={t('credentials.githubApiUrlPlaceholder')}
             />
@@ -212,15 +212,15 @@ function ReviewStep({ wizard }: { wizard: ProjectWizardState }) {
   const { form } = wizard;
   const rows: [string, string][] = [
     [t('form.name'), form.name.trim()],
-    [t('form.description'), form.description ?? ''],
-    [t('form.owner'), form.owner ?? ''],
-    [t('form.environment'), form.environment ?? ''],
-    [t('form.customerId'), form.customerId ?? ''],
+    [t('form.description'), form.description],
+    [t('form.owner'), form.owner],
+    [t('form.environment'), form.environment],
+    [t('form.customerId'), form.customerId],
     [
       t('wizard.review.repository'),
       wizard.isNewRepo
         ? t('wizard.repository.new')
-        : `${(form.gitUrl ?? '').trim()} (${form.defaultBranch || 'main'})`,
+        : `${form.gitUrl.trim()} (${form.defaultBranch || 'main'})`,
     ],
     [
       t('credentials.type'),
@@ -277,7 +277,7 @@ export function ProjectWizard() {
       return;
     }
     headingRef.current?.focus();
-  }, [wizard.step, wizard.finished]);
+  }, [wizard.step, wizard.completed]);
 
   function leave() {
     void navigate(PROJECTS_PATH);
@@ -299,20 +299,19 @@ export function ProjectWizard() {
     });
   }
 
-  function openProject() {
-    if (!wizard.created) return;
-    select(wizard.created.id);
+  function openProject(created: Project) {
+    select(created.id);
     void navigate(DASHBOARD_PATH);
   }
 
-  function openSettings() {
-    if (!wizard.created) return;
-    select(wizard.created.id);
+  function openSettings(created: Project) {
+    select(created.id);
     void navigate(`${PROJECT_SETTINGS_PATH}/general`);
   }
 
   const onReview = wizard.step === 'review';
-  const heading = wizard.finished
+  const done = wizard.completed;
+  const heading = done
     ? t('wizard.done.title')
     : wizard.started
       ? t('wizard.creating')
@@ -334,17 +333,15 @@ export function ProjectWizard() {
             {heading}
           </h2>
 
-          {wizard.finished ? (
+          {done ? (
             <>
               <Progress wizard={wizard} />
-              <StatusMessage>
-                {t('wizard.done.message', { name: wizard.created?.name ?? '' })}
-              </StatusMessage>
+              <StatusMessage>{t('wizard.done.message', { name: done.name })}</StatusMessage>
               <div className={formActionsClass}>
-                <Button variant="primary" onClick={openProject}>
+                <Button variant="primary" onClick={() => openProject(done)}>
                   {t('wizard.done.open')}
                 </Button>
-                <Button variant="secondary" onClick={openSettings}>
+                <Button variant="secondary" onClick={() => openSettings(done)}>
                   {t('wizard.done.settings')}
                 </Button>
               </div>

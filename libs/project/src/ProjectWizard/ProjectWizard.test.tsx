@@ -4,7 +4,9 @@ import * as api from '@openjcockpit/api';
 import { chooseOption } from '@openjcockpit/ui/testing';
 import { clickAsync } from '../testUtils';
 import { project, renderHub } from '../testHub';
-import { ProjectWizard } from './ProjectWizard';
+import { createTestQueryClient } from '../testQueryClient';
+import ProjectWizardRoute, { ProjectWizard } from './ProjectWizard';
+import { ALL_PROJECTS_KEY } from '../projectCache';
 
 vi.mock('@openjcockpit/api', async (importOriginal) =>
   (await import('../testUtils')).automockApiClients(await importOriginal()),
@@ -184,5 +186,231 @@ describe('ProjectWizard', () => {
     expect(screen.getByText('Leave without creating?')).toBeInTheDocument();
     await clickAsync(screen.getByTestId('confirm-action-confirm'));
     await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/projects'));
+  });
+
+  it('keeps every entered field and the review rows, falling back to main for an empty branch', async () => {
+    await renderHub(<ProjectWizard />);
+    const basics: [RegExp, string][] = [
+      [/^Name/, 'Alpha'],
+      [/Customer/, 'cust-1'],
+      [/Environment/, 'prod'],
+      [/Owner/, 'team-a'],
+      [/Description/, 'About it'],
+    ];
+    for (const [label, value] of basics) {
+      fireEvent.change(screen.getByLabelText(label), { target: { value } });
+    }
+    await next();
+    fireEvent.change(screen.getByLabelText(/Git URL/), { target: { value: ' https://g/o/r ' } });
+    fireEvent.change(screen.getByLabelText(/^Branch/), { target: { value: '' } });
+    fireEvent.change(screen.getByLabelText('Username'), { target: { value: 'me' } });
+    fireEvent.change(screen.getByLabelText(/API URL/), { target: { value: 'https://api.x' } });
+    await next();
+    await next();
+
+    expect(screen.getByText('https://g/o/r (main)')).toBeInTheDocument();
+    for (const value of ['cust-1', 'prod', 'team-a', 'About it', 'No']) {
+      expect(screen.getByText(value)).toBeInTheDocument();
+    }
+  });
+
+  it('sends the optional credentials with the test and a null secret when empty', async () => {
+    vi.mocked(api.checkGitConnection).mockResolvedValue({ gitStatus: 'ACCESSIBLE', warnings: [] });
+    await fillBasics();
+    fireEvent.change(screen.getByLabelText(/Git URL/), { target: { value: 'https://g/o/r' } });
+    fireEvent.change(screen.getByLabelText('Username'), { target: { value: 'me' } });
+    fireEvent.change(screen.getByLabelText(/API URL/), { target: { value: 'https://api.x' } });
+    await clickAsync(screen.getByText('Test connection'));
+    expect(api.checkGitConnection).toHaveBeenCalledWith({
+      gitUrl: 'https://g/o/r',
+      credentialType: 'NONE',
+      username: 'me',
+      secret: null,
+      githubApiUrl: 'https://api.x',
+    });
+  });
+
+  it('omits empty optional credentials from the test', async () => {
+    vi.mocked(api.checkGitConnection).mockResolvedValue({ gitStatus: 'ACCESSIBLE', warnings: [] });
+    await fillBasics();
+    fireEvent.change(screen.getByLabelText(/Git URL/), { target: { value: 'https://g/o/r' } });
+    await clickAsync(screen.getByText('Test connection'));
+    expect(api.checkGitConnection).toHaveBeenCalledWith({
+      gitUrl: 'https://g/o/r',
+      credentialType: 'NONE',
+      username: undefined,
+      secret: null,
+      githubApiUrl: undefined,
+    });
+  });
+
+  it('asks for a Git URL before testing, without calling the API', async () => {
+    await fillBasics();
+    await clickAsync(screen.getByText('Test connection'));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Git URL is required');
+    expect(api.checkGitConnection).not.toHaveBeenCalled();
+  });
+
+  it('shows a generic message when the test is not reachable and gives no reason', async () => {
+    vi.mocked(api.checkGitConnection).mockResolvedValue({
+      gitStatus: 'NOT_ACCESSIBLE',
+      warnings: [],
+    });
+    await fillBasics();
+    fireEvent.change(screen.getByLabelText(/Git URL/), { target: { value: 'https://g/o/r' } });
+    await clickAsync(screen.getByText('Test connection'));
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'The repository could not be reached.',
+    );
+  });
+
+  it('shows a fallback for an unknown host warning', async () => {
+    vi.mocked(api.checkGitConnection).mockResolvedValue({
+      gitStatus: 'ACCESSIBLE',
+      warnings: ['host_new_kind'],
+    });
+    await fillBasics();
+    fireEvent.change(screen.getByLabelText(/Git URL/), { target: { value: 'https://g/o/r' } });
+    await clickAsync(screen.getByText('Test connection'));
+    expect(await screen.findByText('The host needs attention.')).toBeInTheDocument();
+  });
+
+  it('reports a test that throws, and clears the result once the input changes', async () => {
+    vi.mocked(api.checkGitConnection).mockRejectedValue(new Error('net'));
+    await fillBasics();
+    fireEvent.change(screen.getByLabelText(/Git URL/), { target: { value: 'https://g/o/r' } });
+    await clickAsync(screen.getByText('Test connection'));
+    expect(await screen.findByRole('alert')).toHaveTextContent('The connection test failed.');
+    fireEvent.change(screen.getByLabelText(/Git URL/), { target: { value: 'https://g/o/x' } });
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
+  it('switches back to an existing repository and drops spec init for a new one', async () => {
+    await fillBasics();
+    await chooseNewRepo();
+    expect(screen.queryByLabelText(/Git URL/)).not.toBeInTheDocument();
+    chooseOption(screen.getByRole('combobox', { name: /Repository/ }), 'Existing repository');
+    expect(screen.getByLabelText(/Git URL/)).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText(/Git URL/), { target: { value: 'https://g/o/r' } });
+    await next();
+    fireEvent.click(screen.getByRole('checkbox'));
+    await clickAsync(screen.getByText('Back'));
+    await chooseNewRepo();
+    await next();
+    expect(screen.getByRole('checkbox')).toBeDisabled();
+    expect(screen.getByRole('checkbox')).not.toBeChecked();
+  });
+
+  it('names the failing call when saving credentials throws without a message', async () => {
+    vi.mocked(api.saveGitCredentials).mockRejectedValue(new Error(''));
+    await fillBasics();
+    fireEvent.change(screen.getByLabelText(/Git URL/), { target: { value: 'https://g/o/r' } });
+    chooseOption(screen.getByRole('combobox', { name: /Type/ }), 'GitHub PAT');
+    fireEvent.change(screen.getByLabelText('Secret / token / password'), {
+      target: { value: 's3cret' },
+    });
+    await next();
+    await next();
+    await clickAsync(screen.getByText('Create project'));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Project "Alpha" was created');
+    expect(api.triggerGitCheck).not.toHaveBeenCalled();
+  });
+
+  it('falls back to the generic create error for a non-Error rejection', async () => {
+    vi.mocked(api.createProject).mockRejectedValue('nope');
+    await fillBasics();
+    await chooseNewRepo();
+    await next();
+    await next();
+    await clickAsync(screen.getByText('Create project'));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Failed to create the project.');
+  });
+
+  it('reports a failing spec initialisation and keeps the other results', async () => {
+    vi.mocked(api.initSpecFolder).mockRejectedValue(new Error('no spec'));
+    await fillBasics();
+    fireEvent.change(screen.getByLabelText(/Git URL/), { target: { value: 'https://g/o/r' } });
+    await next();
+    fireEvent.click(screen.getByRole('checkbox'));
+    await next();
+    await clickAsync(screen.getByText('Create project'));
+    expect(await screen.findByRole('alert')).toHaveTextContent('no spec');
+  });
+
+  it('hides Continue anyway while a call is still running', async () => {
+    vi.mocked(api.initSpecFolder).mockReturnValue(new Promise(() => {}));
+    await fillBasics();
+    fireEvent.change(screen.getByLabelText(/Git URL/), { target: { value: 'https://g/o/r' } });
+    await next();
+    fireEvent.click(screen.getByRole('checkbox'));
+    await next();
+    await clickAsync(screen.getByText('Create project'));
+    expect(await screen.findByText('Retry')).toBeDisabled();
+    expect(screen.queryByText('Continue anyway')).not.toBeInTheDocument();
+  });
+
+  it('leaves straight away when nothing was entered', async () => {
+    await renderHub(<ProjectWizard />);
+    await clickAsync(screen.getByText('Cancel'));
+    expect(screen.getByTestId('location')).toHaveTextContent(/^\/projects$/);
+  });
+
+  it('leaves without asking once creation has started', async () => {
+    vi.mocked(api.createProject).mockRejectedValue(new Error('boom'));
+    await fillBasics();
+    await chooseNewRepo();
+    await next();
+    await next();
+    await clickAsync(screen.getByText('Create project'));
+    await screen.findByRole('alert');
+    await clickAsync(screen.getByTitle('Back to projects'));
+    expect(screen.queryByText('Leave without creating?')).not.toBeInTheDocument();
+  });
+
+  it('submits from the keyboard on the review step', async () => {
+    await fillBasics();
+    await chooseNewRepo();
+    await next();
+    await next();
+    fireEvent.submit(screen.getByText('Create project').closest('form')!);
+    expect(await screen.findByText('Project created')).toBeInTheDocument();
+  });
+
+  it('adds the project to the cached list in name order and records credentials and Git status', async () => {
+    const client = createTestQueryClient();
+    client.setQueryData(ALL_PROJECTS_KEY, [
+      project({ id: 'z', name: 'Zed' }),
+      project({ id: 'a', name: 'Aaa' }),
+    ]);
+    await renderHub(<ProjectWizard />, { client });
+    fireEvent.change(screen.getByLabelText(/^Name/), { target: { value: 'Mid' } });
+    await next();
+    fireEvent.change(screen.getByLabelText(/Git URL/), { target: { value: 'https://g/o/r' } });
+    chooseOption(screen.getByRole('combobox', { name: /Type/ }), 'GitHub PAT');
+    await next();
+    await next();
+    await clickAsync(screen.getByText('Create project'));
+    await screen.findByText('Project created');
+
+    const cached = client.getQueryData<ReturnType<typeof project>[]>(ALL_PROJECTS_KEY)!;
+    expect(cached.map((p) => p.name)).toEqual(['Aaa', 'Mid', 'Zed']);
+    expect(cached.find((p) => p.id === 'p9')).toMatchObject({
+      hasCredentials: true,
+      gitStatus: 'ACCESSIBLE',
+    });
+    expect(cached.find((p) => p.id === 'a')?.hasCredentials).toBe(false);
+    // An empty secret is sent as null, not as an empty string.
+    expect(api.saveGitCredentials).toHaveBeenCalledWith(
+      'p9',
+      expect.objectContaining({ credentialType: 'GITHUB_PAT', secret: null }),
+    );
+  });
+
+  it('renders under its own translations as the route element', async () => {
+    await renderHub(<ProjectWizardRoute />);
+    expect(
+      await screen.findByText('Set up a project step by step', { exact: false }),
+    ).toBeInTheDocument();
   });
 });

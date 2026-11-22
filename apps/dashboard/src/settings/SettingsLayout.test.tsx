@@ -215,4 +215,14 @@ describe('SettingsLayout', () => {
     expect(screen.getByTestId('settings-nav-general')).toBeInTheDocument();
     error.mockRestore();
   });
+
+  it('shows the section description and renders a project-free section without a project', async () => {
+    await renderSettings(
+      [app([section('general', { descriptionKey: 'settings.selectProject' })])],
+      '/settings/general',
+      { project: false },
+    );
+    expect(await screen.findByTestId('body-general')).toBeInTheDocument();
+    expect(screen.getByText('Select a project to configure this section.')).toBeInTheDocument();
+  });
 });
