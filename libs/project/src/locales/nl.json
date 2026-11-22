@@ -38,8 +38,6 @@
       }
     },
     "form": {
-      "newTitle": "Nieuw project",
-      "editTitle": "Project bewerken",
       "name": "Naam",
       "namePlaceholder": "Projectnaam",
       "customerId": "Klant-ID (stub)",

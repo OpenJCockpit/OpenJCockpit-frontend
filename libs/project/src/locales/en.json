@@ -38,8 +38,6 @@
       }
     },
     "form": {
-      "newTitle": "New project",
-      "editTitle": "Edit project",
       "name": "Name",
       "namePlaceholder": "Project name",
       "customerId": "Customer ID (stub)",

@@ -38,8 +38,6 @@
       }
     },
     "form": {
-      "newTitle": "Nuevo proyecto",
-      "editTitle": "Editar proyecto",
       "name": "Nombre",
       "namePlaceholder": "Nombre del proyecto",
       "customerId": "ID de cliente (stub)",
