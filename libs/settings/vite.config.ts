@@ -4,6 +4,8 @@ import base from '../../vite.config.base';
 // Floors sit just under the measured baseline; raise them as coverage grows.
 export default mergeConfig(base, {
   test: {
+    // Registers the vitest-axe matchers and their types' runtime half; types come from tsconfig `include`.
+    setupFiles: ['../../test-setup/axeMatchers.ts'],
     coverage: {
       thresholds: { statements: 100, branches: 100, functions: 100, lines: 100 },
     },
