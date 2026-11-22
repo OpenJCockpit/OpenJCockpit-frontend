@@ -27,7 +27,7 @@ export function useAuthSession() {
 
   useEffect(() => {
     const keycloak = getKeycloak();
-    let refreshTimer: ReturnType<typeof setInterval> | undefined;
+    let refreshTimer: number | undefined;
     let cancelled = false;
     initKeycloakOnce(keycloak)
       .then((ok) => {
