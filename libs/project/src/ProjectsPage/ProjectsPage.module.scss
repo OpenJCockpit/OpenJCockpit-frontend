@@ -1,4 +1,13 @@
+.panel {
+  overflow: hidden;
+  padding-bottom: 4px;
+}
 .toolbar {
   display: flex;
   justify-content: flex-end;
+  padding: 14px 16px 6px;
+}
+.panel > [role='alert'] {
+  margin: 0;
+  padding: 0 16px 12px;
 }

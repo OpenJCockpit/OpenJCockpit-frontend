@@ -11,3 +11,14 @@
   align-items: center;
   gap: 0.75rem;
 }
+
+.row a {
+  color: var(--teal);
+  font-weight: 550;
+  text-decoration: none;
+
+  &:hover,
+  &:focus-visible {
+    text-decoration: underline;
+  }
+}

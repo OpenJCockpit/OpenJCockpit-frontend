@@ -13,6 +13,8 @@ import {
   CheckboxField,
   HubPage,
   Icon,
+  Panel,
+  PanelBody,
   SelectField,
   StatusMessage,
   TextField,
@@ -325,80 +327,84 @@ export function ProjectWizard() {
       onBack={cancel}
       backTitle={t('wizard.backToProjects')}
     >
-      {!wizard.started && <Stepper current={wizard.stepIndex} />}
-      <h2 ref={headingRef} tabIndex={-1} className={styles.stepHeading}>
-        {heading}
-      </h2>
+      <Panel as="section">
+        <PanelBody className={styles.body}>
+          {!wizard.started && <Stepper current={wizard.stepIndex} />}
+          <h2 ref={headingRef} tabIndex={-1} className={styles.stepHeading}>
+            {heading}
+          </h2>
 
-      {wizard.finished ? (
-        <>
-          <Progress wizard={wizard} />
-          <StatusMessage>
-            {t('wizard.done.message', { name: wizard.created?.name ?? '' })}
-          </StatusMessage>
-          <div className={formActionsClass}>
-            <Button variant="primary" onClick={openProject}>
-              {t('wizard.done.open')}
-            </Button>
-            <Button variant="secondary" onClick={openSettings}>
-              {t('wizard.done.settings')}
-            </Button>
-          </div>
-        </>
-      ) : wizard.started ? (
-        <>
-          <Progress wizard={wizard} />
-          {wizard.createError && (
-            <p role="alert" className={fieldErrorClass}>
-              {wizard.created
-                ? t('wizard.partial', { name: wizard.created.name })
-                : t('wizard.errors.create')}{' '}
-              {wizard.createError}
-            </p>
-          )}
-          <div className={formActionsClass}>
-            <Button
-              variant="primary"
-              onClick={() => void wizard.submit()}
-              disabled={wizard.running}
+          {wizard.finished ? (
+            <>
+              <Progress wizard={wizard} />
+              <StatusMessage>
+                {t('wizard.done.message', { name: wizard.created?.name ?? '' })}
+              </StatusMessage>
+              <div className={formActionsClass}>
+                <Button variant="primary" onClick={openProject}>
+                  {t('wizard.done.open')}
+                </Button>
+                <Button variant="secondary" onClick={openSettings}>
+                  {t('wizard.done.settings')}
+                </Button>
+              </div>
+            </>
+          ) : wizard.started ? (
+            <>
+              <Progress wizard={wizard} />
+              {wizard.createError && (
+                <p role="alert" className={fieldErrorClass}>
+                  {wizard.created
+                    ? t('wizard.partial', { name: wizard.created.name })
+                    : t('wizard.errors.create')}{' '}
+                  {wizard.createError}
+                </p>
+              )}
+              <div className={formActionsClass}>
+                <Button
+                  variant="primary"
+                  onClick={() => void wizard.submit()}
+                  disabled={wizard.running}
+                >
+                  {wizard.running && <Icon name="spinner" />} {t('wizard.retry')}
+                </Button>
+                {wizard.created && !wizard.running && (
+                  <Button variant="secondary" onClick={wizard.continueAnyway}>
+                    {t('wizard.continueAnyway')}
+                  </Button>
+                )}
+              </div>
+            </>
+          ) : (
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                if (onReview) void wizard.submit();
+                else wizard.next();
+              }}
+              noValidate
             >
-              {wizard.running && <Icon name="spinner" />} {t('wizard.retry')}
-            </Button>
-            {wizard.created && !wizard.running && (
-              <Button variant="secondary" onClick={wizard.continueAnyway}>
-                {t('wizard.continueAnyway')}
-              </Button>
-            )}
-          </div>
-        </>
-      ) : (
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
-            if (onReview) void wizard.submit();
-            else wizard.next();
-          }}
-          noValidate
-        >
-          {wizard.step === 'basics' && <BasicsStep wizard={wizard} />}
-          {wizard.step === 'repository' && <RepositoryStep wizard={wizard} />}
-          {wizard.step === 'integrations' && <IntegrationsStep wizard={wizard} />}
-          {onReview && <ReviewStep wizard={wizard} />}
-          <div className={formActionsClass}>
-            {wizard.stepIndex > 0 && (
-              <Button type="button" variant="secondary" onClick={wizard.back}>
-                {t('wizard.back')}
-              </Button>
-            )}
-            <Button variant="primary" type="submit" disabled={wizard.running}>
-              {onReview ? t('wizard.create') : t('wizard.next')}
-            </Button>
-            <Button type="button" variant="secondary" onClick={cancel}>
-              {t('form.cancel')}
-            </Button>
-          </div>
-        </form>
-      )}
+              {wizard.step === 'basics' && <BasicsStep wizard={wizard} />}
+              {wizard.step === 'repository' && <RepositoryStep wizard={wizard} />}
+              {wizard.step === 'integrations' && <IntegrationsStep wizard={wizard} />}
+              {onReview && <ReviewStep wizard={wizard} />}
+              <div className={formActionsClass}>
+                {wizard.stepIndex > 0 && (
+                  <Button type="button" variant="secondary" onClick={wizard.back}>
+                    {t('wizard.back')}
+                  </Button>
+                )}
+                <Button variant="primary" type="submit" disabled={wizard.running}>
+                  {onReview ? t('wizard.create') : t('wizard.next')}
+                </Button>
+                <Button type="button" variant="secondary" onClick={cancel}>
+                  {t('form.cancel')}
+                </Button>
+              </div>
+            </form>
+          )}
+        </PanelBody>
+      </Panel>
       {dialog}
     </HubPage>
   );

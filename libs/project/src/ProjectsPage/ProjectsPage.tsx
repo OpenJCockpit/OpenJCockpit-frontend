@@ -10,6 +10,7 @@ import { useTranslation } from '@openjcockpit/i18n';
 import {
   Button,
   HubPage,
+  Panel,
   StatusMessage,
   fieldErrorClass,
   useConfirmDialog,
@@ -69,37 +70,39 @@ export function ProjectsPage() {
       onBack={() => void navigate(DASHBOARD_PATH)}
       backTitle={t('page.back')}
     >
-      {!loaded ? (
-        <StatusMessage variant="loading">{t('settings.loading')}</StatusMessage>
-      ) : (
-        <>
-          {isAdmin && (
-            <div className={styles.toolbar}>
-              <Button variant="primary" onClick={() => void navigate(NEW_PROJECT_PATH)}>
-                {t('settings.newProject')}
-              </Button>
-            </div>
-          )}
+      <Panel as="section" className={styles.panel}>
+        {!loaded ? (
+          <StatusMessage variant="loading">{t('settings.loading')}</StatusMessage>
+        ) : (
+          <>
+            {isAdmin && (
+              <div className={styles.toolbar}>
+                <Button variant="primary" onClick={() => void navigate(NEW_PROJECT_PATH)}>
+                  {t('settings.newProject')}
+                </Button>
+              </div>
+            )}
 
-          {error && (
-            <p role="alert" className={fieldErrorClass}>
-              {error}
-            </p>
-          )}
+            {error && (
+              <p role="alert" className={fieldErrorClass}>
+                {error}
+              </p>
+            )}
 
-          {projects.length === 0 ? (
-            <StatusMessage data-testid="projects-empty">{t('page.empty')}</StatusMessage>
-          ) : (
-            <ProjectList
-              projects={projects}
-              selectedId={selected?.id ?? null}
-              onSelect={handleSelect}
-              onSettings={isAdmin ? handleSettings : undefined}
-              onToggleActive={isAdmin ? handleToggle : undefined}
-            />
-          )}
-        </>
-      )}
+            {projects.length === 0 ? (
+              <StatusMessage data-testid="projects-empty">{t('page.empty')}</StatusMessage>
+            ) : (
+              <ProjectList
+                projects={projects}
+                selectedId={selected?.id ?? null}
+                onSelect={handleSelect}
+                onSettings={isAdmin ? handleSettings : undefined}
+                onToggleActive={isAdmin ? handleToggle : undefined}
+              />
+            )}
+          </>
+        )}
+      </Panel>
       {dialog}
     </HubPage>
   );

@@ -18,6 +18,7 @@ import { WithTranslations } from '../registerTranslations';
 import { useGitCheck } from '../useGitCheck';
 import { useGitCredentials } from '../useGitCredentials';
 import { useProjectDetails } from '../useProjectDetails';
+import styles from './RepositorySettings.module.scss';
 
 /** Git URL and branch, the result of the Git check and the stored credentials of the selected project. */
 export function RepositorySettings() {
@@ -29,7 +30,7 @@ export function RepositorySettings() {
   const { confirm, dialog } = useConfirmDialog();
 
   return (
-    <>
+    <div className={styles.stack}>
       <form
         onSubmit={(event) => {
           event.preventDefault();
@@ -109,7 +110,7 @@ export function RepositorySettings() {
         </div>
       )}
       {dialog}
-    </>
+    </div>
   );
 }
 
