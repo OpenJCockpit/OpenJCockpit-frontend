@@ -16,6 +16,19 @@ export const projectsApp: AppDefinition = {
   loadRoutes: () => import('./projectsRoutes').then((m) => m.projectsRoutes),
   settings: [
     {
+      id: 'overview',
+      sourceAppId: 'projects',
+      titleKey: 'settings.sections.overview.title',
+      descriptionKey: 'settings.sections.overview.description',
+      // Everyone on the project may see how far its setup is; links to admin sections are plain text for them.
+      requiredPermissions: [],
+      order: 0,
+      screen: 'project',
+      groupKey: 'settings.groups.project',
+      requiresProject: true,
+      component: () => import('./ProjectOverview/ProjectOverview'),
+    },
+    {
       id: 'general',
       sourceAppId: 'projects',
       titleKey: 'settings.sections.general.title',

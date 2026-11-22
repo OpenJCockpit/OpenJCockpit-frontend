@@ -1,6 +1,7 @@
 import type { Project } from '@openjcockpit/api';
 import { useTranslation } from '@openjcockpit/i18n';
 import { GitStatusBadge } from '../GitStatusBadge/GitStatusBadge';
+import { SetupBadge } from '../ProjectOverview/SetupBadge';
 import { canSelectProject } from '../ProjectSelection/ProjectSelection';
 import {
   Actions,
@@ -65,7 +66,8 @@ export function ProjectList({ projects, selectedId, onSelect, onSettings, onTogg
               <StatusChip
                 label={project.active === 1 ? t('list.active') : t('list.inactive')}
                 kind={project.active === 1 ? 'ok' : 'neutral'}
-              />
+              />{' '}
+              <SetupBadge project={project} />
             </td>
             <Actions as="td">
               <Button

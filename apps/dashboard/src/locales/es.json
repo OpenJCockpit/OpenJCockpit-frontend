@@ -262,6 +262,10 @@
         "repository": {
           "title": "Repositorio",
           "description": "URL de Git, rama, estado de la conexión y credenciales de Git del proyecto seleccionado."
+        },
+        "overview": {
+          "title": "Resumen",
+          "description": "Lista de configuración del proyecto seleccionado."
         }
       }
     },

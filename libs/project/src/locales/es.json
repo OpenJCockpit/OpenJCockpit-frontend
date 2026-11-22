@@ -204,6 +204,27 @@
         "gitCheck": "No se pudo acceder al repositorio.",
         "specInit": "No se pudo inicializar la carpeta de specs."
       }
+    },
+    "overview": {
+      "title": "Lista de configuración",
+      "summary": "{{done}} de {{total}} pasos completados.",
+      "complete": "Este proyecto está totalmente configurado.",
+      "items": {
+        "basics": "Nombre, responsable y entorno",
+        "repository": "Repositorio accesible (o marcado como nuevo)",
+        "credentials": "Credenciales de Git guardadas",
+        "specFolder": "Carpeta de specs inicializada"
+      },
+      "state": {
+        "done": "Hecho",
+        "todo": "Pendiente",
+        "pending": "En curso",
+        "unknown": "Desconocido"
+      },
+      "badge": {
+        "complete": "Configurado",
+        "progress": "Configuración {{done}}/{{total}}"
+      }
     }
   }
 }

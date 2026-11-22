@@ -204,6 +204,27 @@
         "gitCheck": "De repository kon niet worden bereikt.",
         "specInit": "Specmap initialiseren is mislukt."
       }
+    },
+    "overview": {
+      "title": "Checklist voor inrichting",
+      "summary": "{{done}} van {{total}} stappen gedaan.",
+      "complete": "Dit project is volledig ingericht.",
+      "items": {
+        "basics": "Naam, eigenaar en omgeving",
+        "repository": "Repository bereikbaar (of als nieuw gemarkeerd)",
+        "credentials": "Git-inloggegevens opgeslagen",
+        "specFolder": "Spec-map geïnitialiseerd"
+      },
+      "state": {
+        "done": "Klaar",
+        "todo": "Te doen",
+        "pending": "Bezig",
+        "unknown": "Onbekend"
+      },
+      "badge": {
+        "complete": "Ingericht",
+        "progress": "Inrichting {{done}}/{{total}}"
+      }
     }
   }
 }

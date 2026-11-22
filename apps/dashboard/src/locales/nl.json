@@ -262,6 +262,10 @@
         "repository": {
           "title": "Repository",
           "description": "Git-URL, branch, verbindingsstatus en Git-inloggegevens van het geselecteerde project."
+        },
+        "overview": {
+          "title": "Overzicht",
+          "description": "Checklist voor de inrichting van het geselecteerde project."
         }
       }
     },

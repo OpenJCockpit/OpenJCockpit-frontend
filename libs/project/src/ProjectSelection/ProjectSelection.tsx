@@ -2,6 +2,7 @@ import type { GitStatus, Project } from '@openjcockpit/api';
 import styles from './ProjectSelection.module.scss';
 import { AppHeader, AppShell, Button, ErrorState, Icon, cx } from '@openjcockpit/ui';
 import { useTranslation } from '@openjcockpit/i18n';
+import { SetupBadge } from '../ProjectOverview/SetupBadge';
 import gitStyles from '../GitStatusBadge/GitStatusBadge.module.scss';
 
 interface Props {
@@ -125,6 +126,7 @@ export function ProjectSelection({
                         <span>{t('selection.branch', { branch: project.defaultBranch })}</span>
                       )}
                     </div>
+                    <SetupBadge project={project} />
                     {showNotAccessible && project.newProject === 0 && (
                       <p className={styles.projectCardNotice}>
                         {t('selection.notReachableNotice')}

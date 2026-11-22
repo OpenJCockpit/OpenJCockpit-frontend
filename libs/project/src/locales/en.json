@@ -204,6 +204,27 @@
         "gitCheck": "The repository could not be reached.",
         "specInit": "Failed to initialise the spec folder."
       }
+    },
+    "overview": {
+      "title": "Setup checklist",
+      "summary": "{{done}} of {{total}} steps done.",
+      "complete": "This project is fully set up.",
+      "items": {
+        "basics": "Name, owner and environment",
+        "repository": "Repository reachable (or marked as new)",
+        "credentials": "Git credentials stored",
+        "specFolder": "Spec folder initialised"
+      },
+      "state": {
+        "done": "Done",
+        "todo": "To do",
+        "pending": "In progress",
+        "unknown": "Unknown"
+      },
+      "badge": {
+        "complete": "Set up",
+        "progress": "Setup {{done}}/{{total}}"
+      }
     }
   }
 }

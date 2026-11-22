@@ -204,6 +204,27 @@
         "gitCheck": "Das Repository konnte nicht erreicht werden.",
         "specInit": "Spec-Ordner initialisieren fehlgeschlagen."
       }
+    },
+    "overview": {
+      "title": "Einrichtungs-Checkliste",
+      "summary": "{{done}} von {{total}} Schritten erledigt.",
+      "complete": "Dieses Projekt ist vollständig eingerichtet.",
+      "items": {
+        "basics": "Name, Eigentümer und Umgebung",
+        "repository": "Repository erreichbar (oder als neu markiert)",
+        "credentials": "Git-Zugangsdaten gespeichert",
+        "specFolder": "Spec-Ordner initialisiert"
+      },
+      "state": {
+        "done": "Erledigt",
+        "todo": "Offen",
+        "pending": "In Arbeit",
+        "unknown": "Unbekannt"
+      },
+      "badge": {
+        "complete": "Eingerichtet",
+        "progress": "Einrichtung {{done}}/{{total}}"
+      }
     }
   }
 }

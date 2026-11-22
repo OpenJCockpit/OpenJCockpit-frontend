@@ -17,13 +17,16 @@ describe('projectsApp', () => {
     expect(await projectsApp.loadRoutes()).toHaveLength(2);
   });
 
-  it('contributes General and Repository to the project settings, for admins', () => {
+  it('contributes Overview, General and Repository to the project settings', () => {
     const sections = projectsApp.settings ?? [];
     expect(sections.map((s) => [s.id, s.screen, s.requiresProject])).toEqual([
+      ['overview', 'project', true],
       ['general', 'project', true],
       ['repository', 'project', true],
     ]);
-    expect(sections.every((s) => s.requiredPermissions.includes('openjcockpit-admin'))).toBe(true);
+    expect(sections.find((s) => s.id === 'overview')?.requiredPermissions).toEqual([]);
+    const editing = sections.filter((s) => s.id !== 'overview');
+    expect(editing.every((s) => s.requiredPermissions.includes('openjcockpit-admin'))).toBe(true);
   });
 
   it('loads each settings section as a component', async () => {
