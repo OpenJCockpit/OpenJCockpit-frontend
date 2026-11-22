@@ -103,7 +103,12 @@
       rgb(var(--tint-rgb) / 0.38) 17px,
       transparent 18px
     );
-  mask-image: radial-gradient(circle, #000 0%, #000 58%, transparent 74%);
+  mask-image: radial-gradient(
+    circle,
+    var(--mask-opaque) 0%,
+    var(--mask-opaque) 58%,
+    transparent 74%
+  );
   animation: none;
 }
 
@@ -119,7 +124,12 @@
     rgb(var(--accent-rgb) / 0.08) 14deg 38deg,
     transparent 38deg
   );
-  mask-image: radial-gradient(circle, #000 0%, #000 58%, transparent 74%);
+  mask-image: radial-gradient(
+    circle,
+    var(--mask-opaque) 0%,
+    var(--mask-opaque) 58%,
+    transparent 74%
+  );
   animation: radarSweep 3s linear infinite;
 }
 

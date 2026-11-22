@@ -27,7 +27,7 @@
       linear-gradient(rgb(var(--tint-rgb) / 0.035) 1px, transparent 1px),
       linear-gradient(90deg, rgb(var(--tint-rgb) / 0.035) 1px, transparent 1px);
     background-size: 54px 54px;
-    mask-image: radial-gradient(circle at center, #000 0%, transparent 76%);
+    mask-image: radial-gradient(circle at center, var(--mask-opaque) 0%, transparent 76%);
   }
 }
 
