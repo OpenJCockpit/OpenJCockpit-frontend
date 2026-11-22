@@ -23,6 +23,7 @@ import { FileTextIcon as FileText } from '@phosphor-icons/react/dist/csr/FileTex
 import { FireIcon as Fire } from '@phosphor-icons/react/dist/csr/Fire';
 import { FlaskIcon as Flask } from '@phosphor-icons/react/dist/csr/Flask';
 import { FolderSimpleIcon as FolderSimple } from '@phosphor-icons/react/dist/csr/FolderSimple';
+import { FoldersIcon as Folders } from '@phosphor-icons/react/dist/csr/Folders';
 import { GearIcon as Gear } from '@phosphor-icons/react/dist/csr/Gear';
 import { GithubLogoIcon as GithubLogo } from '@phosphor-icons/react/dist/csr/GithubLogo';
 import { HandWavingIcon as HandWaving } from '@phosphor-icons/react/dist/csr/HandWaving';
@@ -87,6 +88,7 @@ const ICONS = {
   skillsHub: SquaresFour,
   sliders: SlidersHorizontal,
   project: FolderSimple,
+  projects: Folders,
   logout: SignOut,
   collapse: SidebarSimple,
   pulse: Pulse,

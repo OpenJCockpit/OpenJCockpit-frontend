@@ -38,8 +38,6 @@
       }
     },
     "form": {
-      "newTitle": "Neues Projekt",
-      "editTitle": "Projekt bearbeiten",
       "name": "Name",
       "namePlaceholder": "Projektname",
       "customerId": "Kunden-ID (Stub)",
@@ -85,20 +83,18 @@
     "list": {
       "name": "Name",
       "gitStatus": "Git-Status",
-      "credentials": "Zugangsdaten",
       "status": "Status",
       "actions": "Aktionen",
-      "credentialsSet": "Zugangsdaten gesetzt",
-      "credentialsNone": "Keine",
       "active": "Aktiv",
       "inactive": "Inaktiv",
-      "edit": "Bearbeiten",
       "gitCheck": "Git-Prüfung",
-      "updateCredentials": "Zugangsdaten aktualisieren",
-      "addCredentials": "Zugangsdaten hinzufügen",
       "deleteCredentials": "Zugangsdaten löschen",
       "deactivate": "Deaktivieren",
-      "activate": "Aktivieren"
+      "activate": "Aktivieren",
+      "environment": "Umgebung",
+      "select": "Auswählen",
+      "settings": "Einstellungen",
+      "current": "Aktuell"
     },
     "confirm": {
       "cancel": "Abbrechen",
@@ -112,6 +108,120 @@
         "title": "{{name}} deaktivieren?",
         "message": "Das Projekt verschwindet aus der Projektauswahl. Auf dieser Seite kann es wieder aktiviert werden.",
         "confirm": "Deaktivieren"
+      }
+    },
+    "page": {
+      "eyebrow": "Projekte",
+      "title": "Projekte",
+      "subtitle": "Wähle das Projekt, an dem du arbeitest, oder verwalte deine Projekte.",
+      "back": "Zurück zur Startseite",
+      "empty": "Keine Projekte verfügbar."
+    },
+    "general": {
+      "saved": "Gespeichert."
+    },
+    "repository": {
+      "statusTitle": "Repository-Status"
+    },
+    "wizard": {
+      "title": "Neues Projekt",
+      "subtitle": "Richte ein Projekt Schritt für Schritt ein. Erst im letzten Schritt wird etwas angelegt.",
+      "backToProjects": "Zurück zu den Projekten",
+      "stepsLabel": "Schritte",
+      "steps": {
+        "basics": "Grunddaten",
+        "repository": "Repository",
+        "integrations": "Integrationen",
+        "review": "Prüfen und anlegen"
+      },
+      "next": "Weiter",
+      "back": "Zurück",
+      "create": "Projekt anlegen",
+      "creating": "Projekt wird angelegt…",
+      "retry": "Erneut versuchen",
+      "continueAnyway": "Trotzdem fortfahren",
+      "partial": "Projekt „{{name}}“ wurde angelegt, aber ein späterer Schritt ist fehlgeschlagen.",
+      "repository": {
+        "mode": "Repository",
+        "existing": "Bestehendes Repository",
+        "new": "Neues Projekt (Repository existiert noch nicht)",
+        "newHint": "Jetzt sind keine Git-Prüfung und keine Zugangsdaten nötig; das Repository wird später angelegt.",
+        "test": "Verbindung testen",
+        "testOk": "Das Repository ist erreichbar.",
+        "testNotReachable": "Das Repository konnte nicht erreicht werden.",
+        "testFailed": "Der Verbindungstest ist fehlgeschlagen. Bitte erneut versuchen.",
+        "testHint": "Der Test speichert nichts. Die Zugangsdaten werden erst beim Anlegen des Projekts gespeichert.",
+        "warnings": {
+          "host_loopback": "Der Host verweist auf diesen Server selbst (Loopback).",
+          "host_link_local": "Der Host ist eine Link-Local-Adresse (zum Beispiel ein Cloud-Metadatendienst).",
+          "host_private": "Der Host liegt in einem privaten Netzwerk.",
+          "unknown": "Der Host erfordert Aufmerksamkeit."
+        }
+      },
+      "integrations": {
+        "specInit": "Spec-Ordner nach dem Anlegen initialisieren",
+        "specInitNeedsRepo": "Erfordert ein bestehendes Repository.",
+        "later": "Jira, Dokumentenordner und Control-Tower-Repository lassen sich nach dem Anlegen in den Projekteinstellungen konfigurieren."
+      },
+      "review": {
+        "repository": "Repository",
+        "specInit": "Spec-Ordner initialisieren",
+        "yes": "Ja",
+        "no": "Nein"
+      },
+      "progress": {
+        "label": "Fortschritt beim Anlegen",
+        "create": "Projekt anlegen",
+        "credentials": "Zugangsdaten speichern",
+        "gitCheck": "Repository prüfen",
+        "specInit": "Spec-Ordner initialisieren",
+        "state": {
+          "pending": "wartet",
+          "running": "läuft…",
+          "done": "erledigt",
+          "failed": "fehlgeschlagen",
+          "skipped": "übersprungen"
+        }
+      },
+      "done": {
+        "title": "Projekt angelegt",
+        "message": "„{{name}}“ ist bereit.",
+        "open": "Dieses Projekt auswählen und öffnen",
+        "settings": "Zu den Projekteinstellungen"
+      },
+      "leave": {
+        "title": "Verlassen, ohne anzulegen?",
+        "message": "Die eingegebenen Daten gehen verloren.",
+        "confirm": "Verlassen"
+      },
+      "errors": {
+        "nameRequired": "Name ist erforderlich.",
+        "gitUrlRequired": "Für ein bestehendes Repository ist eine Git-URL erforderlich.",
+        "create": "Projekt anlegen fehlgeschlagen.",
+        "credentials": "Zugangsdaten speichern fehlgeschlagen.",
+        "gitCheck": "Das Repository konnte nicht erreicht werden.",
+        "specInit": "Spec-Ordner initialisieren fehlgeschlagen."
+      }
+    },
+    "overview": {
+      "title": "Einrichtungs-Checkliste",
+      "summary": "{{done}} von {{total}} Schritten erledigt.",
+      "complete": "Dieses Projekt ist vollständig eingerichtet.",
+      "items": {
+        "basics": "Name, Eigentümer und Umgebung",
+        "repository": "Repository erreichbar (oder als neu markiert)",
+        "credentials": "Git-Zugangsdaten gespeichert",
+        "specFolder": "Spec-Ordner initialisiert"
+      },
+      "state": {
+        "done": "Erledigt",
+        "todo": "Offen",
+        "pending": "In Arbeit",
+        "unknown": "Unbekannt"
+      },
+      "badge": {
+        "complete": "Eingerichtet",
+        "progress": "Einrichtung {{done}}/{{total}}"
       }
     }
   }

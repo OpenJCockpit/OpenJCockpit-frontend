@@ -68,7 +68,8 @@
         "skillsHubBadge": "Verbundene Marktplätze",
         "evidence": "Ausführungsnachweis",
         "quality": "Qualitätsstatus",
-        "controltower": "Control Tower"
+        "controltower": "Control Tower",
+        "projects": "Projekte"
       },
       "groups": {
         "work": "Arbeit",
@@ -218,10 +219,6 @@
           "title": "Einstellungen",
           "description": "Sprache und Design für dein Konto auf diesem Gerät."
         },
-        "projects": {
-          "title": "Projektverwaltung",
-          "description": "Projekte und ihre Git-Zugangsdaten anlegen, bearbeiten und deaktivieren."
-        },
         "skillsHub": {
           "title": "Marktplätze",
           "description": "Die Skill-Marktplätze verbinden, die der Skills Hub auflistet."
@@ -257,6 +254,18 @@
         "controltowerPolicy": {
           "title": "Control-Tower-Richtlinien",
           "description": "Open-Policy-Agent-Prüfungen für Freigaben und Dispatches in Control Tower."
+        },
+        "general": {
+          "title": "Allgemein",
+          "description": "Name, Beschreibung, Eigentümer, Umgebung und Kunde des ausgewählten Projekts."
+        },
+        "repository": {
+          "title": "Repository",
+          "description": "Git-URL, Branch, Verbindungsstatus und Git-Zugangsdaten des ausgewählten Projekts."
+        },
+        "overview": {
+          "title": "Übersicht",
+          "description": "Einrichtungs-Checkliste des ausgewählten Projekts."
         }
       }
     },

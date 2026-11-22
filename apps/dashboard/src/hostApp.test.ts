@@ -4,7 +4,7 @@ import { hostApp } from './hostApp';
 describe('hostApp', () => {
   it('contributes only settings sections, none of them in the nav', () => {
     expect(hostApp.showInNav).toBe(false);
-    expect(hostApp.settings?.map((section) => section.id)).toEqual(['preferences', 'projects']);
+    expect(hostApp.settings?.map((section) => section.id)).toEqual(['preferences']);
   });
 
   it('loads the routes as empty and each section as a component', async () => {

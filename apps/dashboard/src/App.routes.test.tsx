@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ROUTES } from './routes';
 import { FEATURE_FLAGS } from './featureFlags';
 import { renderRoutedApp } from './testUtils/renderRoutedApp';
-import { specsRemotes } from './testUtils/specsRemoteStubs';
+import { projectsRemote, specsRemotes } from './testUtils/specsRemoteStubs';
 import { clickAsync } from './testUtils/dom';
 import { mockDashboardApis, PROJECT, WORKFLOW } from './testUtils/dashboardFixtures';
 import * as api from '@openjcockpit/api';
@@ -41,12 +41,6 @@ vi.mock('@openjcockpit/api', async (importOriginal) => ({
   listWorkflowGroups: vi.fn(),
 }));
 
-// The host contributes the project settings section; the real form is covered by the project lib.
-vi.mock('@openjcockpit/project', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('@openjcockpit/project')>()),
-  ProjectSettings: () => <section data-testid="settings-section-projects" />,
-}));
-
 // Each lazy view is replaced by a stub exposing the callbacks App wires up, so these tests
 // cover App's routing glue without rendering the feature libraries.
 vi.mock('./lazyViews', async () => {
@@ -68,7 +62,6 @@ vi.mock('./lazyViews', async () => {
     ProjectSelection: (props: {
       projects: { id: string; name: string }[];
       onSelect: (p: { id: string; name: string }) => void;
-      onSettings: () => void;
       loadFailed?: boolean;
       onRetry?: () => void;
     }) => (
@@ -83,9 +76,6 @@ vi.mock('./lazyViews', async () => {
             Select {p.name}
           </button>
         ))}
-        <button type="button" onClick={props.onSettings}>
-          Open settings
-        </button>
       </section>
     ),
     SpecFilesDashboard: (props: {
@@ -170,11 +160,22 @@ describe('App routing', () => {
     await waitFor(() => expect(localStorage.getItem('openjcockpit_project_id')).toBe('project-1'));
   });
 
-  it('opens project settings from project selection', async () => {
+  it('serves a select-only project page while the projects app is unavailable', async () => {
     localStorage.clear();
     renderRoutedApp('/projects');
-    await clickAsync(await screen.findByRole('button', { name: 'Open settings' }));
-    expect(await screen.findByTestId('settings-section-projects')).toBeInTheDocument();
+    expect(await screen.findByTestId('view-projects')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Open settings' })).not.toBeInTheDocument();
+  });
+
+  it('leaves /projects to the projects app when it is loaded', async () => {
+    renderRoutedApp('/projects', projectsRemote);
+    expect(await screen.findByTestId('view-projects-remote')).toBeInTheDocument();
+    expect(screen.queryByTestId('view-projects')).not.toBeInTheDocument();
+  });
+
+  it('redirects the old project management section to /projects', async () => {
+    renderRoutedApp('/project-settings/projects', projectsRemote);
+    expect(await screen.findByTestId('view-projects-remote')).toBeInTheDocument();
   });
 
   it('forgets a stored project that no longer exists', async () => {
@@ -234,10 +235,10 @@ describe('App routing', () => {
       passed: false,
       errors: [{ code: 'GIT_AUTH_FAILED', message: 'denied' }],
     });
-    renderRoutedApp('/home');
+    renderRoutedApp('/home', projectsRemote);
     await clickAsync(await screen.findByText('Start'));
     await clickAsync(await screen.findByRole('button', { name: 'Check Git settings' }));
-    expect(await screen.findByTestId('settings-section-projects')).toBeInTheDocument();
+    expect(await screen.findByTestId('settings-section-general')).toBeInTheDocument();
   });
 
   it('selects a project from project selection and lands on the dashboard', async () => {

@@ -68,7 +68,8 @@
         "skillsHubBadge": "Gekoppelde marketplaces",
         "evidence": "Uitvoeringsbewijs",
         "quality": "Kwaliteitsstatus",
-        "controltower": "Control Tower"
+        "controltower": "Control Tower",
+        "projects": "Projecten"
       },
       "groups": {
         "work": "Werk",
@@ -218,10 +219,6 @@
           "title": "Voorkeuren",
           "description": "Taal en thema voor je account op dit apparaat."
         },
-        "projects": {
-          "title": "Projectbeheer",
-          "description": "Projecten en hun Git-inloggegevens aanmaken, bewerken en deactiveren."
-        },
         "skillsHub": {
           "title": "Marktplaatsen",
           "description": "Koppel de skill-marktplaatsen die de Skills Hub toont."
@@ -257,6 +254,18 @@
         "controltowerPolicy": {
           "title": "Control Tower-beleid",
           "description": "Open Policy Agent-controles voor goedkeuringen en dispatches in Control Tower."
+        },
+        "general": {
+          "title": "Algemeen",
+          "description": "Naam, beschrijving, eigenaar, omgeving en klant van het geselecteerde project."
+        },
+        "repository": {
+          "title": "Repository",
+          "description": "Git-URL, branch, verbindingsstatus en Git-inloggegevens van het geselecteerde project."
+        },
+        "overview": {
+          "title": "Overzicht",
+          "description": "Checklist voor de inrichting van het geselecteerde project."
         }
       }
     },

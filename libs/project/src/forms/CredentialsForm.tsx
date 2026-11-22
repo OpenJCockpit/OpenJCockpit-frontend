@@ -18,7 +18,8 @@ interface Props {
   loading: boolean;
   saving: boolean;
   onSave: () => void;
-  onCancel: () => void;
+  /** Omitted where the form is always shown, so there is nothing to cancel. */
+  onCancel?: () => void;
 }
 
 export function CredentialsForm({
@@ -83,9 +84,11 @@ export function CredentialsForm({
         <Button variant="primary" onClick={onSave} disabled={saving || loading}>
           {saving ? t('credentials.saving') : t('credentials.save')}
         </Button>
-        <Button variant="secondary" onClick={onCancel}>
-          {t('credentials.cancel')}
-        </Button>
+        {onCancel && (
+          <Button variant="secondary" onClick={onCancel}>
+            {t('credentials.cancel')}
+          </Button>
+        )}
       </div>
     </div>
   );

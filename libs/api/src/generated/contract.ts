@@ -444,6 +444,49 @@ export interface ProjectGitCredentialRequest {
   githubApiUrl?: string;
 }
 
+export type GitConnectionCheckRequestCredentialType = typeof GitConnectionCheckRequestCredentialType[keyof typeof GitConnectionCheckRequestCredentialType];
+
+
+export const GitConnectionCheckRequestCredentialType = {
+  NONE: 'NONE',
+  HTTPS_TOKEN: 'HTTPS_TOKEN',
+  USERNAME_PASSWORD: 'USERNAME_PASSWORD',
+  GITHUB_PAT: 'GITHUB_PAT',
+  GITHUB_APP: 'GITHUB_APP',
+} as const;
+
+/**
+ * A Git URL and credentials to test before any project exists. Nothing is persisted. The secret is used for this call only and is never logged or echoed.
+ */
+export interface GitConnectionCheckRequest {
+  /** Must use the https, ssh or git scheme (scp-style git@host:org/repo is treated as ssh). */
+  gitUrl: string;
+  credentialType?: GitConnectionCheckRequestCredentialType;
+  username?: string;
+  /** @nullable */
+  secret?: string | null;
+  /** Optional GitHub Enterprise API base URL; must use https. */
+  githubApiUrl?: string;
+}
+
+export type GitConnectionCheckResultGitStatus = typeof GitConnectionCheckResultGitStatus[keyof typeof GitConnectionCheckResultGitStatus];
+
+
+export const GitConnectionCheckResultGitStatus = {
+  UNKNOWN: 'UNKNOWN',
+  ACCESSIBLE: 'ACCESSIBLE',
+  NOT_ACCESSIBLE: 'NOT_ACCESSIBLE',
+  CHECK_FAILED: 'CHECK_FAILED',
+} as const;
+
+export interface GitConnectionCheckResult {
+  gitStatus: GitConnectionCheckResultGitStatus;
+  /** A fixed, friendly message. Never raw exception text. */
+  message?: string;
+  /** Non-blocking findings about the target host, resolved from its IP addresses. Known values are host_loopback, host_link_local and host_private. */
+  warnings: string[];
+}
+
 export interface SpecInitResult {
   projectId: string;
   branch: string;
@@ -2401,6 +2444,49 @@ export type SaveDocumentFolderConfig201 = {
   fileTriggerEnabled: boolean;
   allowedDocumentTypes?: string;
   workflowId?: string;
+};
+
+export type CheckGitConnectionBodyCredentialType = typeof CheckGitConnectionBodyCredentialType[keyof typeof CheckGitConnectionBodyCredentialType];
+
+
+export const CheckGitConnectionBodyCredentialType = {
+  NONE: 'NONE',
+  HTTPS_TOKEN: 'HTTPS_TOKEN',
+  USERNAME_PASSWORD: 'USERNAME_PASSWORD',
+  GITHUB_PAT: 'GITHUB_PAT',
+  GITHUB_APP: 'GITHUB_APP',
+} as const;
+
+/**
+ * A Git URL and credentials to test before any project exists. Nothing is persisted. The secret is used for this call only and is never logged or echoed.
+ */
+export type CheckGitConnectionBody = {
+  /** Must use the https, ssh or git scheme (scp-style git@host:org/repo is treated as ssh). */
+  gitUrl: string;
+  credentialType?: CheckGitConnectionBodyCredentialType;
+  username?: string;
+  /** @nullable */
+  secret?: string | null;
+  /** Optional GitHub Enterprise API base URL; must use https. */
+  githubApiUrl?: string;
+};
+
+export type CheckGitConnection200GitStatus = typeof CheckGitConnection200GitStatus[keyof typeof CheckGitConnection200GitStatus];
+
+
+export const CheckGitConnection200GitStatus = {
+  UNKNOWN: 'UNKNOWN',
+  ACCESSIBLE: 'ACCESSIBLE',
+  NOT_ACCESSIBLE: 'NOT_ACCESSIBLE',
+  CHECK_FAILED: 'CHECK_FAILED',
+} as const;
+
+export type CheckGitConnection200 = {
+  gitStatus: CheckGitConnection200GitStatus;
+  /** A fixed, friendly message. Never raw exception text. */
+  message?: string;
+  /** Non-blocking findings about the target host, resolved from its IP addresses. Known values are host_loopback, host_link_local and host_private. */
+  warnings: string[];
 };
 
 export type TriggerGitCheck200GitStatus = typeof TriggerGitCheck200GitStatus[keyof typeof TriggerGitCheck200GitStatus];

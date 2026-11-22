@@ -38,8 +38,6 @@
       }
     },
     "form": {
-      "newTitle": "Nuevo proyecto",
-      "editTitle": "Editar proyecto",
       "name": "Nombre",
       "namePlaceholder": "Nombre del proyecto",
       "customerId": "ID de cliente (stub)",
@@ -85,20 +83,18 @@
     "list": {
       "name": "Nombre",
       "gitStatus": "Estado de Git",
-      "credentials": "Credenciales",
       "status": "Estado",
       "actions": "Acciones",
-      "credentialsSet": "Credenciales configuradas",
-      "credentialsNone": "Ninguna",
       "active": "Activo",
       "inactive": "Inactivo",
-      "edit": "Editar",
       "gitCheck": "Comprobar Git",
-      "updateCredentials": "Actualizar credenciales",
-      "addCredentials": "Añadir credenciales",
       "deleteCredentials": "Eliminar credenciales",
       "deactivate": "Desactivar",
-      "activate": "Activar"
+      "activate": "Activar",
+      "environment": "Entorno",
+      "select": "Seleccionar",
+      "settings": "Ajustes",
+      "current": "Actual"
     },
     "confirm": {
       "cancel": "Cancelar",
@@ -112,6 +108,120 @@
         "title": "¿Desactivar {{name}}?",
         "message": "El proyecto desaparece del selector de proyectos. Puedes volver a activarlo desde esta página.",
         "confirm": "Desactivar"
+      }
+    },
+    "page": {
+      "eyebrow": "Proyectos",
+      "title": "Proyectos",
+      "subtitle": "Elige el proyecto en el que trabajas o gestiona los que administras.",
+      "back": "Volver al inicio",
+      "empty": "No hay proyectos disponibles."
+    },
+    "general": {
+      "saved": "Guardado."
+    },
+    "repository": {
+      "statusTitle": "Estado del repositorio"
+    },
+    "wizard": {
+      "title": "Nuevo proyecto",
+      "subtitle": "Configura un proyecto paso a paso. No se crea nada hasta el último paso.",
+      "backToProjects": "Volver a proyectos",
+      "stepsLabel": "Pasos",
+      "steps": {
+        "basics": "Datos básicos",
+        "repository": "Repositorio",
+        "integrations": "Integraciones",
+        "review": "Revisar y crear"
+      },
+      "next": "Siguiente",
+      "back": "Atrás",
+      "create": "Crear proyecto",
+      "creating": "Creando el proyecto…",
+      "retry": "Reintentar",
+      "continueAnyway": "Continuar de todos modos",
+      "partial": "El proyecto \"{{name}}\" se creó, pero falló un paso posterior.",
+      "repository": {
+        "mode": "Repositorio",
+        "existing": "Repositorio existente",
+        "new": "Proyecto nuevo (el repositorio aún no existe)",
+        "newHint": "Ahora no hacen falta comprobación de Git ni credenciales; el repositorio se crea más tarde.",
+        "test": "Probar conexión",
+        "testOk": "El repositorio es accesible.",
+        "testNotReachable": "No se pudo acceder al repositorio.",
+        "testFailed": "La prueba de conexión falló. Inténtalo de nuevo.",
+        "testHint": "La prueba no guarda nada. Las credenciales solo se guardan al crear el proyecto.",
+        "warnings": {
+          "host_loopback": "El host apunta a este mismo servidor (loopback).",
+          "host_link_local": "El host es una dirección link-local (por ejemplo, un servicio de metadatos en la nube).",
+          "host_private": "El host está en una red privada.",
+          "unknown": "El host requiere atención."
+        }
+      },
+      "integrations": {
+        "specInit": "Inicializar la carpeta de specs tras la creación",
+        "specInitNeedsRepo": "Requiere un repositorio existente.",
+        "later": "Jira, la carpeta de documentos y el repositorio de Control Tower se pueden configurar en los ajustes del proyecto tras la creación."
+      },
+      "review": {
+        "repository": "Repositorio",
+        "specInit": "Inicializar carpeta de specs",
+        "yes": "Sí",
+        "no": "No"
+      },
+      "progress": {
+        "label": "Progreso de la creación",
+        "create": "Crear proyecto",
+        "credentials": "Guardar credenciales",
+        "gitCheck": "Comprobar repositorio",
+        "specInit": "Inicializar carpeta de specs",
+        "state": {
+          "pending": "en espera",
+          "running": "en curso…",
+          "done": "hecho",
+          "failed": "fallido",
+          "skipped": "omitido"
+        }
+      },
+      "done": {
+        "title": "Proyecto creado",
+        "message": "\"{{name}}\" está listo.",
+        "open": "Seleccionar este proyecto y abrirlo",
+        "settings": "Ir a los ajustes del proyecto"
+      },
+      "leave": {
+        "title": "¿Salir sin crear?",
+        "message": "Se perderán los datos introducidos.",
+        "confirm": "Salir"
+      },
+      "errors": {
+        "nameRequired": "El nombre es obligatorio.",
+        "gitUrlRequired": "La URL de Git es obligatoria para un repositorio existente.",
+        "create": "No se pudo crear el proyecto.",
+        "credentials": "No se pudieron guardar las credenciales.",
+        "gitCheck": "No se pudo acceder al repositorio.",
+        "specInit": "No se pudo inicializar la carpeta de specs."
+      }
+    },
+    "overview": {
+      "title": "Lista de configuración",
+      "summary": "{{done}} de {{total}} pasos completados.",
+      "complete": "Este proyecto está totalmente configurado.",
+      "items": {
+        "basics": "Nombre, responsable y entorno",
+        "repository": "Repositorio accesible (o marcado como nuevo)",
+        "credentials": "Credenciales de Git guardadas",
+        "specFolder": "Carpeta de specs inicializada"
+      },
+      "state": {
+        "done": "Hecho",
+        "todo": "Pendiente",
+        "pending": "En curso",
+        "unknown": "Desconocido"
+      },
+      "badge": {
+        "complete": "Configurado",
+        "progress": "Configuración {{done}}/{{total}}"
       }
     }
   }

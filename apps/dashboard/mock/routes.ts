@@ -81,6 +81,16 @@ const gitStatus = (id: string) => {
   return { projectId: id, gitStatus: status, gitStatusCheckedAt, gitStatusMessage };
 };
 get('/api/projects/:id/git-status', ({ p }) => gitStatus(p[0]));
+// Stateless check used by the project wizard. Hosts named `bad-*` fail, private-looking hosts warn.
+post('/api/projects/git-check', ({ body }) => {
+  const url = str(body.gitUrl);
+  const host = /^[a-z+]+:\/\/([^/:]+)|@([^:]+):/i.exec(url);
+  const name = host?.[1] ?? host?.[2] ?? '';
+  const warnings = /^(localhost|127\.|10\.|192\.168\.)/.test(name) ? ['host_private'] : [];
+  return name.startsWith('bad-')
+    ? { gitStatus: 'NOT_ACCESSIBLE', message: 'Authentication failed', warnings }
+    : { gitStatus: 'ACCESSIBLE', message: 'Reachable with credentials', warnings };
+});
 post('/api/projects/:id/git-check', ({ p }) => {
   patchProject(p[0], { gitStatus: 'ACCESSIBLE', gitStatusCheckedAt: now() });
   return gitStatus(p[0]);

@@ -1,5 +1,7 @@
 import { apiRequest, apiRequestVoid } from '../core/http';
 import type {
+  GitConnectionCheckRequest,
+  GitConnectionCheckResult,
   Project,
   ProjectGitCredentialDto,
   ProjectGitCredentialRequest,
@@ -84,5 +86,22 @@ export function triggerGitCheck(id: string): Promise<ProjectGitStatusDto> {
 export function getGitStatus(id: string): Promise<ProjectGitStatusDto> {
   return apiRequest(`/api/projects/${id}/git-status`, {
     errorMessage: 'Failed to get git status',
+  });
+}
+
+/**
+ * Tests a Git URL and credentials before any project exists. Nothing is persisted. Admin only;
+ * the secret is sent for this call only. `warnings` lists non-blocking findings about the host
+ * (`host_loopback`, `host_link_local`, `host_private`).
+ */
+export function checkGitConnection(
+  req: GitConnectionCheckRequest,
+  signal?: AbortSignal,
+): Promise<GitConnectionCheckResult> {
+  return apiRequest('/api/projects/git-check', {
+    method: 'POST',
+    body: req,
+    signal,
+    errorMessage: 'Failed to check git connection',
   });
 }

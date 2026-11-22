@@ -44,8 +44,8 @@ if [ "$mode" = image ] || [ "$mode" = all ]; then
   }
   echo "== building images =="
   build dashboard apps/dashboard/Dockerfile
-  for r in skills-hub specs evidence quality controltower; do build "remote-$r" deploy/remote/Dockerfile "remote-$r"; done
-  for n in dashboard remote-skills-hub remote-specs remote-evidence remote-quality remote-controltower; do
+  for r in projects skills-hub specs evidence quality controltower; do build "remote-$r" deploy/remote/Dockerfile "remote-$r"; done
+  for n in dashboard remote-skills-hub remote-specs remote-evidence remote-quality remote-controltower remote-projects; do
     echo "== trivy image: $n =="
     run_trivy image "${common[@]}" "trivy-scan-$n:local" || failed=1
   done

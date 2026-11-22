@@ -40,6 +40,7 @@ jobs:
       matrix:
         include:
           - {name: dashboard, dockerfile: apps/dashboard/Dockerfile, remote: ""}
+          - {name: remote-projects, dockerfile: deploy/remote/Dockerfile, remote: remote-projects}
           - {name: remote-skills-hub, dockerfile: deploy/remote/Dockerfile, remote: remote-skills-hub}
           - {name: remote-specs, dockerfile: deploy/remote/Dockerfile, remote: remote-specs}
           - {name: remote-evidence, dockerfile: deploy/remote/Dockerfile, remote: remote-evidence}
@@ -101,7 +102,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        name: [dashboard, remote-skills-hub, remote-specs, remote-evidence, remote-quality, remote-controltower]
+        name: [dashboard, remote-projects, remote-skills-hub, remote-specs, remote-evidence, remote-quality, remote-controltower]
     steps:
       - name: Image name
         run: |

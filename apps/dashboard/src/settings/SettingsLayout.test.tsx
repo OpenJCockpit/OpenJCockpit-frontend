@@ -81,23 +81,20 @@ async function renderSettings(
 
 describe('SettingsLayout', () => {
   it('redirects /settings to the first visible section', async () => {
-    await renderSettings(
-      [app([section('projects'), section('other', { order: 20 })])],
-      '/settings',
-    );
-    expect(await screen.findByTestId('body-projects')).toBeInTheDocument();
-    expect(screen.getByTestId('where')).toHaveTextContent('/settings/projects');
+    await renderSettings([app([section('general'), section('other', { order: 20 })])], '/settings');
+    expect(await screen.findByTestId('body-general')).toBeInTheDocument();
+    expect(screen.getByTestId('where')).toHaveTextContent('/settings/general');
   });
 
   it('renders the requested section under a host heading and lists the others in the nav', async () => {
     await renderSettings(
-      [app([section('projects'), section('skillsHub', { order: 20 })])],
+      [app([section('general'), section('skillsHub', { order: 20 })])],
       '/settings/skillsHub',
     );
     expect(await screen.findByTestId('body-skillsHub')).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 1, name: 'Marketplaces' })).toBeInTheDocument();
     const nav = screen.getByTestId('settings-nav');
-    expect(nav).toHaveTextContent('Project management');
+    expect(nav).toHaveTextContent('General');
     expect(screen.getByTestId('settings-nav-skillsHub')).toHaveAttribute('aria-current', 'page');
   });
 
@@ -137,37 +134,33 @@ describe('SettingsLayout', () => {
   });
 
   it('puts the section content on a card', async () => {
-    await renderSettings([app([section('projects')])], '/settings/projects');
-    expect(await screen.findByTestId('settings-card-projects')).toContainElement(
-      await screen.findByTestId('body-projects'),
+    await renderSettings([app([section('general')])], '/settings/general');
+    expect(await screen.findByTestId('settings-card-general')).toContainElement(
+      await screen.findByTestId('body-general'),
     );
   });
 
   it('sets the document title from the section', async () => {
-    await renderSettings([app([section('projects')])], '/settings/projects');
-    await screen.findByTestId('body-projects');
-    expect(document.title).toBe('Settings · Project management · OpenJCockpit');
+    await renderSettings([app([section('general')])], '/settings/general');
+    await screen.findByTestId('body-general');
+    expect(document.title).toBe('Settings · General · OpenJCockpit');
   });
 
   it('answers 404 for an unknown id', async () => {
-    await renderSettings([app([section('projects')])], '/settings/nope');
+    await renderSettings([app([section('general')])], '/settings/nope');
     expect(await screen.findByTestId('not-found')).toBeInTheDocument();
   });
 
   it('answers 403 for a section the session may not open and hides it from the nav', async () => {
-    const apps = [
-      app([section('projects'), section('secret', { requiredPermissions: ['admin'] })]),
-    ];
+    const apps = [app([section('general'), section('secret', { requiredPermissions: ['admin'] })])];
     await renderSettings(apps, '/settings/secret');
     expect(await screen.findByTestId('forbidden')).toBeInTheDocument();
   });
 
   it('keeps hidden sections out of the nav', async () => {
-    const apps = [
-      app([section('projects'), section('secret', { requiredPermissions: ['admin'] })]),
-    ];
-    await renderSettings(apps, '/settings/projects');
-    await screen.findByTestId('body-projects');
+    const apps = [app([section('general'), section('secret', { requiredPermissions: ['admin'] })])];
+    await renderSettings(apps, '/settings/general');
+    await screen.findByTestId('body-general');
     expect(screen.queryByTestId('settings-nav-secret')).not.toBeInTheDocument();
   });
 
@@ -178,7 +171,7 @@ describe('SettingsLayout', () => {
 
   it('shows the select-project message for a project section without a project', async () => {
     await renderSettings(
-      [app([section('projects'), section('jira', { requiresProject: true, order: 20 })])],
+      [app([section('general'), section('jira', { requiresProject: true, order: 20 })])],
       '/settings/jira',
       {
         project: false,
@@ -206,7 +199,7 @@ describe('SettingsLayout', () => {
 
   it('ignores apps that contribute no settings', async () => {
     await renderSettings(
-      [app([], { id: 'bare', settings: undefined }), app([section('projects')])],
+      [app([], { id: 'bare', settings: undefined }), app([section('general')])],
       '/settings/nope',
     );
     expect(await screen.findByTestId('not-found')).toBeInTheDocument();
@@ -217,9 +210,19 @@ describe('SettingsLayout', () => {
     const boom = section('boom', {}, () => {
       throw new Error('boom');
     });
-    await renderSettings([app([section('projects'), boom])], '/settings/boom');
+    await renderSettings([app([section('general'), boom])], '/settings/boom');
     await waitFor(() => expect(screen.getByRole('alert')).toBeInTheDocument());
-    expect(screen.getByTestId('settings-nav-projects')).toBeInTheDocument();
+    expect(screen.getByTestId('settings-nav-general')).toBeInTheDocument();
     error.mockRestore();
+  });
+
+  it('shows the section description and renders a project-free section without a project', async () => {
+    await renderSettings(
+      [app([section('general', { descriptionKey: 'settings.selectProject' })])],
+      '/settings/general',
+      { project: false },
+    );
+    expect(await screen.findByTestId('body-general')).toBeInTheDocument();
+    expect(screen.getByText('Select a project to configure this section.')).toBeInTheDocument();
   });
 });
