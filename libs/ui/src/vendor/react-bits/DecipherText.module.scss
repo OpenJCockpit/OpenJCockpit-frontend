@@ -1,0 +1,19 @@
+// Stack the reserved final text and the scrambling overlay in one grid cell (ATTRIBUTION.md #5).
+.wrapper {
+  display: inline-grid;
+  position: relative;
+  white-space: pre-wrap;
+}
+
+// In flow, so it sizes the cell; `opacity: 0` (not clip/visibility) keeps it in the accessibility tree.
+.reserved {
+  grid-area: 1 / 1;
+  opacity: 0;
+}
+
+// Absolute, so it does not contribute to track sizing; pinned to fill the cell.
+.overlay {
+  grid-area: 1 / 1;
+  position: absolute;
+  inset: 0;
+}
