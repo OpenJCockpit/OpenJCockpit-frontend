@@ -17,7 +17,6 @@ export default mergeConfig(base, {
     }),
   ],
   build: { target: 'esnext' },
-  test: { passWithNoTests: true },
   server: {
     port: PORT,
     strictPort: true,
