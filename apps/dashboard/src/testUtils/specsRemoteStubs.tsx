@@ -50,3 +50,35 @@ export const specsRemotes: RemoteApps = {
   ],
   failed: [],
 };
+
+/** Stands in for the `projects` remote: the project list route and the General project settings section. */
+export const projectsRemote: RemoteApps = {
+  apps: [
+    {
+      id: 'projects',
+      labelKey: 'siteHeader.nav.projects',
+      icon: 'projects',
+      route: '/projects',
+      order: 10,
+      requiredPermissions: [],
+      showInNav: true,
+      loadRoutes: () =>
+        Promise.resolve([{ index: true, element: <section data-testid="view-projects-remote" /> }]),
+      settings: [
+        {
+          id: 'general',
+          sourceAppId: 'projects',
+          titleKey: 'settings.sections.general.title',
+          requiredPermissions: [],
+          order: 5,
+          screen: 'project',
+          groupKey: 'settings.groups.project',
+          requiresProject: true,
+          component: () =>
+            Promise.resolve({ default: () => <section data-testid="settings-section-general" /> }),
+        },
+      ],
+    },
+  ],
+  failed: [],
+};

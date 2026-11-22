@@ -7,7 +7,8 @@ import gitStyles from '../GitStatusBadge/GitStatusBadge.module.scss';
 interface Props {
   projects: Project[];
   onSelect: (project: Project) => void;
-  onSettings: () => void;
+  /** Opens project management. Left out where management is not available, which hides its buttons. */
+  onSettings?: () => void;
   onBack?: () => void;
   /** The project list could not be loaded: show an error with Retry instead of "no projects". */
   loadFailed?: boolean;
@@ -84,9 +85,11 @@ export function ProjectSelection({
         ) : displayProjects.length === 0 ? (
           <div className={styles.projectEmpty}>
             <p data-testid="project-selection-empty">{t('selection.empty')}</p>
-            <Button variant="secondary" onClick={onSettings}>
-              {t('selection.manageArrow')} <Icon name="arrow-right" />
-            </Button>
+            {onSettings && (
+              <Button variant="secondary" onClick={onSettings}>
+                {t('selection.manageArrow')} <Icon name="arrow-right" />
+              </Button>
+            )}
           </div>
         ) : (
           <div className={styles.projectGrid}>
@@ -137,11 +140,13 @@ export function ProjectSelection({
           </div>
         )}
 
-        <div className={styles.projectSelectionFooter}>
-          <Button variant="secondary" onClick={onSettings}>
-            <Icon name="settings" /> {t('selection.manageGear')}
-          </Button>
-        </div>
+        {onSettings && (
+          <div className={styles.projectSelectionFooter}>
+            <Button variant="secondary" onClick={onSettings}>
+              <Icon name="settings" /> {t('selection.manageGear')}
+            </Button>
+          </div>
+        )}
       </main>
     </AppShell>
   );

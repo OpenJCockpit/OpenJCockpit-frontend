@@ -85,20 +85,18 @@
     "list": {
       "name": "Naam",
       "gitStatus": "Git-status",
-      "credentials": "Inloggegevens",
       "status": "Status",
       "actions": "Acties",
-      "credentialsSet": "Inloggegevens ingesteld",
-      "credentialsNone": "Geen",
       "active": "Actief",
       "inactive": "Inactief",
-      "edit": "Bewerken",
       "gitCheck": "Git-controle",
-      "updateCredentials": "Inloggegevens bijwerken",
-      "addCredentials": "Inloggegevens toevoegen",
       "deleteCredentials": "Inloggegevens verwijderen",
       "deactivate": "Deactiveren",
-      "activate": "Activeren"
+      "activate": "Activeren",
+      "environment": "Omgeving",
+      "select": "Selecteren",
+      "settings": "Instellingen",
+      "current": "Huidig"
     },
     "confirm": {
       "cancel": "Annuleren",
@@ -112,6 +110,99 @@
         "title": "{{name}} deactiveren?",
         "message": "Het project verdwijnt uit de projectkeuze. Op deze pagina kun je het weer activeren.",
         "confirm": "Deactiveren"
+      }
+    },
+    "page": {
+      "eyebrow": "Projecten",
+      "title": "Projecten",
+      "subtitle": "Kies het project waaraan je werkt, of beheer de projecten die je administreert.",
+      "back": "Terug naar start",
+      "empty": "Geen projecten beschikbaar."
+    },
+    "general": {
+      "saved": "Opgeslagen."
+    },
+    "repository": {
+      "statusTitle": "Status van de repository"
+    },
+    "wizard": {
+      "title": "Nieuw project",
+      "subtitle": "Stel een project stap voor stap in. Er wordt pas iets aangemaakt in de laatste stap.",
+      "backToProjects": "Terug naar projecten",
+      "stepsLabel": "Stappen",
+      "steps": {
+        "basics": "Basis",
+        "repository": "Repository",
+        "integrations": "Integraties",
+        "review": "Controleren en aanmaken"
+      },
+      "next": "Volgende",
+      "back": "Terug",
+      "create": "Project aanmaken",
+      "creating": "Project wordt aangemaakt…",
+      "retry": "Opnieuw proberen",
+      "continueAnyway": "Toch doorgaan",
+      "partial": "Project \"{{name}}\" is aangemaakt, maar een latere stap is mislukt.",
+      "repository": {
+        "mode": "Repository",
+        "existing": "Bestaande repository",
+        "new": "Nieuw project (repository bestaat nog niet)",
+        "newHint": "Nu is geen Git-controle of inloggegevens nodig; de repository wordt later aangemaakt.",
+        "test": "Verbinding testen",
+        "testOk": "De repository is bereikbaar.",
+        "testNotReachable": "De repository kon niet worden bereikt.",
+        "testFailed": "De verbindingstest is mislukt. Probeer het opnieuw.",
+        "testHint": "De test slaat niets op. De inloggegevens worden pas opgeslagen als het project wordt aangemaakt.",
+        "warnings": {
+          "host_loopback": "De host verwijst naar deze server zelf (loopback).",
+          "host_link_local": "De host is een link-local adres (bijvoorbeeld een cloud-metadataservice).",
+          "host_private": "De host staat in een privénetwerk.",
+          "unknown": "De host vraagt aandacht."
+        }
+      },
+      "integrations": {
+        "specInit": "Specmap initialiseren na het aanmaken",
+        "specInitNeedsRepo": "Vereist een bestaande repository.",
+        "later": "Jira, documentmap en Control Tower-repository kun je na het aanmaken instellen in de projectinstellingen."
+      },
+      "review": {
+        "repository": "Repository",
+        "specInit": "Specmap initialiseren",
+        "yes": "Ja",
+        "no": "Nee"
+      },
+      "progress": {
+        "label": "Voortgang van het aanmaken",
+        "create": "Project aanmaken",
+        "credentials": "Inloggegevens opslaan",
+        "gitCheck": "Repository controleren",
+        "specInit": "Specmap initialiseren",
+        "state": {
+          "pending": "wacht",
+          "running": "bezig…",
+          "done": "klaar",
+          "failed": "mislukt",
+          "skipped": "overgeslagen"
+        }
+      },
+      "done": {
+        "title": "Project aangemaakt",
+        "message": "\"{{name}}\" is klaar.",
+        "open": "Dit project selecteren en openen",
+        "settings": "Naar projectinstellingen"
+      },
+      "leave": {
+        "title": "Verlaten zonder aan te maken?",
+        "message": "De ingevoerde gegevens gaan verloren.",
+        "confirm": "Verlaten"
+      },
+      "errors": {
+        "nameRequired": "Naam is verplicht.",
+        "gitUrlRequired": "Git-URL is verplicht voor een bestaande repository.",
+        "create": "Project aanmaken is mislukt.",
+        "credentials": "Inloggegevens opslaan is mislukt.",
+        "gitCheck": "De repository kon niet worden bereikt.",
+        "specInit": "Specmap initialiseren is mislukt."
       }
     }
   }

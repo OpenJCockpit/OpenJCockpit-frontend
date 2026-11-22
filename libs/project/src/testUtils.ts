@@ -1,14 +1,5 @@
-import { act, render } from '@testing-library/react';
+import { act } from '@testing-library/react';
 import { vi } from 'vitest';
-import type { ReactElement } from 'react';
-import { withQueryClient } from './testQueryClient';
-
-/** Renders inside `act` so effects and their resolved mocks settle before assertions. */
-export async function renderAsync(ui: ReactElement) {
-  await act(async () => {
-    render(withQueryClient(ui));
-  });
-}
 
 /** Clicks inside `act` so state updates flush before assertions. */
 export async function clickAsync(element: HTMLElement) {

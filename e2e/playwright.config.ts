@@ -15,6 +15,7 @@ const REMOTES = [
   { project: 'remote-evidence', port: 4405 },
   { project: 'remote-quality', port: 4406 },
   { project: 'remote-controltower', port: 4407 },
+  { project: 'remote-projects', port: 4408 },
 ];
 
 export default defineConfig({

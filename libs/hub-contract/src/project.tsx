@@ -15,6 +15,9 @@ export interface HubProjects {
 /** Where the host lets the user pick a project. */
 export const PROJECTS_PATH = '/projects';
 
+/** Where the host mounts the selected project's settings; sections live at `<path>/<section id>`. */
+export const PROJECT_SETTINGS_PATH = '/project-settings';
+
 export const HubProjectContext = createContext<HubProjects | null>(null);
 
 export function useHubProject(): HubProjects {

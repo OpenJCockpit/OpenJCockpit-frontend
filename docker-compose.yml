@@ -46,7 +46,7 @@ services:
       # Same-origin: the dashboard's nginx proxies /remotes/<name>/ to the remote containers (host remote-<name>,
       # port 8080: REMOTE_HOST_PREFIX / REMOTE_PORT), so no extra origin, CORS or allow-list is needed.
       # Override FEDERATION_MANIFEST in .env to run without a remote (see .env.example for the four-remote value).
-      FEDERATION_MANIFEST: ${FEDERATION_MANIFEST:-{"skillsHub":"/remotes/skills-hub/mf-manifest.json","specs":"/remotes/specs/mf-manifest.json","evidence":"/remotes/evidence/mf-manifest.json","quality":"/remotes/quality/mf-manifest.json","controltower":"/remotes/controltower/mf-manifest.json"}}
+      FEDERATION_MANIFEST: ${FEDERATION_MANIFEST:-{"projects":"/remotes/projects/mf-manifest.json","skillsHub":"/remotes/skills-hub/mf-manifest.json","specs":"/remotes/specs/mf-manifest.json","evidence":"/remotes/evidence/mf-manifest.json","quality":"/remotes/quality/mf-manifest.json","controltower":"/remotes/controltower/mf-manifest.json"}}
       FEDERATION_ALLOWED_ORIGINS_JSON: '[]'
       FEDERATION_ALLOWED_ORIGINS: ""
 
@@ -102,5 +102,16 @@ services:
         REMOTE: remote-controltower
         BUILD_SHA: ${BUILD_SHA:-dev}
     container_name: openjcockpit-remote-controltower
+    restart: unless-stopped
+    # Internal only: reached through the dashboard at /remotes/<name>/.
+
+  remote-projects:
+    build:
+      context: .
+      dockerfile: deploy/remote/Dockerfile
+      args:
+        REMOTE: remote-projects
+        BUILD_SHA: ${BUILD_SHA:-dev}
+    container_name: openjcockpit-remote-projects
     restart: unless-stopped
     # Internal only: reached through the dashboard at /remotes/<name>/.

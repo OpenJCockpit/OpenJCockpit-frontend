@@ -85,20 +85,18 @@
     "list": {
       "name": "Name",
       "gitStatus": "Git status",
-      "credentials": "Credentials",
       "status": "Status",
       "actions": "Actions",
-      "credentialsSet": "Credentials set",
-      "credentialsNone": "None",
       "active": "Active",
       "inactive": "Inactive",
-      "edit": "Edit",
       "gitCheck": "Git check",
-      "updateCredentials": "Update credentials",
-      "addCredentials": "Add credentials",
       "deleteCredentials": "Delete credentials",
       "deactivate": "Deactivate",
-      "activate": "Activate"
+      "activate": "Activate",
+      "environment": "Environment",
+      "select": "Select",
+      "settings": "Settings",
+      "current": "Current"
     },
     "confirm": {
       "cancel": "Cancel",
@@ -112,6 +110,99 @@
         "title": "Deactivate {{name}}?",
         "message": "The project disappears from the project picker. You can activate it again from this page.",
         "confirm": "Deactivate"
+      }
+    },
+    "page": {
+      "eyebrow": "Projects",
+      "title": "Projects",
+      "subtitle": "Select the project to work on, or manage the ones you administer.",
+      "back": "Back to home",
+      "empty": "No projects available."
+    },
+    "general": {
+      "saved": "Saved."
+    },
+    "repository": {
+      "statusTitle": "Repository status"
+    },
+    "wizard": {
+      "title": "New project",
+      "subtitle": "Set up a project step by step. Nothing is created until the last step.",
+      "backToProjects": "Back to projects",
+      "stepsLabel": "Steps",
+      "steps": {
+        "basics": "Basics",
+        "repository": "Repository",
+        "integrations": "Integrations",
+        "review": "Review and create"
+      },
+      "next": "Next",
+      "back": "Back",
+      "create": "Create project",
+      "creating": "Creating the project…",
+      "retry": "Retry",
+      "continueAnyway": "Continue anyway",
+      "partial": "Project \"{{name}}\" was created, but a later step failed.",
+      "repository": {
+        "mode": "Repository",
+        "existing": "Existing repository",
+        "new": "New project (repository does not exist yet)",
+        "newHint": "No Git check or credentials are needed now; the repository is created later.",
+        "test": "Test connection",
+        "testOk": "The repository is reachable.",
+        "testNotReachable": "The repository could not be reached.",
+        "testFailed": "The connection test failed. Try again.",
+        "testHint": "Nothing is saved by the test. The credentials are only stored when the project is created.",
+        "warnings": {
+          "host_loopback": "The host points to this server itself (loopback).",
+          "host_link_local": "The host is a link-local address (for example a cloud metadata service).",
+          "host_private": "The host is on a private network.",
+          "unknown": "The host needs attention."
+        }
+      },
+      "integrations": {
+        "specInit": "Initialise the spec folder after creation",
+        "specInitNeedsRepo": "Needs an existing repository.",
+        "later": "Jira, document folder and Control Tower repository can be configured in the project settings after creation."
+      },
+      "review": {
+        "repository": "Repository",
+        "specInit": "Initialise spec folder",
+        "yes": "Yes",
+        "no": "No"
+      },
+      "progress": {
+        "label": "Creation progress",
+        "create": "Create project",
+        "credentials": "Save credentials",
+        "gitCheck": "Check repository",
+        "specInit": "Initialise spec folder",
+        "state": {
+          "pending": "waiting",
+          "running": "running…",
+          "done": "done",
+          "failed": "failed",
+          "skipped": "skipped"
+        }
+      },
+      "done": {
+        "title": "Project created",
+        "message": "\"{{name}}\" is ready.",
+        "open": "Select this project and open it",
+        "settings": "Go to project settings"
+      },
+      "leave": {
+        "title": "Leave without creating?",
+        "message": "The details you entered are lost.",
+        "confirm": "Leave"
+      },
+      "errors": {
+        "nameRequired": "Name is required.",
+        "gitUrlRequired": "Git URL is required for an existing repository.",
+        "create": "Failed to create the project.",
+        "credentials": "Failed to save the credentials.",
+        "gitCheck": "The repository could not be reached.",
+        "specInit": "Failed to initialise the spec folder."
       }
     }
   }

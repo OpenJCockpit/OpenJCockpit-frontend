@@ -14,6 +14,7 @@ export { ADMIN_PERMISSION, Can, FORBIDDEN_PATH, RequirePermission, useCan } from
 export {
   HubProjectContext,
   PROJECTS_PATH,
+  PROJECT_SETTINGS_PATH,
   RequireProject,
   useHubProject,
   useSelectedProject,

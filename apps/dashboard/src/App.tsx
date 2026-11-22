@@ -68,6 +68,7 @@ function App() {
   const { authenticated, user } = useAuthSession();
   const remoteApps = useRemoteApps();
   const apps = useMemo(() => [hostApp, ...remoteApps], [remoteApps]);
+  const projectsAppLoaded = remoteApps.some((app) => app.route === ROUTES.projects);
   const projectsQuery = useProjectsQuery(authenticated);
   const projects = projectsQuery.data ?? NO_PROJECTS;
   const [selectedProjectId, setSelectedProjectId] = useState(getStoredProjectId);
@@ -177,18 +178,21 @@ function App() {
                       </LandingRoute>
                     }
                   />
-                  <Route
-                    path={ROUTES.projects}
-                    element={
-                      <ProjectSelectionRoute
-                        projects={projects}
-                        onSelect={handleSelectProject}
-                        // A failed load must not read as "you have no projects".
-                        loadFailed={projectsQuery.isError && !projectsQuery.data}
-                        onRetry={() => void projectsQuery.refetch()}
-                      />
-                    }
-                  />
+                  {/* The projects app owns this route; the host serves a select-only page when it is unavailable. */}
+                  {!projectsAppLoaded && (
+                    <Route
+                      path={ROUTES.projects}
+                      element={
+                        <ProjectSelectionRoute
+                          projects={projects}
+                          onSelect={handleSelectProject}
+                          // A failed load must not read as "you have no projects".
+                          loadFailed={projectsQuery.isError && !projectsQuery.data}
+                          onRetry={() => void projectsQuery.refetch()}
+                        />
+                      }
+                    />
+                  )}
                   <Route
                     path={`${ROUTES.dashboardRun}/:runId`}
                     element={
@@ -200,6 +204,10 @@ function App() {
                   <Route
                     path={`${ROUTES.settings}/*`}
                     element={<SettingsLayout screen="settings" />}
+                  />
+                  <Route
+                    path={`${ROUTES.projectSettings}/projects`}
+                    element={<Navigate to={ROUTES.projects} replace />}
                   />
                   <Route
                     path={`${ROUTES.projectSettings}/*`}

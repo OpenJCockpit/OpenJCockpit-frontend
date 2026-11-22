@@ -1,0 +1,51 @@
+.stepper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 0 0 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.stepperItem {
+  color: var(--faint);
+  font-size: 13px;
+}
+
+.stepperCurrent {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.stepHeading {
+  margin: 0 0 12px;
+  font-size: 18px;
+  outline: none;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 16px;
+  margin: 0 0 16px;
+
+  dt {
+    color: var(--faint);
+  }
+
+  dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+.progress {
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.warnings {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}

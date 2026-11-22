@@ -31,7 +31,6 @@ export function ProjectSelectionRoute({
         onSelect(project);
         void navigate(from ?? ROUTES.home, { replace: true });
       }}
-      onSettings={() => void navigate(ROUTES.projectSettings)}
       onBack={() => void navigate(ROUTES.home)}
     />
   );

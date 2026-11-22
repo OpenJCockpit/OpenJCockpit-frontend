@@ -3,8 +3,8 @@ import { ROUTES } from './routes';
 
 /**
  * The host's own contribution to the registry: it has no pages or nav entry, only settings
- * sections, so it goes through the same path as a remote's. The project lib is bundled with
- * the host, so its translations are already registered and the section needs no provider.
+ * sections, so it goes through the same path as a remote's. The project settings live in the
+ * projects remote.
  */
 export const hostApp: AppDefinition = {
   id: 'host',
@@ -39,18 +39,6 @@ export const hostApp: AppDefinition = {
       order: 0,
       groupKey: 'settings.groups.general',
       component: () => import('./settings/PreferencesSection'),
-    },
-    {
-      id: 'projects',
-      sourceAppId: 'host',
-      titleKey: 'settings.sections.projects.title',
-      descriptionKey: 'settings.sections.projects.description',
-      requiredPermissions: [],
-      order: 10,
-      screen: 'project',
-      groupKey: 'settings.groups.project',
-      component: () =>
-        import('@openjcockpit/project').then((m) => ({ default: m.ProjectSettings })),
     },
   ],
 };

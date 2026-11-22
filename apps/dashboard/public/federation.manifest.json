@@ -1,4 +1,5 @@
 {
+  "projects": "http://localhost:4408/mf-manifest.json",
   "skillsHub": "http://localhost:4403/mf-manifest.json",
   "specs": "http://localhost:4404/mf-manifest.json",
   "evidence": "http://localhost:4405/mf-manifest.json",
