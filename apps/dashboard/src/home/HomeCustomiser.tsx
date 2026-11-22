@@ -113,12 +113,10 @@ export function HomeCustomiser({ initial, defaultItems, widgets, onDone, onCance
     return t('home.sizeFull');
   };
 
-  const categoryCounts = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const w of widgets) counts.set(categoryOf(w), (counts.get(categoryOf(w)) ?? 0) + 1);
-    return counts;
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- labels follow the language
-  }, [widgets, allApps, t]);
+  const categoryCounts = new Map<string, number>();
+  for (const w of widgets) {
+    categoryCounts.set(categoryOf(w), (categoryCounts.get(categoryOf(w)) ?? 0) + 1);
+  }
 
   const needle = query.trim().toLowerCase();
   const visible = widgets.filter((w) => {
