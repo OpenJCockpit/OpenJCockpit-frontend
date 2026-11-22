@@ -170,7 +170,7 @@ export function SettingsLayout({ screen = 'settings' }: { screen?: SettingsScree
                   {visibleSettings.map((section) => (
                     <Route
                       key={section.id}
-                      path={section.id}
+                      path={`${section.id}/*`}
                       element={<SectionFrame section={section} />}
                     />
                   ))}

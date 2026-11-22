@@ -1,41 +1,73 @@
+import { Navigate, Route, Routes, useNavigate, useParams, useResolvedPath } from 'react-router';
 import {
-  TextAreaField,
-  TextField,
   Actions,
-  CheckboxField,
   DataTable,
   StatusChip,
   fieldHintClass,
-  formGridClass,
   SettingsGroup,
   Button,
   StatusMessage,
   useConfirmDialog,
 } from '@openjcockpit/ui';
 import { useFormatters, useTranslation } from '@openjcockpit/i18n';
-import styles from './SkillsHubSettings.module.scss';
+import { MarketplaceForm } from './MarketplaceForm';
 import { useSkillsHubSettings } from './useSkillsHubSettings';
 
 /** Content of the host's "Marketplaces" settings section; the host owns the heading and page chrome. */
 export function SkillsHubSettings() {
+  const state = useSkillsHubSettings();
+  const listPath = useResolvedPath('').pathname.replace(/\/$/, '');
+  return (
+    <Routes>
+      <Route index element={<MarketplaceList {...state} listPath={listPath} />} />
+      <Route path="new" element={<MarketplaceFormRoute {...state} listPath={listPath} />} />
+      <Route
+        path=":connectionId/edit"
+        element={<MarketplaceFormRoute {...state} listPath={listPath} />}
+      />
+      <Route path="*" element={<Navigate to={listPath || '/'} replace />} />
+    </Routes>
+  );
+}
+
+type State = ReturnType<typeof useSkillsHubSettings>;
+
+function MarketplaceFormRoute({
+  listPath,
+  connections,
+  loaded,
+  error,
+  saving,
+  saveConnection,
+}: State & { listPath: string }) {
+  const { t } = useTranslation('skillsHub');
+  const { connectionId } = useParams();
+  if (!loaded) return <StatusMessage variant="loading">{t('settings.loading')}</StatusMessage>;
+  const editing = connectionId ? connections.find((c) => c.id === connectionId) : undefined;
+  if (connectionId && !editing) return <Navigate to={listPath || '/'} replace />;
+  return (
+    <MarketplaceForm
+      editing={editing ?? null}
+      error={error}
+      saving={saving}
+      listPath={listPath}
+      onSave={(form) => saveConnection(editing?.id ?? null, form)}
+    />
+  );
+}
+
+function MarketplaceList({
+  connections,
+  loaded,
+  error,
+  status,
+  handleDelete,
+  clearError,
+  listPath,
+}: State & { listPath: string }) {
   const { t } = useTranslation('skillsHub');
   const { formatDate } = useFormatters();
-  const {
-    connections,
-    loaded,
-    editingId,
-    editingHasApiKey,
-    form,
-    setForm,
-    saving,
-    error,
-    status,
-    nameInputRef,
-    startEdit,
-    cancelEdit,
-    handleSave,
-    handleDelete,
-  } = useSkillsHubSettings();
+  const navigate = useNavigate();
   const { confirm, dialog } = useConfirmDialog();
 
   if (!loaded) {
@@ -52,59 +84,6 @@ export function SkillsHubSettings() {
       <p className={fieldHintClass} role="status" aria-live="polite">
         {status}
       </p>
-
-      <SettingsGroup title={editingId === null ? t('settings.formNew') : t('settings.formEdit')}>
-        <div className={formGridClass}>
-          <TextField
-            label={t('settings.name')}
-            required
-            ref={nameInputRef}
-            value={form.name}
-            onChange={(v) => setForm((f) => ({ ...f, name: v }))}
-            placeholder={t('settings.namePlaceholder')}
-          />
-          <TextField
-            label={t('settings.marketplaceUrl')}
-            required
-            value={form.marketplaceUrl}
-            onChange={(v) => setForm((f) => ({ ...f, marketplaceUrl: v }))}
-            placeholder={t('settings.marketplaceUrlPlaceholder')}
-          />
-          <TextField
-            label={editingId === null ? t('settings.apiKeyRequired') : t('settings.apiKey')}
-            required={editingId === null}
-            type="password"
-            value={form.apiKey!}
-            onChange={(v) => setForm((f) => ({ ...f, apiKey: v }))}
-            placeholder={
-              editingId !== null && editingHasApiKey
-                ? t('settings.apiKeyKeepPlaceholder')
-                : t('settings.apiKeyRequiredPlaceholder')
-            }
-          />
-          <TextAreaField
-            label={t('settings.description')}
-            wide
-            rows={3}
-            value={form.description!}
-            onChange={(v) => setForm((f) => ({ ...f, description: v }))}
-            placeholder={t('settings.descriptionPlaceholder')}
-          />
-          <CheckboxField
-            label={t('settings.enabledField')}
-            checked={form.enabled}
-            onChange={(enabled) => setForm((f) => ({ ...f, enabled }))}
-          />
-        </div>
-        <Actions className={styles.formActions}>
-          <Button variant="primary" onClick={() => void handleSave()} disabled={saving}>
-            {saving ? t('settings.saving') : t('settings.save')}
-          </Button>
-          <Button variant="secondary" onClick={cancelEdit}>
-            {t('settings.cancel')}
-          </Button>
-        </Actions>
-      </SettingsGroup>
 
       <SettingsGroup>
         <DataTable>
@@ -137,7 +116,13 @@ export function SkillsHubSettings() {
                 </td>
                 <td>{formatDate(connection.createdAt)}</td>
                 <Actions as="td">
-                  <Button variant="secondary" onClick={() => startEdit(connection)}>
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      clearError();
+                      void navigate(`${listPath}/${encodeURIComponent(connection.id)}/edit`);
+                    }}
+                  >
                     {t('settings.edit')}
                   </Button>
                   <Button
@@ -167,6 +152,15 @@ export function SkillsHubSettings() {
             )}
           </tbody>
         </DataTable>
+        <Button
+          variant="primary"
+          onClick={() => {
+            clearError();
+            void navigate(`${listPath}/new`);
+          }}
+        >
+          {t('settings.formNew')}
+        </Button>
       </SettingsGroup>
       {dialog}
     </>

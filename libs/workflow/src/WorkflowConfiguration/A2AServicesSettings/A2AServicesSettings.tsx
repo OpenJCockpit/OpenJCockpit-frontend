@@ -1,20 +1,17 @@
+import { Navigate, Route, Routes, useNavigate, useParams, useResolvedPath } from 'react-router';
 import { useTranslation } from '@openjcockpit/i18n';
 import {
   StatusChip,
-  SecretField,
-  TextField,
   StatusMessage,
   Button,
   Actions,
   SettingsGroup,
   DataTable,
-  cx,
   fieldHintClass,
-  formActionsClass,
-  formGridClass,
 } from '@openjcockpit/ui';
 import { useConfirmDelete } from '../../WorkflowDesign/panels/shared/useConfirmDelete';
 import { a2aServiceStatus } from './a2aServiceStatus';
+import { A2AServiceForm } from './A2AServiceForm';
 import { useA2AServices } from './useA2AServices';
 import WorkflowConfigurationStyles from '../WorkflowConfiguration.module.scss';
 
@@ -24,23 +21,63 @@ import WorkflowConfigurationStyles from '../WorkflowConfiguration.module.scss';
  * it applies to every project.
  */
 export function A2AServicesSettings() {
+  const state = useA2AServices();
+  const listPath = useResolvedPath('').pathname.replace(/\/$/, '');
+  return (
+    <Routes>
+      <Route index element={<A2AServicesList {...state} listPath={listPath} />} />
+      <Route
+        path="new"
+        element={<A2AServiceFormRoute {...state} listPath={listPath} mode="add" />}
+      />
+      <Route
+        path=":serviceId/edit"
+        element={<A2AServiceFormRoute {...state} listPath={listPath} mode="edit" />}
+      />
+      <Route path="*" element={<Navigate to={listPath || '/'} replace />} />
+    </Routes>
+  );
+}
+
+type State = ReturnType<typeof useA2AServices>;
+
+/** Routes to the form screen; waits for the list so an edit can start from the stored service. */
+function A2AServiceFormRoute({
+  mode,
+  listPath,
+  services,
+  loaded,
+  error,
+  saving,
+  saveService,
+}: State & { mode: 'add' | 'edit'; listPath: string }) {
   const { t } = useTranslation('workflow');
-  const {
-    services,
-    loaded,
-    error,
-    savedMessage,
-    editing,
-    editingService,
-    form,
-    setForm,
-    saving,
-    startAdd,
-    startEdit,
-    closeForm,
-    handleSave,
-    handleDelete,
-  } = useA2AServices();
+  const { serviceId } = useParams();
+  if (!loaded) return <StatusMessage role="status">{t('a2aServices.loading')}</StatusMessage>;
+  const service = mode === 'edit' ? services.find((s) => s.id === serviceId) : undefined;
+  if (mode === 'edit' && !service?.editable) return <Navigate to={listPath || '/'} replace />;
+  return (
+    <A2AServiceForm
+      editingService={service ?? null}
+      error={error}
+      saving={saving}
+      listPath={listPath}
+      onSave={(form) => saveService(service?.id ?? null, form)}
+    />
+  );
+}
+
+function A2AServicesList({
+  services,
+  loaded,
+  error,
+  savedMessage,
+  handleDelete,
+  clearFeedback,
+  listPath,
+}: State & { listPath: string }) {
+  const { t } = useTranslation('workflow');
+  const navigate = useNavigate();
   const { askDelete, dialog } = useConfirmDelete();
 
   return (
@@ -105,7 +142,13 @@ export function A2AServicesSettings() {
                     <td>
                       {service.editable ? (
                         <Actions>
-                          <Button variant="secondary" onClick={() => startEdit(service)}>
+                          <Button
+                            variant="secondary"
+                            onClick={() => {
+                              clearFeedback();
+                              void navigate(`${listPath}/${encodeURIComponent(service.id)}/edit`);
+                            }}
+                          >
                             {t('shared.edit')}
                           </Button>
                           <Button
@@ -136,100 +179,16 @@ export function A2AServicesSettings() {
         </div>
       )}
 
-      {editing ? (
-        <div className={WorkflowConfigurationStyles.servicesForm}>
-          <h3 className={WorkflowConfigurationStyles.servicesFormTitle}>
-            {editingService
-              ? t('a2aServices.formTitleEdit', { name: editingService.name })
-              : t('a2aServices.formTitleAdd')}
-          </h3>
-          <p className={fieldHintClass}>{t('a2aServices.formHint')}</p>
-          <div className={cx(formGridClass, WorkflowConfigurationStyles.servicesFormGrid)}>
-            <TextField
-              label={t('a2aServices.fields.id')}
-              required
-              value={form.id}
-              onChange={(v) => setForm((f) => ({ ...f, id: v }))}
-              placeholder={t('a2aServices.fields.idPlaceholder')}
-              disabled={editingService !== null}
-              hint={
-                editingService
-                  ? t('a2aServices.fields.idHintEdit')
-                  : t('a2aServices.fields.idHintAdd')
-              }
-            />
-            <TextField
-              label={t('a2aServices.fields.name')}
-              required
-              value={form.name}
-              onChange={(v) => setForm((f) => ({ ...f, name: v }))}
-              placeholder={t('a2aServices.fields.namePlaceholder')}
-            />
-            <TextField
-              label={t('a2aServices.fields.baseUrl')}
-              required
-              value={form.baseUrl}
-              onChange={(v) => setForm((f) => ({ ...f, baseUrl: v }))}
-              placeholder={t('a2aServices.fields.baseUrlPlaceholder')}
-              hint={t('a2aServices.fields.baseUrlHint')}
-            />
-            <TextField
-              label={t('a2aServices.fields.publicUrl')}
-              value={form.publicUrl}
-              onChange={(v) => setForm((f) => ({ ...f, publicUrl: v }))}
-              placeholder={t('a2aServices.fields.publicUrlPlaceholder')}
-              hint={t('a2aServices.fields.publicUrlHint')}
-            />
-            <SecretField
-              label={
-                editingService
-                  ? t('a2aServices.fields.apiKeyEdit')
-                  : t('a2aServices.fields.apiKeyAdd')
-              }
-              hasValue={editingService?.hasApiKey ?? false}
-              required={!editingService}
-              value={form.apiKey}
-              onChange={(v) => setForm((f) => ({ ...f, apiKey: v }))}
-            />
-            <TextField
-              label={t('a2aServices.fields.callerTokenUrl')}
-              value={form.callerTokenUrl}
-              onChange={(v) => setForm((f) => ({ ...f, callerTokenUrl: v }))}
-              placeholder={t('a2aServices.fields.callerTokenUrlPlaceholder')}
-              hint={t('a2aServices.fields.callerTokenUrlHint')}
-            />
-            <TextField
-              label={t('a2aServices.fields.callerClientId')}
-              value={form.callerClientId}
-              onChange={(v) => setForm((f) => ({ ...f, callerClientId: v }))}
-              placeholder={t('a2aServices.fields.callerClientIdPlaceholder')}
-            />
-            <SecretField
-              label={t('a2aServices.fields.callerClientSecret')}
-              hasValue={editingService?.hasCallerClientSecret ?? false}
-              value={form.callerClientSecret}
-              onChange={(v) => setForm((f) => ({ ...f, callerClientSecret: v }))}
-            />
-          </div>
-          <div className={formActionsClass}>
-            <Button variant="primary" onClick={() => void handleSave(editing)} disabled={saving}>
-              {saving
-                ? t('shared.saving')
-                : editingService
-                  ? t('a2aServices.saveService')
-                  : t('a2aServices.addService')}
-            </Button>
-            <Button variant="secondary" onClick={closeForm} disabled={saving}>
-              {t('shared.cancel')}
-            </Button>
-          </div>
-        </div>
-      ) : (
-        loaded && (
-          <Button variant="primary" onClick={startAdd}>
-            {t('a2aServices.addButton')}
-          </Button>
-        )
+      {loaded && (
+        <Button
+          variant="primary"
+          onClick={() => {
+            clearFeedback();
+            void navigate(`${listPath}/new`);
+          }}
+        >
+          {t('a2aServices.addButton')}
+        </Button>
       )}
       {dialog}
     </SettingsGroup>

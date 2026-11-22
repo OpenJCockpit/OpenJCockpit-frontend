@@ -1,3 +1,4 @@
+import { MemoryRouter } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { pseudoResources, withI18n } from '@openjcockpit/i18n/testing';
 import type { ReactElement } from 'react';
@@ -13,7 +14,9 @@ export function withQueryClient(ui: ReactElement, { pseudo = false } = {}) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
   const resources = mergeResources(apiResources, workflowResources);
   return withI18n(
-    <QueryClientProvider client={client}>{ui}</QueryClientProvider>,
+    <QueryClientProvider client={client}>
+      <MemoryRouter>{ui}</MemoryRouter>
+    </QueryClientProvider>,
     pseudo ? pseudoResources(resources) : resources,
   );
 }

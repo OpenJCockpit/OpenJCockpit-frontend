@@ -1,3 +1,4 @@
+import { MemoryRouter } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { withI18n } from '@openjcockpit/i18n/testing';
 import type { ReactElement } from 'react';
@@ -7,7 +8,9 @@ import { skillsHubResources } from './i18n';
 export function withQueryClient(ui: ReactElement) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
   return withI18n(
-    <QueryClientProvider client={client}>{ui}</QueryClientProvider>,
+    <QueryClientProvider client={client}>
+      <MemoryRouter>{ui}</MemoryRouter>
+    </QueryClientProvider>,
     skillsHubResources,
   );
 }

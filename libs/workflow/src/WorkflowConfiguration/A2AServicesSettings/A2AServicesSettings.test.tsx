@@ -266,7 +266,7 @@ describe('A2AServicesSettings', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('Id already exists');
   });
 
-  it('keeps a service when removal is declined and closes the edit form when it is removed', async () => {
+  it('keeps a service when removal is declined and removes it once confirmed', async () => {
     vi.mocked(workflowApi.deleteA2AService).mockResolvedValue(undefined);
     await renderSettings();
 
@@ -274,13 +274,27 @@ describe('A2AServicesSettings', () => {
     fireEvent.click(screen.getByTestId('confirm-action-cancel'));
     expect(screen.getByRole('button', { name: 'Delete' })).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
     fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
     await act(async () => {
       fireEvent.click(screen.getByTestId('confirm-action-confirm'));
     });
     expect(screen.getByText('A2A service "Acme gateway" deleted.')).toBeInTheDocument();
-    expect(screen.queryByRole('heading', { name: /Edit Acme/ })).not.toBeInTheDocument();
+  });
+
+  it('keeps the add and edit forms on their own screens, apart from the list', async () => {
+    await renderSettings();
+    expect(screen.queryByLabelText(/^Id/)).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: '+ Add A2A service' }));
+    expect(screen.getByRole('heading', { name: 'Add A2A service' })).toBeInTheDocument();
+    expect(screen.queryByRole('table')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(screen.getByRole('table')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+    expect(screen.queryByRole('table')).not.toBeInTheDocument();
+    expect(input(/^Id/).value).toBe('acme');
   });
 
   it('falls back to a generic message when removal fails with a non-Error', async () => {
