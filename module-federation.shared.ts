@@ -10,8 +10,8 @@ export const sharedModules = {
   // Module-level state a remote must not duplicate: the auth token and error translator (api),
   // the query cache and i18n instance (their React contexts), and the shared UI kit.
   '@tanstack/react-query': { singleton: true, requiredVersion: '5.108.4', strictVersion: true },
-  i18next: { singleton: true, requiredVersion: '26.5.11', strictVersion: true },
-  'react-i18next': { singleton: true, requiredVersion: '17.1.9', strictVersion: true },
+  i18next: { singleton: true, requiredVersion: '27.2.5', strictVersion: true },
+  'react-i18next': { singleton: true, requiredVersion: '18.0.3', strictVersion: true },
   '@openjcockpit/api': { singleton: true, requiredVersion: false },
   '@openjcockpit/i18n': { singleton: true, requiredVersion: false },
   '@openjcockpit/ui': { singleton: true, requiredVersion: false },
