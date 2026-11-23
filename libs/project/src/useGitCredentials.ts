@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { deleteGitCredentials, getGitCredentials, saveGitCredentials } from '@openjcockpit/api';
 import type { ProjectGitCredentialRequest } from '@openjcockpit/api';
 import { useTranslation } from '@openjcockpit/i18n';
@@ -15,6 +15,11 @@ const EMPTY_CRED_FORM: ProjectGitCredentialRequest = {
 /** The stored Git credentials of one project: loaded on mount, saved after a successful Git check by the backend. */
 export function useGitCredentials(projectId: string) {
   const { t } = useTranslation('project');
+  // Read through a ref so a new `t` (language or namespace change) does not re-run the credential load.
+  const tRef = useRef(t);
+  useEffect(() => {
+    tRef.current = t;
+  }, [t]);
   const updateProjects = useProjectCache();
   const [form, setForm] = useState<ProjectGitCredentialRequest>(EMPTY_CRED_FORM);
   // What the server holds: the loaded value, then the last saved one (the secret is write-only).
@@ -42,7 +47,7 @@ export function useGitCredentials(projectId: string) {
         setHasSecret(existing.hasSecret);
       })
       .catch(() => {
-        if (!cancelled) setError(t('settings.errors.credentialsLoadFailed'));
+        if (!cancelled) setError(tRef.current('settings.errors.credentialsLoadFailed'));
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -50,7 +55,7 @@ export function useGitCredentials(projectId: string) {
     return () => {
       cancelled = true;
     };
-  }, [projectId, t]);
+  }, [projectId]);
 
   async function save() {
     setSaving(true);
