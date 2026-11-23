@@ -1,9 +1,10 @@
-import { fireEvent, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as api from '@openjcockpit/api';
 import type { SkillsMarketplaceConnection } from '@openjcockpit/api';
 import { SkillsHubSettings } from './SkillsHubSettings';
 import { clickAsync, renderAsync } from '../testUtils';
+import { withQueryClient } from '../testQueryClient';
 
 vi.mock('@openjcockpit/api', async (importOriginal) =>
   (await import('../testUtils')).automockApiClients(await importOriginal()),
@@ -24,6 +25,12 @@ function connection(
     updatedAt: '2026-01-05T10:00:00Z',
     ...overrides,
   };
+}
+
+async function renderAt(route: string) {
+  await act(async () => {
+    render(withQueryClient(<SkillsHubSettings />, { route }));
+  });
 }
 
 async function open(connections: SkillsMarketplaceConnection[]) {
@@ -220,5 +227,20 @@ describe('SkillsHubSettings — flows', () => {
     await clickAsync(screen.getByTestId('confirm-action-confirm'));
     expect(screen.getByRole('alert')).toHaveTextContent('Failed to delete the marketplace.');
     expect(screen.getByText('Acme Skills')).toBeInTheDocument();
+  });
+
+  it('waits for the list before showing the edit form of a deep link', async () => {
+    vi.mocked(api.listSkillsMarketplaces).mockReturnValue(new Promise(() => {}));
+    await renderAt('/mp-1/edit');
+    expect(screen.getByText('Loading marketplaces…')).toBeInTheDocument();
+  });
+
+  it('sends a deep link to an unknown marketplace back to the list', async () => {
+    vi.mocked(api.listSkillsMarketplaces).mockResolvedValue([connection()]);
+    await renderAt('/nope/edit');
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'New marketplace' })).toBeInTheDocument(),
+    );
+    expect(screen.queryByLabelText('Name *')).not.toBeInTheDocument();
   });
 });

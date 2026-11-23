@@ -1,6 +1,6 @@
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   AppRegistryProvider,
   FORBIDDEN_PATH,
@@ -13,10 +13,18 @@ import {
   FakeHubSession,
   FakeHubSessionProvider,
 } from '@openjcockpit/hub-contract/testing';
+import { useSettingsLeaveGuard } from '@openjcockpit/hub-contract';
 import { SettingsForm } from '@openjcockpit/ui';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '../testUtils/render';
 import { SettingsLayout } from './SettingsLayout';
+
+const setupComplete = vi.hoisted(() => ({ value: false }));
+
+vi.mock('@openjcockpit/project', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@openjcockpit/project')>()),
+  useProjectSetupComplete: () => setupComplete.value,
+}));
 
 const PROJECT = { id: 'p1', name: 'Project one' } as HubProject;
 
@@ -294,6 +302,26 @@ describe('SettingsLayout', () => {
       expect(screen.queryByText('Unsaved changes')).not.toBeInTheDocument();
     });
 
+    it('proceeds at once when a clean section asks to leave', async () => {
+      function Leave() {
+        const guard = useSettingsLeaveGuard();
+        return <button onClick={() => guard.confirmLeave(() => (window.name = 'left'))}>go</button>;
+      }
+      const leave = () => <Leave />;
+      await renderSettings([app([section('clean', {}, leave)])], '/settings/clean');
+      fireEvent.click(await screen.findByRole('button', { name: 'go' }));
+      expect(window.name).toBe('left');
+      expect(screen.queryByText('Unsaved changes')).not.toBeInTheDocument();
+    });
+
+    it('lets the tab close while nothing is dirty', async () => {
+      await renderSettings([app([section('general')])], '/settings/general');
+      await screen.findByTestId('body-general');
+      const event = new Event('beforeunload', { cancelable: true });
+      window.dispatchEvent(event);
+      expect(event.defaultPrevented).toBe(false);
+    });
+
     it('warns before the tab closes only while dirty', async () => {
       await renderSettings(apps(), '/settings/dirty');
       await screen.findByTestId('body-dirty');
@@ -325,5 +353,38 @@ describe('SettingsLayout', () => {
     const body = () => <section id="advanced">advanced</section>;
     await renderSettings([app([section('general', {}, body)])], '/settings/general#advanced');
     await waitFor(() => expect(scroll).toHaveBeenCalled());
+  });
+
+  describe('once the project is fully set up', () => {
+    beforeEach(() => {
+      setupComplete.value = true;
+    });
+    afterEach(() => {
+      setupComplete.value = false;
+    });
+
+    it('drops the setup checklist from the nav', async () => {
+      const apps = [
+        app([
+          section('overview', { screen: 'project', order: 1 }),
+          section('general', { screen: 'project', order: 2 }),
+        ]),
+      ];
+      await renderSettings(apps, '/project-settings');
+      expect(await screen.findByTestId('body-general')).toBeInTheDocument();
+      expect(screen.queryByTestId('settings-nav-overview')).not.toBeInTheDocument();
+    });
+
+    it('redirects a bookmarked checklist link to the first remaining section', async () => {
+      const apps = [
+        app([
+          section('overview', { screen: 'project', order: 1 }),
+          section('general', { screen: 'project', order: 2 }),
+        ]),
+      ];
+      await renderSettings(apps, '/project-settings/overview');
+      expect(await screen.findByTestId('body-general')).toBeInTheDocument();
+      expect(screen.getByTestId('where')).toHaveTextContent('/project-settings/general');
+    });
   });
 });

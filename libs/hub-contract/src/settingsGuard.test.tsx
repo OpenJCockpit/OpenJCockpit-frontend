@@ -1,9 +1,13 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, renderHook, screen } from '@testing-library/react';
 import { MemoryRouter, useLocation } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 import type { AppDefinition } from './appDefinition';
 import { AppRegistryProvider } from './registry';
-import { SettingsLeaveGuardContext, type SettingsLeaveGuard } from './settingsGuard';
+import {
+  SettingsLeaveGuardContext,
+  useSettingsLeaveGuard,
+  type SettingsLeaveGuard,
+} from './settingsGuard';
 import { SettingsLink } from './settingsLink';
 import { FakeHubSession, FakeHubSessionProvider } from './testing';
 
@@ -77,5 +81,15 @@ describe('SettingsLink leave guard', () => {
     renderLink({ isDirty: () => true, confirmLeave });
     fireEvent.click(screen.getByTestId('link'), { ctrlKey: true });
     expect(confirmLeave).not.toHaveBeenCalled();
+  });
+});
+
+describe('default leave guard', () => {
+  it('reports clean and proceeds at once without a provider', () => {
+    const proceed = vi.fn();
+    const { result } = renderHook(() => useSettingsLeaveGuard());
+    expect(result.current.isDirty()).toBe(false);
+    result.current.confirmLeave(proceed);
+    expect(proceed).toHaveBeenCalledOnce();
   });
 });

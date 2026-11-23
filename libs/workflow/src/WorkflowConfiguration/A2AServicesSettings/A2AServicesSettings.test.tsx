@@ -330,4 +330,34 @@ describe('A2AServicesSettings', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
     expect(input(/^Base URL/).value).toBe('');
   });
+
+  describe('opened on an edit link', () => {
+    async function renderAt(route: string) {
+      await act(async () => {
+        render(withQueryClient(<A2AServicesSettings />, { route }));
+      });
+    }
+
+    it('waits for the list before showing the form', async () => {
+      vi.mocked(workflowApi.listA2AServices).mockReturnValue(new Promise(() => undefined));
+      await renderAt('/acme/edit');
+      expect(screen.getByText(/Loading A2A services/)).toBeInTheDocument();
+    });
+
+    it('sends a read-only service back to the list', async () => {
+      await renderAt('/litellm/edit');
+      await waitFor(() =>
+        expect(screen.getByRole('button', { name: '+ Add A2A service' })).toBeInTheDocument(),
+      );
+      expect(screen.queryByLabelText(/^Id/)).not.toBeInTheDocument();
+    });
+
+    it('sends an unknown service back to the list', async () => {
+      await renderAt('/nope/edit');
+      await waitFor(() =>
+        expect(screen.getByRole('button', { name: '+ Add A2A service' })).toBeInTheDocument(),
+      );
+      expect(screen.queryByLabelText(/^Id/)).not.toBeInTheDocument();
+    });
+  });
 });

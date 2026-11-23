@@ -9,4 +9,11 @@ describe('Skeleton', () => {
     expect(el).toHaveAttribute('aria-hidden', 'true');
     expect(el).toHaveStyle('--skeleton-width: 120px; --skeleton-height: 2em');
   });
+
+  it('falls back to the stylesheet size without width or height', () => {
+    render(<Skeleton />);
+    const el = screen.getByTestId('skeleton');
+    expect(el.style.getPropertyValue('--skeleton-width')).toBe('');
+    expect(el.style.getPropertyValue('--skeleton-height')).toBe('');
+  });
 });

@@ -186,7 +186,7 @@ export function OpaSettings() {
         />
         <SecretField
           label={t('config.authToken')}
-          hasValue={server?.hasAuthToken ?? false}
+          hasValue={server?.hasAuthToken === true}
           value={draft.authToken}
           onChange={(v) => update({ authToken: v })}
         />
