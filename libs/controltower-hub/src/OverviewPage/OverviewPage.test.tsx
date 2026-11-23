@@ -161,13 +161,15 @@ describe('pipeline', () => {
 describe('tab badges', () => {
   it('shows the drafts on Specifications and the ready specs on the queue', async () => {
     renderRoutes(controltowerRoutes);
-    expect(await screen.findByRole('link', { name: 'Specifications 1' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Dispatch queue 1' })).toBeInTheDocument();
+    expect(await screen.findByRole('link', { name: /^Specifications\s*1$/ })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /^Dispatch queue\s*1$/ })).toBeInTheDocument();
   });
 
   it('shows the interviews in progress on Discovery interviews', async () => {
     renderRoutes(controltowerRoutes);
-    expect(await screen.findByRole('link', { name: 'Discovery interviews 1' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('link', { name: /^Discovery interviews\s*1$/ }),
+    ).toBeInTheDocument();
   });
 
   it('hides a badge at zero and while loading', async () => {

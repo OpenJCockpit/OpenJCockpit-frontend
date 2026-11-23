@@ -62,7 +62,7 @@
     "eslint-plugin-jsx-a11y": "6.10.2",
     "eslint-plugin-react-hooks": "7.1.1",
     "globals": "17.14.0",
-    "jsdom": "25.0.1",
+    "jsdom": "31.0.1",
     "knip": "6.48.0",
     "nx": "24.0.6",
     "prettier": "3.10.1",
