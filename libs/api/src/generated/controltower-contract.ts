@@ -269,10 +269,8 @@ export interface SpecGenerationRequest {
 }
 
 export type ListProjectsParams = {
-/**
- * Only the repository linked to this OpenJCockpit project.
- */
-cockpitProjectId?: string;
+  /** Only the repository linked to this OpenJCockpit project. */
+  cockpitProjectId?: string;
 };
 
 

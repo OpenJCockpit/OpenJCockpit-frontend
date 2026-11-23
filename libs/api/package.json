@@ -17,6 +17,6 @@
     "includedScripts": []
   },
   "devDependencies": {
-    "orval": "8.45.0"
+    "orval": "8.49.0"
   }
 }
