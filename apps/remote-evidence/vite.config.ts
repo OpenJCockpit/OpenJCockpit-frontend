@@ -2,6 +2,7 @@ import { federation } from '@module-federation/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { sharedModules } from '../../module-federation.shared';
+import { nxReadySignal } from '@nx/vite/plugins/nx-ready-signal.plugin';
 
 const PORT = 4405;
 
@@ -16,6 +17,7 @@ export default defineConfig({
       dts: false,
       manifest: true,
     }),
+    nxReadySignal(),
   ],
   // Served by the dashboard under /remotes/<name>/ in the container build (see vite.config.base.ts).
   base: process.env.REMOTE_BASE ?? '/',

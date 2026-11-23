@@ -5,6 +5,7 @@ import { mergeConfig, type Plugin } from 'vite';
 import base from '../../vite.config.base';
 import { sharedModules } from '../../module-federation.shared';
 import { mockApi } from './mock/mockApi';
+import { nxReadySignal } from '@nx/vite/plugins/nx-ready-signal.plugin';
 
 // The plugin rewrites the entry for federation, which tests do not need and jsdom cannot run.
 const plugins = process.env.VITEST
@@ -48,6 +49,7 @@ export default mergeConfig(base, {
     ...plugins,
     ...(omitted.length > 0 ? [withoutRemotes(omitted)] : []),
     ...(mock ? [mockApi()] : []),
+    nxReadySignal(),
   ],
   resolve: mock
     ? {

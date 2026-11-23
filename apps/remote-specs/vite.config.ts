@@ -2,6 +2,7 @@ import { federation } from '@module-federation/vite';
 import { mergeConfig } from 'vite';
 import base from '../../vite.config.base';
 import { sharedModules } from '../../module-federation.shared';
+import { nxReadySignal } from '@nx/vite/plugins/nx-ready-signal.plugin';
 
 const PORT = 4404;
 
@@ -20,7 +21,7 @@ const plugins = process.env.VITEST
     ];
 
 export default mergeConfig(base, {
-  plugins,
+  plugins: [...plugins, nxReadySignal()],
   build: { target: 'esnext' },
   server: {
     port: PORT,

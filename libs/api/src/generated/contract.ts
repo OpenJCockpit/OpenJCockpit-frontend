@@ -4725,7 +4725,7 @@ export type StartWorkflow409 = {
 };
 
 export type CheckPreflightParams = {
-projectId: string;
+  projectId: string;
 };
 
 export type CheckPreflight200ErrorsItemCode = typeof CheckPreflight200ErrorsItemCode[keyof typeof CheckPreflight200ErrorsItemCode];
@@ -5429,13 +5429,13 @@ export type Start409 = {
 };
 
 export type DecisionLogsParams = {
-from?: string;
-to?: string;
-agentId?: string;
-subagentId?: string;
-skillId?: string;
-mcpToolName?: string;
-result?: string;
+  from?: string;
+  to?: string;
+  agentId?: string;
+  subagentId?: string;
+  skillId?: string;
+  mcpToolName?: string;
+  result?: string;
 };
 
 export type DecisionLogs200Item = {
@@ -5465,13 +5465,13 @@ export type DecisionLogs200Item = {
 };
 
 export type DecisionLogs2Params = {
-from?: string;
-to?: string;
-agentId?: string;
-subagentId?: string;
-skillId?: string;
-mcpToolName?: string;
-result?: string;
+  from?: string;
+  to?: string;
+  agentId?: string;
+  subagentId?: string;
+  skillId?: string;
+  mcpToolName?: string;
+  result?: string;
 };
 
 export type DecisionLogs2200Item = {
@@ -5501,15 +5501,13 @@ export type DecisionLogs2200Item = {
 };
 
 export type ListWorkflowExecutionsParams = {
-/**
- * @minimum 1
- * @maximum 100
- */
-limit?: number;
-/**
- * @minimum 0
- */
-offset?: number;
+  /**
+   * @minimum 1
+   * @maximum 100
+   */
+  limit?: number;
+  /** @minimum 0 */
+  offset?: number;
 };
 
 export type ListWorkflowExecutions200ItemsItem = {

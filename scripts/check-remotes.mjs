@@ -39,7 +39,8 @@ const SHARED_LIBS = [
   { name: '@openjcockpit/hub-contract', sentinel: 'needs a HubSessionContext provider' },
   { name: '@openjcockpit/i18n', sentinel: 'useLocale must be used inside <I18nProvider>' },
   // The api lib holds the auth token; a private copy would send remote requests unauthenticated.
-  { name: '@openjcockpit/api', sentinel: '"ApiError"' },
+  // Rolldown (Vite 8) emits this string as a template literal, so accept every quote style.
+  { name: '@openjcockpit/api', sentinel: ['"ApiError"', "'ApiError'", '`ApiError`'] },
 ];
 
 // Chunk files reachable from `entry` by relative imports, not following imports out of `stop` chunks.
@@ -92,9 +93,11 @@ for (const remote of remotes) {
     errors.push(`${remote}: no app-entry chunk`);
   }
   for (const lib of SHARED_LIBS) {
-    const chunks = files.filter((n) =>
-      readFileSync(join(assets, n), 'utf8').includes(lib.sentinel),
-    );
+    const sentinels = [lib.sentinel].flat();
+    const chunks = files.filter((n) => {
+      const source = readFileSync(join(assets, n), 'utf8');
+      return sentinels.some((s) => source.includes(s));
+    });
     if (chunks.length !== 1) {
       errors.push(`${remote}: expected one chunk defining ${lib.name}, found ${chunks.length}`);
     } else if (entry) {
