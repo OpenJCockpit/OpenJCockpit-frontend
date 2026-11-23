@@ -6,7 +6,7 @@
 export const sharedModules = {
   react: { singleton: true, requiredVersion: '^19', strictVersion: true },
   'react-dom': { singleton: true, requiredVersion: '^19', strictVersion: true },
-  'react-router': { singleton: true, requiredVersion: '^7', strictVersion: true },
+  'react-router': { singleton: true, requiredVersion: '^8', strictVersion: true },
   // Module-level state a remote must not duplicate: the auth token and error translator (api),
   // the query cache and i18n instance (their React contexts), and the shared UI kit.
   '@tanstack/react-query': { singleton: true, requiredVersion: '5.108.4', strictVersion: true },
