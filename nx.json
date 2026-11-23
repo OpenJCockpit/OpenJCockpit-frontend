@@ -13,7 +13,11 @@
         "typecheckTargetName": "typecheck"
       }
     },
-    { "plugin": "@nx/vitest", "options": { "testTargetName": "test" } }
+    { "plugin": "@nx/vitest", "options": { "testTargetName": "test" } },
+    {
+      "plugin": "@nx/js/typescript",
+      "options": { "typecheck": { "targetName": "typecheck" } }
+    }
   ],
   "cacheDirectory": ".nx/cache",
   "namedInputs": {
@@ -60,5 +64,6 @@
       "inputs": ["default"],
       "outputs": ["{projectRoot}/coverage"]
     }
-  }
+  },
+  "affected": { "legacy": true }
 }
