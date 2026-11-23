@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import type { CSSProperties, ElementType } from 'react';
+import type { ElementType } from 'react';
+import { cx } from '../../cx';
 import { usePrefersReducedMotion } from '../../motion/usePrefersReducedMotion';
+import styles from './DecipherText.module.scss';
 
 // Adapted from React Bits' `DecryptedText`
 // (https://github.com/DavidHDev/react-bits,
@@ -21,8 +23,8 @@ import { usePrefersReducedMotion } from '../../motion/usePrefersReducedMotion';
 // aria-hidden>{visible text}</span></Component>`) is preserved from
 // upstream — only the *content* fed to the first span, the trigger
 // mechanism, and the CSS used to stack/position the two spans are changed
-// (see the `reservedTextStyle`/`scrambleOverlayStyle` comments below for the
-// layout-reservation adaptation, #5 in ATTRIBUTION.md).
+// (see DecipherText.module.scss for the layout-reservation
+// adaptation, #5 in ATTRIBUTION.md).
 
 // Transcribed from Arwes' text package
 // (animateTextDecipher/animateTextDecipher.js, read directly out of the
@@ -32,39 +34,8 @@ import { usePrefersReducedMotion } from '../../motion/usePrefersReducedMotion';
 const CIPHERED_CHARACTERS =
   '    ----____abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
-// The final-text node reserves the box: it is a normal, in-flow grid item
-// (so its intrinsic size drives the shared grid cell's track sizing) that is
-// made invisible with `opacity: 0` rather than `clip`/`visibility: hidden` —
-// opacity does not remove a node from the accessibility tree, so this node
-// is still what screen readers announce (see adaptation #3 below), while
-// sighted users never see it. Because it is the *only* item that
-// participates in track sizing (the scrambling overlay is taken out of flow
-// with `position: absolute`), the reserved box tracks the final text's
-// metrics only — this holds regardless of whether the font is monospace and
-// regardless of whether the scrambling characters share the final text's
-// width (adaptation #5 below).
-const reservedTextStyle: CSSProperties = {
-  gridArea: '1 / 1',
-  opacity: 0,
-};
-
-// Stacked in the same grid cell as the reserved text via `grid-area: 1 / 1`,
-// but taken out of grid track sizing by `position: absolute` (an
-// absolutely-positioned grid item does not contribute to its track's
-// content-based sizing) and pinned to fill that cell with `inset: 0`. This
-// is what actually overlays the visible scrambling glyphs on top of the
-// space the final text reserved, with no dependency on glyph width parity.
-const scrambleOverlayStyle: CSSProperties = {
-  gridArea: '1 / 1',
-  position: 'absolute',
-  inset: 0,
-};
-
-const wrapperStyle: CSSProperties = {
-  display: 'inline-grid',
-  position: 'relative',
-  whiteSpace: 'pre-wrap',
-};
+// Layout (reserved final-text node + absolutely positioned overlay in one grid cell) lives in
+// DecipherText.module.scss; see the comments there and ATTRIBUTION.md #3 and #5.
 
 function randomOrder(length: number): number[] {
   const order = Array.from({ length }, (_, index) => index);
@@ -154,16 +125,13 @@ export function DecipherText({
   }, [text, durationMs, intervalMs, characters, reducedMotion]);
 
   return (
-    // eslint-disable-next-line no-restricted-syntax -- static layout styles; move into the CSS module in the CSS Modules PR
-    <Component className={className} style={wrapperStyle}>
+    <Component className={cx(styles.wrapper, className)}>
       {/* Screen readers always get the final string, never a partial
           scramble — this is the upstream defect fix (ATTRIBUTION.md #3).
           This node also reserves the layout box (ATTRIBUTION.md #5): it is
           the only in-flow, size-contributing item in the grid stack. */}
-      {/* eslint-disable-next-line no-restricted-syntax -- static layout styles; move into the CSS module in the CSS Modules PR */}
-      <span style={reservedTextStyle}>{text}</span>
-      {/* eslint-disable-next-line no-restricted-syntax -- static layout styles; move into the CSS module in the CSS Modules PR */}
-      <span aria-hidden="true" style={scrambleOverlayStyle}>
+      <span className={styles.reserved}>{text}</span>
+      <span aria-hidden="true" className={styles.overlay}>
         {displayText}
       </span>
     </Component>

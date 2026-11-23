@@ -12,7 +12,7 @@
     "format:check": "prettier --check . --ignore-path ../../.prettierignore"
   },
   "dependencies": {
-    "keycloak-js": "^26.0.0"
+    "keycloak-js": "26.2.4"
   },
   "nx": {
     "includedScripts": []

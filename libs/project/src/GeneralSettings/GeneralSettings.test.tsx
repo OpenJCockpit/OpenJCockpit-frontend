@@ -58,7 +58,10 @@ describe('GeneralSettings', () => {
   it('shows a save error', async () => {
     await renderHub(<GeneralSettings />, { selected: project() });
     vi.mocked(api.updateProject).mockRejectedValue(new Error('500'));
-    await clickAsync(await screen.findByText('Save'));
+    fireEvent.change(await screen.findByPlaceholderText('Project name'), {
+      target: { value: 'Beta 2' },
+    });
+    await clickAsync(screen.getByText('Save'));
     expect(await screen.findByRole('alert')).toHaveTextContent('Failed to save the project.');
     expect(screen.queryByText('Saved.')).not.toBeInTheDocument();
   });
@@ -74,5 +77,29 @@ describe('GeneralSettings', () => {
     expect(name).toHaveAttribute('aria-invalid', 'true');
     await waitFor(() => expect(document.activeElement).toBe(name));
     expect(api.updateProject).not.toHaveBeenCalled();
+  });
+
+  it('keeps Save and Reset disabled until something changes, and Reset restores the project', async () => {
+    await renderHub(<GeneralSettings />, { selected: project() });
+    const name = await screen.findByPlaceholderText('Project name');
+    expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Reset' })).toBeDisabled();
+
+    fireEvent.change(name, { target: { value: 'Other' } });
+    expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Reset' }));
+    expect(name).toHaveValue('Beta');
+    expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled();
+  });
+
+  it('clears the name error on Reset', async () => {
+    await renderHub(<GeneralSettings />, { selected: project() });
+    const name = await screen.findByPlaceholderText('Project name');
+    fireEvent.change(name, { target: { value: ' ' } });
+    await clickAsync(screen.getByText('Save'));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Name is required.');
+    fireEvent.click(screen.getByRole('button', { name: 'Reset' }));
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(name).not.toHaveAttribute('aria-invalid', 'true');
   });
 });

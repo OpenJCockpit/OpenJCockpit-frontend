@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState } from 'react';
 import { useSelectedProject } from '@openjcockpit/hub-contract';
 import { useTranslation } from '@openjcockpit/i18n';
 import {
@@ -9,6 +9,7 @@ import {
   type ControlTowerProjectRequest,
 } from '@openjcockpit/api';
 import { useGlobalMutation } from '../hooks';
+import { errorMessage } from '../errorMessage';
 import { useAction } from '../useAction';
 
 export type RepositoryFormValues = Required<Omit<ControlTowerProjectRequest, 'cockpitProjectId'>>;
@@ -44,33 +45,48 @@ const fromRepository = (repository: ControlTowerProject): RepositoryFormValues =
 export function useRepositoryForm(data: ControlTowerProject | null) {
   const { t } = useTranslation('controltower');
   const project = useSelectedProject();
-  const [form, setForm] = useState<RepositoryFormValues>(data ? fromRepository(data) : EMPTY);
+  const initial = data ? fromRepository(data) : EMPTY;
+  const [form, setForm] = useState<RepositoryFormValues>(initial);
+  // What the server holds: the loaded value, then the last saved one (the secret is write-only).
+  const [baseline, setBaseline] = useState<RepositoryFormValues>(initial);
+  const dirty = JSON.stringify(form) !== JSON.stringify(baseline);
+  const [saved, setSaved] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const check = useAction();
-  const submit = useAction();
   const save = useGlobalMutation((body: ControlTowerProjectRequest) =>
     data ? updateControlTowerProject(data.id, body) : createControlTowerProject(body),
   );
 
   const set = (patch: Partial<RepositoryFormValues>) => {
     setForm((f) => ({ ...f, ...patch }));
+    setSaved(null);
+    setSaveError(null);
     check.clear();
   };
 
-  function onSubmit(event: FormEvent) {
-    event.preventDefault();
-    return submit.run(
-      () =>
-        save.mutateAsync({
-          ...form,
-          gitUsername: form.gitUsername || undefined,
-          secret: form.secret || undefined,
-          cockpitProjectId: project.id,
-        }),
-      () => {
-        setForm((f) => ({ ...f, secret: '' }));
-        return data ? t('repository.saved') : t('repository.registered');
-      },
-    );
+  const reset = () => {
+    setForm(baseline);
+    setSaved(null);
+    setSaveError(null);
+    check.clear();
+  };
+
+  async function onSubmit() {
+    setSaved(null);
+    setSaveError(null);
+    try {
+      await save.mutateAsync({
+        ...form,
+        gitUsername: form.gitUsername || undefined,
+        secret: form.secret || undefined,
+        cockpitProjectId: project.id,
+      });
+      setForm((f) => ({ ...f, secret: '' }));
+      setBaseline({ ...form, secret: '' });
+      setSaved(data ? t('repository.saved') : t('repository.registered'));
+    } catch (e) {
+      setSaveError(errorMessage(e));
+    }
   }
 
   const onCheck = () =>
@@ -90,13 +106,15 @@ export function useRepositoryForm(data: ControlTowerProject | null) {
     form,
     set,
     onSubmit,
+    onReset: reset,
     onCheck,
+    dirty,
+    saved,
+    saveError,
     saving: save.isPending,
     checking: check.pending,
     checkFeedback: check.feedback,
-    submitFeedback: submit.feedback,
     clearCheckFeedback: check.clear,
-    clearSubmitFeedback: submit.clear,
     project,
   };
 }

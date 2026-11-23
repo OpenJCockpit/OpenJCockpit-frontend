@@ -149,7 +149,9 @@ describe.each(integrations)('$name', (i) => {
   it('shows an error and no success message when saving fails', async () => {
     i.save.mockRejectedValue(new Error('500'));
     await renderAsync(i.render());
-    await screen.findByPlaceholderText(i.edit[0]);
+    fireEvent.change(await screen.findByPlaceholderText(i.edit[0]), {
+      target: { value: i.edit[1] },
+    });
     await clickAsync(screen.getByRole('button', { name: i.saveLabel }));
 
     expect(await screen.findByText(i.saveError)).toBeInTheDocument();
@@ -159,7 +161,9 @@ describe.each(integrations)('$name', (i) => {
   it('clears a previous error when saving again', async () => {
     i.save.mockRejectedValueOnce(new Error('500')).mockResolvedValue(i.config);
     await renderAsync(i.render());
-    await screen.findByPlaceholderText(i.edit[0]);
+    fireEvent.change(await screen.findByPlaceholderText(i.edit[0]), {
+      target: { value: i.edit[1] },
+    });
     await clickAsync(screen.getByRole('button', { name: i.saveLabel }));
     await screen.findByText(i.saveError);
 

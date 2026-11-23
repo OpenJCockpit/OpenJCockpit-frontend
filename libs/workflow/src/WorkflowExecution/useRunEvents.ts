@@ -1,3 +1,4 @@
+import { logger } from '@openjcockpit/api';
 import { useEffect, useRef, useState } from 'react';
 import {
   getApprovalGateContext,
@@ -66,7 +67,7 @@ export function useRunEvents({
       setDecisionError(null);
       setApprovalLoadError(null);
     } catch (err) {
-      console.warn('Failed to load approval gate context', err);
+      logger.warn('Failed to load approval gate context', err);
       setApprovalLoadError('The approval request could not be loaded. Retrying…');
       // Forget the status so the next poll tick sees a fresh AWAITING_APPROVAL and retries.
       previousStatusRef.current = null;
@@ -168,7 +169,7 @@ export function useRunEvents({
     if (!workflow) return;
     const workflowId = workflow.id;
 
-    const interval = setInterval(async () => {
+    const tick = async () => {
       tickRef.current += 1;
       const isEvenTick = tickRef.current % 2 === 0;
 
@@ -194,7 +195,8 @@ export function useRunEvents({
           void refreshHistoryWindow(workflowId);
         }
       }
-    }, 1000);
+    };
+    const interval = setInterval(() => void tick(), 1000);
 
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- interval keyed only on the workflow identity; current selection is read via selectedRunIdRef

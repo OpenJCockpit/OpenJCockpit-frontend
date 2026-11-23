@@ -28,6 +28,8 @@ describe('policy settings section', () => {
     renderWith(<Section />, { permissions: ADMIN });
     const url = await screen.findByRole('textbox', { name: /Agent URL/ });
     expect(url).toHaveValue('http://opa:8181');
+    expect(screen.getByRole('button', { name: 'Save policy settings' })).toBeDisabled();
+    fireEvent.change(url, { target: { value: 'http://opa:9999' } });
     fireEvent.click(screen.getByRole('button', { name: 'Save policy settings' }));
     expect(await screen.findByText(/now checked by the policies/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole('checkbox', { name: /Enforce policies/ }));
@@ -44,9 +46,9 @@ describe('policy settings section', () => {
     ct.saveControlTowerPolicy.mockRejectedValue(new Error('Forbidden'));
     ct.testControlTowerPolicy.mockRejectedValue(new Error('Unreachable'));
     renderWith(<Section />, { permissions: ADMIN });
-    fireEvent.click(await screen.findByRole('button', { name: 'Save policy settings' }));
+    fireEvent.click(await screen.findByRole('checkbox', { name: /fail open/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save policy settings' }));
     expect(await screen.findByRole('alert')).toHaveTextContent('Forbidden');
-    fireEvent.click(screen.getByRole('checkbox', { name: /fail open/ }));
     fireEvent.click(screen.getByRole('button', { name: 'Test connection' }));
     expect(await screen.findByText('Unreachable')).toBeInTheDocument();
   });
@@ -75,7 +77,8 @@ describe('policy settings section', () => {
     ct.getControlTowerSettings.mockResolvedValue({ policy: POLICY, editable: false });
     renderWith(<Section />);
     expect(await screen.findByRole('textbox', { name: /Agent URL/ })).toBeDisabled();
-    expect(screen.queryByRole('button', { name: 'Save policy settings' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Save policy settings' })).toBeDisabled();
+    expect(screen.queryByRole('button', { name: 'Test connection' })).toBeNull();
   });
 
   it('retries a failed load', async () => {
@@ -85,5 +88,17 @@ describe('policy settings section', () => {
     renderWith(<Section />);
     fireEvent.click(await screen.findByRole('button', { name: 'Retry' }));
     expect(await screen.findByRole('textbox', { name: /Agent URL/ })).toBeInTheDocument();
+  });
+
+  it('Reset restores the stored policy and clears the saved notice', async () => {
+    const Section = await section();
+    ct.getControlTowerSettings.mockResolvedValue({ policy: POLICY, editable: true });
+    ct.saveControlTowerPolicy.mockResolvedValue(POLICY);
+    renderWith(<Section />, { permissions: ADMIN });
+    const url = await screen.findByRole('textbox', { name: /Agent URL/ });
+    fireEvent.change(url, { target: { value: 'http://opa:9999' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Reset' }));
+    expect(url).toHaveValue('http://opa:8181');
+    expect(screen.getByRole('button', { name: 'Save policy settings' })).toBeDisabled();
   });
 });

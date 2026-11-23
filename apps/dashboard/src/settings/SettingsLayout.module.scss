@@ -46,7 +46,9 @@
 }
 
 .link {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 8px 12px;
   border-radius: 6px;
   color: var(--nav-text);
@@ -59,6 +61,17 @@
   &:focus-visible {
     outline: 2px solid var(--cyan);
   }
+}
+
+.linkIcon {
+  flex: none;
+}
+
+.lockIcon {
+  display: inline-flex;
+  flex: none;
+  margin-left: auto;
+  color: var(--nav-faint);
 }
 
 .active {

@@ -60,8 +60,13 @@ import { CircleIcon as Circle } from '@phosphor-icons/react/dist/csr/Circle';
 import { CloudIcon as Cloud } from '@phosphor-icons/react/dist/csr/Cloud';
 import { BroadcastIcon as Broadcast } from '@phosphor-icons/react/dist/csr/Broadcast';
 import { MicrophoneIcon as Microphone } from '@phosphor-icons/react/dist/csr/Microphone';
+import { LockSimpleIcon as LockSimple } from '@phosphor-icons/react/dist/csr/LockSimple';
 import { PaperPlaneTiltIcon as PaperPlaneTilt } from '@phosphor-icons/react/dist/csr/PaperPlaneTilt';
 import { SpeakerHighIcon as SpeakerHigh } from '@phosphor-icons/react/dist/csr/SpeakerHigh';
+import { PencilSimpleIcon as PencilSimple } from '@phosphor-icons/react/dist/csr/PencilSimple';
+import { TrashIcon as Trash } from '@phosphor-icons/react/dist/csr/Trash';
+import { EyeIcon as Eye } from '@phosphor-icons/react/dist/csr/Eye';
+import { EyeSlashIcon as EyeSlash } from '@phosphor-icons/react/dist/csr/EyeSlash';
 import { cx } from '../cx';
 
 import styles from './Icon.module.scss';
@@ -133,8 +138,13 @@ const ICONS = {
   cloud: Cloud,
   controltower: Broadcast,
   microphone: Microphone,
+  lock: LockSimple,
   send: PaperPlaneTilt,
   speaker: SpeakerHigh,
+  edit: PencilSimple,
+  delete: Trash,
+  view: Eye,
+  hide: EyeSlash,
 } as const satisfies Record<string, ComponentType<PhosphorIconProps>>;
 
 export type IconName = keyof typeof ICONS;

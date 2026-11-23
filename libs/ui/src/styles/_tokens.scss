@@ -72,6 +72,8 @@
 
   // Elevation
   --shadow: 0 20px 80px rgba(0, 0, 0, 0.45);
+  // Opaque stop for mask-image gradients: only its alpha matters, never its colour.
+  --mask-opaque: #000;
   --z-raised: 1;
   --z-overlay: 40;
 }

@@ -1,8 +1,7 @@
-import type { CSSProperties } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from '@openjcockpit/i18n';
 import type { WidgetDefinition } from '@openjcockpit/hub-contract';
-import { Panel } from '@openjcockpit/ui';
+import { cssVars, Panel } from '@openjcockpit/ui';
 import { RemoteSlot } from '../federation/RemoteSlot';
 import type { LayoutItem } from './homeLayout';
 import gridStyles from './HomeGrid.module.scss';
@@ -23,8 +22,7 @@ export function WidgetCard({ widget, item }: Props) {
     <Panel
       as="article"
       className={gridStyles.tile}
-      // eslint-disable-next-line no-restricted-syntax -- runtime grid spans passed as custom properties
-      style={{ '--cols': item.cols, '--rows': item.rows } as CSSProperties}
+      {...cssVars({ '--cols': item.cols, '--rows': item.rows })}
       data-testid={`widget-${widget.id}`}
       data-cols={item.cols}
       data-rows={item.rows}

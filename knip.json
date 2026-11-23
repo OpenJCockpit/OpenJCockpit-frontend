@@ -1,0 +1,22 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "tags": ["-lintignore"],
+  "ignore": ["libs/api/src/generated/**"],
+  "workspaces": {
+    ".": {},
+    "apps/dashboard": {
+      "entry": [
+        "visual/vite.visual.config.ts",
+        "visual/keycloak.stub.ts",
+        "visual/fixtures.mjs",
+        "visual/fixtures.d.mts"
+      ]
+    },
+    "apps/remote-*": {
+      "entry": ["src/app-entry.ts"]
+    },
+    "e2e": {
+      "entry": ["specs/**/*.ts"]
+    }
+  }
+}

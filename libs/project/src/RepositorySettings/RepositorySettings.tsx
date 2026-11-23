@@ -1,14 +1,14 @@
 import { useSelectedProject } from '@openjcockpit/hub-contract';
 import { useTranslation } from '@openjcockpit/i18n';
+import { useSettingsFormLabels } from '@openjcockpit/settings';
 import {
   Button,
   Icon,
+  SettingsForm,
+  SettingsGroup,
   StatusMessage,
-  fieldErrorClass,
   fieldHintClass,
   formActionsClass,
-  formGridClass,
-  formTitleClass,
   useConfirmDialog,
 } from '@openjcockpit/ui';
 import { CredentialsForm } from '../forms/CredentialsForm';
@@ -28,43 +28,35 @@ export function RepositorySettings() {
   const gitCheck = useGitCheck(project.id);
   const credentials = useGitCredentials(project.id);
   const { confirm, dialog } = useConfirmDialog();
+  const labels = useSettingsFormLabels();
 
   return (
     <div className={styles.stack}>
-      <form
-        onSubmit={(event) => {
-          event.preventDefault();
-          void details.save();
-        }}
-      >
-        <div className={formGridClass}>
+      <SettingsGroup>
+        <SettingsForm
+          {...labels}
+          savingLabel={t('form.saving')}
+          savedLabel={t('general.saved')}
+          dirty={details.dirty}
+          saving={details.saving}
+          saved={details.saved}
+          error={details.error}
+          onSubmit={() => void details.save()}
+          onReset={details.reset}
+        >
           <RepositoryFields form={details.form} onChange={details.setForm} />
-        </div>
-        {details.error && (
-          <p role="alert" className={fieldErrorClass}>
-            {details.error}
-          </p>
-        )}
-        {details.saved && <StatusMessage>{t('general.saved')}</StatusMessage>}
-        <div className={formActionsClass}>
-          <Button variant="primary" type="submit" disabled={details.saving}>
-            {details.saving ? t('form.saving') : t('form.save')}
-          </Button>
-        </div>
-      </form>
+        </SettingsForm>
+      </SettingsGroup>
 
-      <section aria-labelledby="repository-status-title">
-        <h2 id="repository-status-title" className={formTitleClass}>
-          {t('repository.statusTitle')}
-        </h2>
+      <SettingsGroup title={t('repository.statusTitle')}>
         <GitStatusBadge status={project.gitStatus} />
         {project.gitStatusMessage && (
           <span className={fieldHintClass}>{project.gitStatusMessage}</span>
         )}
         {gitCheck.error && (
-          <p role="alert" className={fieldErrorClass}>
+          <StatusMessage variant="error" role="alert">
             {gitCheck.error}
-          </p>
+          </StatusMessage>
         )}
         <div className={formActionsClass}>
           <Button
@@ -75,12 +67,12 @@ export function RepositorySettings() {
             {gitCheck.checking && <Icon name="spinner" />} {t('list.gitCheck')}
           </Button>
         </div>
-      </section>
+      </SettingsGroup>
 
       {credentials.error && (
-        <p role="alert" className={fieldErrorClass}>
+        <StatusMessage variant="error" role="alert">
           {credentials.error}
-        </p>
+        </StatusMessage>
       )}
       <CredentialsForm
         form={credentials.form}

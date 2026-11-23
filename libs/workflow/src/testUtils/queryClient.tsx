@@ -1,3 +1,4 @@
+import { MemoryRouter } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { pseudoResources, withI18n } from '@openjcockpit/i18n/testing';
 import type { ReactElement } from 'react';
@@ -9,11 +10,13 @@ import { workflowResources } from '../i18n';
  * Wraps `ui` in English i18n (pseudo-localized with `pseudo`) and a fresh query cache with retries
  * off, so a mocked rejection surfaces at once.
  */
-export function withQueryClient(ui: ReactElement, { pseudo = false } = {}) {
+export function withQueryClient(ui: ReactElement, { pseudo = false, route = '/' } = {}) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
   const resources = mergeResources(apiResources, workflowResources);
   return withI18n(
-    <QueryClientProvider client={client}>{ui}</QueryClientProvider>,
+    <QueryClientProvider client={client}>
+      <MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>
+    </QueryClientProvider>,
     pseudo ? pseudoResources(resources) : resources,
   );
 }

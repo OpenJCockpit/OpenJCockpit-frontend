@@ -80,11 +80,28 @@
     },
     "sampleData": "Sample data",
     "statusBar": {
-      "environment": "Environment: {{value}}",
-      "region": "Region: {{value}}",
-      "classification": "Classification: {{value}}",
-      "embabelVersion": "Embabel version: {{value}}",
-      "springAiControlVersion": "Spring AI Control Service: {{value}}",
+      "queue": "Queue: {{state}}",
+      "queueLink": "Open the spec queue",
+      "queueEmpty": "Nothing queued",
+      "queueUnavailable": "Queue unavailable",
+      "queueState": {
+        "ACTIVE": "active",
+        "PAUSED": "paused",
+        "HALTED": "halted"
+      },
+      "count": {
+        "running": "{{count}} running",
+        "queued": "{{count}} queued",
+        "awaitingMerge": "{{count}} awaiting merge",
+        "failed": "{{count}} failed"
+      },
+      "gitLink": "Open the project's Git settings",
+      "git": {
+        "ACCESSIBLE": "Git connected",
+        "NOT_ACCESSIBLE": "Git not reachable",
+        "CHECK_FAILED": "Git check failed",
+        "UNKNOWN": "Git not checked"
+      },
       "copyright": "© 2026 Metafactory B.V."
     },
     "workspace": {
@@ -207,6 +224,14 @@
       "empty": "There are no settings to show.",
       "selectProject": "Select a project to configure this section.",
       "chooseProject": "Select project",
+      "projectRequired": "Project required",
+      "unsaved": {
+        "title": "Unsaved changes",
+        "message": "You have unsaved changes in this section. If you leave, they are lost.",
+        "leave": "Leave without saving",
+        "stay": "Keep editing",
+        "leaving": "Leaving…"
+      },
       "groups": {
         "general": "General",
         "project": "Project",
@@ -264,7 +289,7 @@
           "description": "Git URL, branch, connection status and Git credentials of the selected project."
         },
         "overview": {
-          "title": "Overview",
+          "title": "Project setup checklist",
           "description": "Setup checklist of the selected project."
         }
       }

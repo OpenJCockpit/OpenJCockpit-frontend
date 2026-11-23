@@ -110,6 +110,7 @@ describe('WorkflowConfiguration — OPA section', () => {
     });
     await screen.findByText('Configured but unreachable');
 
+    fireEvent.change(screen.getByLabelText('Base URL'), { target: { value: 'http://edited:1' } });
     await act(async () => {
       screen.getByText('Save OPA configuration').click();
     });
@@ -117,7 +118,7 @@ describe('WorkflowConfiguration — OPA section', () => {
     await waitFor(() => {
       expect(workflowApi.saveOpaConfig).toHaveBeenCalledWith(
         expect.objectContaining({
-          baseUrl: 'http://localhost:8181',
+          baseUrl: 'http://edited:1',
           failMode: 'FAIL_CLOSED',
         }),
       );
@@ -133,6 +134,7 @@ describe('WorkflowConfiguration — OPA section', () => {
     });
     await screen.findByText('Not configured');
 
+    fireEvent.change(screen.getByLabelText('Base URL'), { target: { value: 'http://edited:1' } });
     await act(async () => {
       screen.getByText('Save OPA configuration').click();
     });

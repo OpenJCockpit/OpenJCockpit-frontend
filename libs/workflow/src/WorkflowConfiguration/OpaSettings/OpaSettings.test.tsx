@@ -107,6 +107,7 @@ describe('OpaSettings', () => {
   it('re-checks health after saving', async () => {
     await openSettings();
     const before = vi.mocked(api.checkOpaHealth).mock.calls.length;
+    fireEvent.change(screen.getByLabelText('Environment label'), { target: { value: 'stg' } });
     await clickAsync(screen.getByRole('button', { name: 'Save OPA configuration' }));
     await screen.findByText('OPA configuration saved.');
     expect(vi.mocked(api.checkOpaHealth).mock.calls.length).toBeGreaterThan(before);

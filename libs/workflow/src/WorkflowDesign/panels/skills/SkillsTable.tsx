@@ -1,6 +1,6 @@
 import type { ExternalSkill, SkillSpec } from '@openjcockpit/api';
 import { useTranslation } from '@openjcockpit/i18n';
-import { Actions, DataTable, fieldHintClass, Button } from '@openjcockpit/ui';
+import { Actions, DataTable, fieldHintClass, IconButton, HiddenHeader } from '@openjcockpit/ui';
 
 type LocalSkillRow = { key: string; readOnly: false; skill: SkillSpec };
 type ExternalSkillRow = { key: string; readOnly: true; skill: ExternalSkill };
@@ -22,7 +22,9 @@ export function SkillsTable({ rows, onEdit, onDelete }: SkillsTableProps) {
           <th>{t('skills.marketplace')}</th>
           <th>{t('skills.input')}</th>
           <th>{t('skills.output')}</th>
-          <th></th>
+          <th>
+            <HiddenHeader>{t('shared.actions')}</HiddenHeader>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -47,12 +49,17 @@ export function SkillsTable({ rows, onEdit, onDelete }: SkillsTableProps) {
               <td>{row.skill.outputContract}</td>
               <td>
                 <Actions>
-                  <Button variant="secondary" onClick={() => onEdit(row.skill)}>
-                    {t('shared.edit')}
-                  </Button>
-                  <Button variant="danger" onClick={() => onDelete(row.skill.name)}>
-                    {t('shared.delete')}
-                  </Button>
+                  <IconButton
+                    icon="edit"
+                    label={t('shared.edit')}
+                    onClick={() => onEdit(row.skill)}
+                  />
+                  <IconButton
+                    icon="delete"
+                    variant="danger"
+                    label={t('shared.delete')}
+                    onClick={() => onDelete(row.skill.name)}
+                  />
                 </Actions>
               </td>
             </tr>

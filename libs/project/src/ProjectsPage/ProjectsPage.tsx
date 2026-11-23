@@ -2,9 +2,9 @@ import { useLocation, useNavigate } from 'react-router';
 import {
   DASHBOARD_PATH,
   PROJECTS_PATH,
-  PROJECT_SETTINGS_PATH,
   useHubHeader,
   useHubProject,
+  useSettingsLink,
 } from '@openjcockpit/hub-contract';
 import { useTranslation } from '@openjcockpit/i18n';
 import {
@@ -37,15 +37,16 @@ export function ProjectsPage() {
   const { selected, select } = useHubProject();
   const { isAdmin, projects, loaded, error, toggleActive } = useProjectList();
   const { confirm, dialog } = useConfirmDialog();
+  const generalSettings = useSettingsLink('general');
 
   function handleSelect(project: Project) {
     select(project.id);
     void navigate(redirectFrom(location.state) ?? DASHBOARD_PATH, { replace: true });
   }
 
-  function handleSettings(project: Project) {
+  function handleSettings(project: Project, path: string) {
     select(project.id);
-    void navigate(`${PROJECT_SETTINGS_PATH}/general`);
+    void navigate(path);
   }
 
   function handleToggle(project: Project) {
@@ -96,7 +97,11 @@ export function ProjectsPage() {
                 projects={projects}
                 selectedId={selected?.id ?? null}
                 onSelect={handleSelect}
-                onSettings={isAdmin ? handleSettings : undefined}
+                onSettings={
+                  isAdmin && generalSettings
+                    ? (project) => handleSettings(project, generalSettings)
+                    : undefined
+                }
                 onToggleActive={isAdmin ? handleToggle : undefined}
               />
             )}

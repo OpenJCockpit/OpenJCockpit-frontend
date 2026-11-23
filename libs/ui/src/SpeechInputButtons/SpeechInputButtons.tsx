@@ -14,9 +14,11 @@ interface Recognition {
 }
 type RecognitionConstructor = new () => Recognition;
 
-interface SpeechWindow {
-  SpeechRecognition?: RecognitionConstructor;
-  webkitSpeechRecognition?: RecognitionConstructor;
+declare global {
+  interface Window {
+    SpeechRecognition?: RecognitionConstructor;
+    webkitSpeechRecognition?: RecognitionConstructor;
+  }
 }
 
 export interface SpeechInputLabels {
@@ -77,8 +79,7 @@ export function SpeechInputButtons({ text, onTranscript, labels }: Props) {
       active.current.stop?.();
       return;
     }
-    const speechWindow = window as unknown as SpeechWindow;
-    const Constructor = speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition;
+    const Constructor = window.SpeechRecognition ?? window.webkitSpeechRecognition;
     if (!Constructor) {
       setUnsupported(true);
       return;

@@ -4,49 +4,50 @@ import { useTranslation } from '@openjcockpit/i18n';
 import {
   FORBIDDEN_PATH,
   useAppRegistry,
+  settingsPath,
+  useGuardedNavigation,
   useHubHeader,
+  useHubProject,
+  type SettingsGroupKey,
   type SettingsScreen,
   type SettingsSectionDefinition,
 } from '@openjcockpit/hub-contract';
 import {
   AppShell,
   Eyebrow,
+  Icon,
   Panel,
   StatusMessage,
   cx,
+  isIconName,
   pageClass,
   pageHeaderClass,
 } from '@openjcockpit/ui';
+import { useProjectSetupComplete } from '@openjcockpit/project';
 import { NotFound } from '../routeViews/NotFound';
-import { ROUTES } from '../routes';
 import { SectionFrame } from './SectionFrame';
+import { SettingsDirtyProvider } from './SettingsDirtyProvider';
 import styles from './SettingsLayout.module.scss';
 
-const DEFAULT_GROUP = 'settings.groups.other';
+/** Id of the project setup checklist section (contributed by the projects app). */
+const SETUP_CHECKLIST_ID = 'overview';
+
+const DEFAULT_GROUP: SettingsGroupKey = 'settings.groups.other';
 
 export interface SettingsGroup {
-  key: string;
+  key: SettingsGroupKey;
   sections: SettingsSectionDefinition[];
 }
 
 /** Groups by `groupKey`, ordered by the lowest `order` of their sections; sections are pre-sorted. */
 export function groupSections(sections: readonly SettingsSectionDefinition[]): SettingsGroup[] {
-  const groups = new Map<string, SettingsSectionDefinition[]>();
+  const groups = new Map<SettingsGroupKey, SettingsSectionDefinition[]>();
   for (const section of sections) {
     const key = section.groupKey ?? DEFAULT_GROUP;
     groups.set(key, [...(groups.get(key) ?? []), section]);
   }
   return [...groups].map(([key, list]) => ({ key, sections: list }));
 }
-
-/** Where each screen is mounted. */
-export const SCREEN_BASE: Record<SettingsScreen, string> = {
-  settings: ROUTES.settings,
-  project: ROUTES.projectSettings,
-};
-
-export const settingsPath = (section: Pick<SettingsSectionDefinition, 'id' | 'screen'>) =>
-  `${SCREEN_BASE[section.screen ?? 'settings']}/${section.id}`;
 
 /** The sections one screen shows: `visibleSettings` already holds only what the session may open. */
 export function useScreenSections(screen: SettingsScreen) {
@@ -73,6 +74,8 @@ function SettingsNav({
   const { t } = useTranslation('dashboard');
   const text = useRemoteText();
   const groups = useMemo(() => groupSections(sections), [sections]);
+  const guarded = useGuardedNavigation();
+  const { selected } = useHubProject();
   return (
     <Panel
       as="nav"
@@ -83,16 +86,34 @@ function SettingsNav({
       {groups.map((group) => (
         <div key={group.key} className={styles.group}>
           <p className={styles.groupTitle}>{text(group.key)}</p>
-          {group.sections.map((section) => (
-            <NavLink
-              key={section.id}
-              to={settingsPath(section)}
-              className={({ isActive }) => cx(styles.link, isActive && styles.active)}
-              data-testid={`settings-nav-${section.id}`}
-            >
-              {text(section.titleKey)}
-            </NavLink>
-          ))}
+          {group.sections.map((section) => {
+            const to = settingsPath(section);
+            const locked = section.requiresProject && !selected;
+            return (
+              <NavLink
+                key={section.id}
+                to={to}
+                onClick={(event) => guarded(event, to)}
+                className={({ isActive }) => cx(styles.link, isActive && styles.active)}
+                data-testid={`settings-nav-${section.id}`}
+              >
+                {section.icon && isIconName(section.icon) ? (
+                  <Icon name={section.icon} className={styles.linkIcon} />
+                ) : null}
+                {text(section.titleKey)}
+                {locked ? (
+                  <span
+                    className={styles.lockIcon}
+                    role="img"
+                    aria-label={t('settings.projectRequired')}
+                    title={t('settings.projectRequired')}
+                  >
+                    <Icon name="lock" />
+                  </span>
+                ) : null}
+              </NavLink>
+            );
+          })}
         </div>
       ))}
     </Panel>
@@ -104,7 +125,16 @@ export function SettingsLayout({ screen = 'settings' }: { screen?: SettingsScree
   const { t } = useTranslation('dashboard');
   const header = useHubHeader();
   const { allApps } = useAppRegistry();
-  const visibleSettings = useScreenSections(screen);
+  const screenSections = useScreenSections(screen);
+  const setupComplete = useProjectSetupComplete();
+  // The setup checklist has nothing left to show once the project is fully set up.
+  const visibleSettings = useMemo(
+    () =>
+      setupComplete
+        ? screenSections.filter((section) => section.id !== SETUP_CHECKLIST_ID)
+        : screenSections,
+    [screenSections, setupComplete],
+  );
   const first = visibleSettings[0];
 
   const known = useMemo(
@@ -131,22 +161,30 @@ export function SettingsLayout({ screen = 'settings' }: { screen?: SettingsScree
           </Eyebrow>
         </div>
         {first ? (
-          <div className={styles.layout}>
-            <SettingsNav sections={visibleSettings} screen={screen} />
-            <div className={styles.content}>
-              <Routes>
-                <Route index element={<Navigate to={settingsPath(first)} replace />} />
-                {visibleSettings.map((section) => (
-                  <Route
-                    key={section.id}
-                    path={section.id}
-                    element={<SectionFrame section={section} />}
-                  />
-                ))}
-                <Route path=":sectionId" element={<UnavailableSection known={known} />} />
-              </Routes>
+          <SettingsDirtyProvider>
+            <div className={styles.layout}>
+              <SettingsNav sections={visibleSettings} screen={screen} />
+              <div className={styles.content}>
+                <Routes>
+                  <Route index element={<Navigate to={settingsPath(first)} replace />} />
+                  {visibleSettings.map((section) => (
+                    <Route
+                      key={section.id}
+                      path={`${section.id}/*`}
+                      element={<SectionFrame section={section} />}
+                    />
+                  ))}
+                  {setupComplete ? (
+                    <Route
+                      path={SETUP_CHECKLIST_ID}
+                      element={<Navigate to=".." replace relative="path" />}
+                    />
+                  ) : null}
+                  <Route path=":sectionId" element={<UnavailableSection known={known} />} />
+                </Routes>
+              </div>
             </div>
-          </div>
+          </SettingsDirtyProvider>
         ) : (
           <StatusMessage data-testid="settings-empty">{t('settings.empty')}</StatusMessage>
         )}

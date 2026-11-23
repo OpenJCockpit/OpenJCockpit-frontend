@@ -1,0 +1,15 @@
+// Pieces of the Control Tower settings sections that sit inside the shared `SettingsForm` grid.
+:where(.fullRow) {
+  grid-column: 1 / -1;
+}
+
+:where(.list) {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  & b {
+    font-weight: 600;
+  }
+}

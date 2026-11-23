@@ -53,7 +53,6 @@
       "description": "Description",
       "descriptionPlaceholder": "Short description",
       "newProjectCheckbox": "New project (repository does not exist yet — skip Git check)",
-      "save": "Save",
       "saving": "⟳ Saving…",
       "cancel": "Cancel"
     },
@@ -204,7 +203,7 @@
       }
     },
     "overview": {
-      "title": "Setup checklist",
+      "title": "Project setup checklist",
       "summary": "{{done}} of {{total}} steps done.",
       "complete": "This project is fully set up.",
       "items": {

@@ -78,7 +78,7 @@ describe('ProjectsPage: status', () => {
   it('deactivates an active project after confirmation', async () => {
     await renderAdmin();
     vi.mocked(api.deactivateProject).mockResolvedValue(undefined);
-    await clickAsync(within(row('Beta')).getByText('Deactivate'));
+    await clickAsync(within(row('Beta')).getByLabelText('Deactivate'));
     await clickAsync(screen.getByTestId('confirm-action-confirm'));
     expect(api.deactivateProject).toHaveBeenCalledWith('p1');
     expect(await within(row('Beta')).findByText('Inactive')).toBeInTheDocument();
@@ -87,7 +87,7 @@ describe('ProjectsPage: status', () => {
   it('activates an inactive project without asking', async () => {
     await renderAdmin([project({ active: 0 })]);
     vi.mocked(api.activateProject).mockResolvedValue(undefined);
-    await clickAsync(within(row('Beta')).getByText('Activate'));
+    await clickAsync(within(row('Beta')).getByLabelText('Activate'));
     expect(api.activateProject).toHaveBeenCalledWith('p1');
     expect(await within(row('Beta')).findByText('Active')).toBeInTheDocument();
   });
@@ -95,7 +95,7 @@ describe('ProjectsPage: status', () => {
   it('shows an error when the status change fails and leaves the project unchanged', async () => {
     await renderAdmin();
     vi.mocked(api.deactivateProject).mockRejectedValue(new Error('x'));
-    await clickAsync(within(row('Beta')).getByText('Deactivate'));
+    await clickAsync(within(row('Beta')).getByLabelText('Deactivate'));
     await clickAsync(screen.getByTestId('confirm-action-confirm'));
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'Failed to change the project status.',
@@ -108,12 +108,12 @@ describe('ProjectsPage: status', () => {
     vi.mocked(api.deactivateProject).mockResolvedValue(undefined);
     vi.mocked(api.activateProject).mockResolvedValue(undefined);
 
-    await clickAsync(within(row('Beta')).getByText('Deactivate'));
+    await clickAsync(within(row('Beta')).getByLabelText('Deactivate'));
     await clickAsync(screen.getByTestId('confirm-action-confirm'));
     expect(await within(row('Beta')).findByText('Inactive')).toBeInTheDocument();
     expect(within(row('Gamma')).getByText('Inactive')).toBeInTheDocument();
 
-    await clickAsync(within(row('Gamma')).getByText('Activate'));
+    await clickAsync(within(row('Gamma')).getByLabelText('Activate'));
     expect(await within(row('Gamma')).findByText('Active')).toBeInTheDocument();
     expect(within(row('Beta')).getByText('Inactive')).toBeInTheDocument();
   });
@@ -152,9 +152,14 @@ describe('ProjectsPage: select and settings', () => {
 
   it('selects the project and opens its settings', async () => {
     const { onSelect } = await renderAdmin();
-    await clickAsync(within(row('Beta')).getByText('Settings'));
+    await clickAsync(within(row('Beta')).getByLabelText('Settings'));
     expect(onSelect).toHaveBeenCalledWith('p1');
     expect(screen.getByTestId('location')).toHaveTextContent('/project-settings/general');
+  });
+
+  it('offers no Settings button when the general section is not available', async () => {
+    await renderAdmin([project()], { settingsSections: [] });
+    expect(within(row('Beta')).queryByLabelText('Settings')).not.toBeInTheDocument();
   });
 
   it('marks the selected project and shows its git message', async () => {
@@ -186,8 +191,8 @@ describe('ProjectsPage: without admin rights', () => {
     expect(row('Beta')).toBeInTheDocument();
     expect(row('Gamma')).toBeInTheDocument();
     expect(screen.queryByText('+ New project')).not.toBeInTheDocument();
-    expect(screen.queryByText('Settings')).not.toBeInTheDocument();
-    expect(screen.queryByText('Deactivate')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Settings')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Deactivate')).not.toBeInTheDocument();
     expect(within(row('Beta')).getByText('Select')).toBeEnabled();
   });
 });

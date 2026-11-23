@@ -1,8 +1,9 @@
+import { logger } from '@openjcockpit/api';
 import { Fragment, useState } from 'react';
 import { getProviderAgentCard } from '@openjcockpit/api';
 import type { A2AAgentCard, ProviderCatalogAgent } from '@openjcockpit/api';
 import { useTranslation } from '@openjcockpit/i18n';
-import { StatusMessage, Button, DataTable, Icon } from '@openjcockpit/ui';
+import { StatusMessage, DataTable, HiddenHeader, Icon, IconButton } from '@openjcockpit/ui';
 import WorkflowDesignStyles from '../../WorkflowDesign.module.scss';
 
 interface ProviderAgentsTableProps {
@@ -27,7 +28,7 @@ export function ProviderAgentsTable({ provider, agents }: ProviderAgentsTablePro
     getProviderAgentCard(provider.type, agent.name)
       .then((card) => setCards((prev) => ({ ...prev, [agent.name]: { card } })))
       .catch((err: unknown) => {
-        console.warn(err);
+        logger.warn(err);
         setCards((prev) => ({
           ...prev,
           [agent.name]: { error: t('providerAgents.cardFailed', { name: provider.name }) },
@@ -44,7 +45,9 @@ export function ProviderAgentsTable({ provider, agents }: ProviderAgentsTablePro
           <th>{t('shared.version')}</th>
           <th>{t('providerAgents.a2a')}</th>
           <th>{t('providerAgents.endpoint')}</th>
-          <th></th>
+          <th>
+            <HiddenHeader>{t('shared.actions')}</HiddenHeader>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -65,13 +68,14 @@ export function ProviderAgentsTable({ provider, agents }: ProviderAgentsTablePro
                 )}
               </td>
               <td>
-                <Button
-                  variant="secondary"
+                <IconButton
+                  icon={open === agent.name ? 'hide' : 'view'}
+                  label={
+                    open === agent.name ? t('providerAgents.hide') : t('providerAgents.details')
+                  }
                   aria-expanded={open === agent.name}
                   onClick={() => toggle(agent)}
-                >
-                  {open === agent.name ? t('providerAgents.hide') : t('providerAgents.details')}
-                </Button>
+                />
               </td>
             </tr>
             {open === agent.name && (

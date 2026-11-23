@@ -1,4 +1,4 @@
-import type { ElementType, HTMLAttributes, TableHTMLAttributes } from 'react';
+import type { ElementType, HTMLAttributes, ReactNode, TableHTMLAttributes } from 'react';
 import { cx } from '../cx';
 import styles from './DataTable.module.scss';
 
@@ -42,4 +42,9 @@ export function Actions({ as: Tag = 'div', className, children, ...rest }: Actio
       {children}
     </Tag>
   );
+}
+
+/** Header text for an icon-only column: hidden from sight, still announced by screen readers. */
+export function HiddenHeader({ children }: { children: ReactNode }) {
+  return <span className={styles.visuallyHidden}>{children}</span>;
 }

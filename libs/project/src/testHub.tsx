@@ -8,6 +8,7 @@ import {
   FakeHubProjectProvider,
   FakeHubSession,
   FakeHubSessionProvider,
+  FakeSettingsRegistry,
 } from '@openjcockpit/hub-contract/testing';
 import type { QueryClient } from '@tanstack/react-query';
 import { createTestQueryClient, withQueryClient } from './testQueryClient';
@@ -45,6 +46,8 @@ interface HubOptions {
   onSelect?: (id: string) => void;
   /** Router location state, e.g. where `RequireProject` came from. */
   state?: unknown;
+  /** Settings sections the registry offers; the general project section by default. */
+  settingsSections?: { id: string; screen?: 'settings' | 'project' }[];
   /** A query cache the test has seeded; a fresh one by default. */
   client?: QueryClient;
 }
@@ -57,6 +60,7 @@ export async function renderHub(ui: ReactElement, options: HubOptions = {}) {
     selected = null,
     onSelect = vi.fn(),
     state,
+    settingsSections = [{ id: 'general', screen: 'project' }],
     client = createTestQueryClient(),
   } = options;
   let unmount!: () => void;
@@ -66,7 +70,7 @@ export async function renderHub(ui: ReactElement, options: HubOptions = {}) {
         <MemoryRouter initialEntries={[{ pathname: '/projects', state }]}>
           <FakeHubSessionProvider session={new FakeHubSession(permissions)}>
             <FakeHubProjectProvider projects={projects} selected={selected} onSelect={onSelect}>
-              {ui}
+              <FakeSettingsRegistry sections={settingsSections}>{ui}</FakeSettingsRegistry>
               <LocationProbe />
             </FakeHubProjectProvider>
           </FakeHubSessionProvider>

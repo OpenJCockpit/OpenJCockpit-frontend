@@ -12,7 +12,6 @@ function setup() {
 
 function search(term: string) {
   fireEvent.change(screen.getByLabelText('Search for a skill'), { target: { value: term } });
-  fireEvent.click(screen.getByRole('button', { name: 'Search' }));
 }
 
 describe('SkillsHubDashboard — search', () => {
@@ -22,10 +21,11 @@ describe('SkillsHubDashboard — search', () => {
     expect(screen.getByText('Software Quality')).toBeInTheDocument();
   });
 
-  it('only filters on submit, not while typing', () => {
+  it('filters while typing, without a submit button', () => {
     setup();
-    fireEvent.change(screen.getByLabelText('Search for a skill'), { target: { value: 'grill' } });
-    expect(screen.getByText('Software Quality')).toBeInTheDocument();
+    search('grill');
+    expect(screen.queryByText('Software Quality')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Search' })).not.toBeInTheDocument();
   });
 
   it('filters by name, case-insensitively and trimmed', () => {

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import type { FormEvent, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import {
   Icon,
   IconBox,
@@ -43,7 +43,6 @@ const SKILL_CATALOG: { id: SkillId; icon: IconName; categories: CategoryId[] }[]
 ];
 
 export function SkillsHubDashboard({ onBack, onSettings, header }: Props) {
-  const [query, setQuery] = useState('');
   const [term, setTerm] = useState('');
   const { t } = useTranslation('skillsHub');
 
@@ -74,11 +73,6 @@ export function SkillsHubDashboard({ onBack, onSettings, header }: Props) {
     );
   }, [skills, term]);
 
-  function handleSearch(e: FormEvent) {
-    e.preventDefault();
-    setTerm(query);
-  }
-
   return (
     <AppShell>
       {header ?? <AppHeader onBack={onBack} backTitle={t('dashboard.backTitle')} />}
@@ -94,44 +88,42 @@ export function SkillsHubDashboard({ onBack, onSettings, header }: Props) {
           </Button>
         </div>
 
-        <form className={styles.skillsHubSearch} onSubmit={handleSearch} role="search">
+        <div className={styles.skillsHubSearch} role="search">
+          <Icon name="search" />
           <input
             className={cx(formInputClass, styles.skillsHubSearchInput)}
             type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            value={term}
+            onChange={(e) => setTerm(e.target.value)}
             placeholder={t('dashboard.searchPlaceholder')}
             aria-label={t('dashboard.searchLabel')}
           />
-          <Button type="submit" size="sm">
-            <Icon name="search" /> {t('dashboard.search')}
-          </Button>
-        </form>
+        </div>
 
         <Panel as="div" className={styles.skillsHubPanel}>
           <DataTable className={styles.skillsHubTable}>
             <thead>
               <tr>
-                <th>{t('dashboard.columnCategory')}</th>
                 <th>{t('dashboard.columnSkill')}</th>
+                <th>{t('dashboard.columnCategory')}</th>
               </tr>
             </thead>
             <tbody>
               {visibleSkills.map((skill) => (
                 <tr key={skill.id}>
                   <td>
-                    <div className={styles.skillCategoryTags}>
-                      {skill.categories.map((category) => (
-                        <StatusChip key={category.id} label={category.label} kind={category.kind} />
-                      ))}
-                    </div>
-                  </td>
-                  <td>
                     <div className={styles.skillRow}>
                       <IconBox label={<Icon name={skill.icon} />} compact />
                       <div>
                         <strong>{skill.name}</strong> <span>{skill.description}</span>
                       </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div className={styles.skillCategoryTags}>
+                      {skill.categories.map((category) => (
+                        <StatusChip key={category.id} label={category.label} kind={category.kind} />
+                      ))}
                     </div>
                   </td>
                 </tr>

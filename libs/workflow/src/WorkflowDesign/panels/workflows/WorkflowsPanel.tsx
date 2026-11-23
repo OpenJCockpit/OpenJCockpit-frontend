@@ -1,20 +1,6 @@
 import { useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from '@openjcockpit/i18n';
-import {
-  createWorkflow,
-  deleteWorkflow,
-  exportWorkflows,
-  importWorkflows,
-  updateWorkflow,
-} from '@openjcockpit/api';
-import type {
-  AgentDefinition,
-  WorkflowDefinition,
-  WorkflowExportBundle,
-  WorkflowGroup,
-  WorkflowOrb,
-} from '@openjcockpit/api';
+import type { AgentDefinition, WorkflowDefinition, WorkflowGroup } from '@openjcockpit/api';
 import {
   Button,
   StatusMessage,
@@ -26,15 +12,11 @@ import {
   Icon,
 } from '@openjcockpit/ui';
 import { useConfirmDelete } from '../shared/useConfirmDelete';
-import { readFileText, downloadWorkflowBundle } from '../../utils';
 import { WorkflowEditor } from './WorkflowEditor/WorkflowEditor';
 import type { WorkflowDraft } from './WorkflowEditor/OrbEditor';
 import { WorkflowsTable } from './WorkflowsTable';
-import {
-  useWorkflowsPanelData,
-  workflowGroupsQueryKey,
-  workflowsQueryKey,
-} from './useWorkflowsPanelData';
+import { useWorkflowActions } from './useWorkflowActions';
+import { useWorkflowsPanelData } from './useWorkflowsPanelData';
 import WorkflowDesignStyles from '../../WorkflowDesign.module.scss';
 
 const EMPTY_WORKFLOW: WorkflowDraft = {
@@ -60,7 +42,6 @@ const NO_AGENTS: AgentDefinition[] = [];
 export function WorkflowsPanel() {
   const { t } = useTranslation('workflow');
   const { askDelete, dialog } = useConfirmDelete();
-  const queryClient = useQueryClient();
   const data = useWorkflowsPanelData();
   const items = data.items ?? NO_WORKFLOWS;
   const groups = data.groups ?? NO_GROUPS;
@@ -69,21 +50,21 @@ export function WorkflowsPanel() {
   const [groupFilter, setGroupFilter] = useState('all');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<WorkflowDraft>(EMPTY_WORKFLOW);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [info, setInfo] = useState<string | null>(null);
-  const [orbError, setOrbError] = useState<string | null>(null);
-  const [importViolations, setImportViolations] = useState<string[]>([]);
+  const {
+    saving,
+    error,
+    info,
+    orbError,
+    importViolations,
+    clearMessages,
+    handleSave,
+    handleDelete,
+    handleExport,
+    handleImportFile,
+  } = useWorkflowActions(form, () => setEditingId(null));
 
   if (!loaded) {
     return <StatusMessage variant="loading">{t('workflows.loading')}</StatusMessage>;
-  }
-
-  function updateItems(update: (prev: WorkflowDefinition[]) => WorkflowDefinition[]) {
-    queryClient.setQueryData<WorkflowDefinition[]>(
-      workflowsQueryKey,
-      (prev) => prev && update(prev),
-    );
   }
 
   function groupName(groupId?: string): string {
@@ -101,8 +82,7 @@ export function WorkflowsPanel() {
   function startCreate() {
     setEditingId('new');
     setForm(EMPTY_WORKFLOW);
-    setError(null);
-    setInfo(null);
+    clearMessages();
   }
   function cancelEdit() {
     setEditingId(null);
@@ -110,98 +90,7 @@ export function WorkflowsPanel() {
   function startEdit(item: WorkflowDefinition) {
     setEditingId(item.id);
     setForm(item);
-    setError(null);
-    setInfo(null);
-  }
-
-  async function handleSave(editingId: string) {
-    if (!form.groupId && !form.projectName.trim()) {
-      setError(t('workflows.groupOrProjectRequired'));
-      return;
-    }
-    if (form.agentIds.length === 0) {
-      setError(t('workflows.agentRequired'));
-      return;
-    }
-    setOrbError(null);
-    const orbs: WorkflowOrb[] = [];
-    for (const [index, { mode, ...orb }] of (form.workflowOrbs ?? []).entries()) {
-      if (!mode) {
-        setOrbError(t('workflows.orbModeRequired', { index: index + 1 }));
-        return;
-      }
-      orbs.push({ ...orb, mode });
-    }
-    setSaving(true);
-    setError(null);
-    try {
-      const request: WorkflowDefinition = {
-        ...form,
-        workflowOrbs: form.workflowOrbs && orbs,
-        groupId: form.groupId || undefined,
-      };
-      const saved =
-        editingId === 'new'
-          ? await createWorkflow(request)
-          : await updateWorkflow(editingId, request);
-      updateItems((prev) =>
-        editingId === 'new' ? [...prev, saved] : prev.map((i) => (i.id === saved.id ? saved : i)),
-      );
-      setEditingId(null);
-    } catch (err) {
-      setOrbError(null);
-      // Surfaces the server's actual message (e.g. the approval-gate placement validation
-      // naming the offending stage) instead of a generic failure (AC-03).
-      setError(err instanceof Error ? err.message : t('workflows.saveFailed'));
-      console.warn(err);
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  async function handleDelete(id: string) {
-    try {
-      await deleteWorkflow(id);
-      updateItems((prev) => prev.filter((i) => i.id !== id));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t('workflows.deleteFailed'));
-      console.warn(err);
-    }
-  }
-
-  async function handleExport() {
-    setError(null);
-    setInfo(null);
-    try {
-      downloadWorkflowBundle(await exportWorkflows());
-    } catch (err) {
-      setError(t('workflows.exportFailed'));
-      console.warn(err);
-    }
-  }
-
-  async function handleImportFile(file: File) {
-    setError(null);
-    setInfo(null);
-    setImportViolations([]);
-    try {
-      const bundle = JSON.parse(await readFileText(file)) as WorkflowExportBundle;
-      const result = await importWorkflows(bundle);
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: workflowsQueryKey }),
-        queryClient.invalidateQueries({ queryKey: workflowGroupsQueryKey }),
-      ]);
-      setInfo(
-        t('workflows.imported', {
-          workflows: result.workflowsImported,
-          groups: result.groupsImported,
-        }),
-      );
-      setImportViolations(result.violations ?? []);
-    } catch (err) {
-      setError(t('workflows.importFailed'));
-      console.warn(err);
-    }
+    clearMessages();
   }
 
   return (

@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState } from 'react';
 import { useTranslation } from '@openjcockpit/i18n';
 import {
   saveControlTowerPolicy,
@@ -6,6 +6,7 @@ import {
   type ControlTowerPolicySettings,
 } from '@openjcockpit/api';
 import { useGlobalMutation } from '../hooks';
+import { errorMessage } from '../errorMessage';
 import { useAction } from '../useAction';
 
 /** The policies shipped in the ControlTower repository under infrastructure/opa/policies. */
@@ -26,23 +27,40 @@ export const DECISION_PATH_PLACEHOLDER = 'openjcontroltower/decision';
 export function usePolicyForm(initial: ControlTowerPolicySettings) {
   const { t } = useTranslation('controltower');
   const [policy, setPolicy] = useState<ControlTowerPolicySettings>(initial);
+  // What the server holds: the loaded value, then the last saved one.
+  const [baseline, setBaseline] = useState(initial);
+  const dirty = JSON.stringify(policy) !== JSON.stringify(baseline);
+  const [saved, setSaved] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const { run, feedback, pending, clear } = useAction();
   const save = useGlobalMutation(saveControlTowerPolicy);
 
   const set = (patch: Partial<ControlTowerPolicySettings>) => {
     setPolicy((p) => ({ ...p, ...patch }));
+    setSaved(null);
+    setSaveError(null);
     clear();
   };
 
-  function onSubmit(event: FormEvent) {
-    event.preventDefault();
-    return run(
-      () => save.mutateAsync(policy),
-      (saved) => {
-        setPolicy(saved);
-        return saved.enabled ? t('policy.savedOn') : t('policy.savedOff');
-      },
-    );
+  const reset = () => {
+    setPolicy(baseline);
+    setSaved(null);
+    setSaveError(null);
+    clear();
+  };
+
+  async function onSubmit() {
+    setSaved(null);
+    setSaveError(null);
+    clear();
+    try {
+      const result = await save.mutateAsync(policy);
+      setPolicy(result);
+      setBaseline(result);
+      setSaved(result.enabled ? t('policy.savedOn') : t('policy.savedOff'));
+    } catch (e) {
+      setSaveError(errorMessage(e));
+    }
   }
 
   const onTest = () =>
@@ -61,9 +79,13 @@ export function usePolicyForm(initial: ControlTowerPolicySettings) {
     policy,
     set,
     onSubmit,
+    onReset: reset,
     onTest,
+    dirty,
+    saved,
+    saveError,
     saving: save.isPending,
-    testing: pending && !save.isPending,
+    testing: pending,
     feedback,
     clearFeedback: clear,
   };

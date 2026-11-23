@@ -12,7 +12,6 @@
       "settings": "Instellingen",
       "searchPlaceholder": "Zoek een skill…",
       "searchLabel": "Zoek een skill",
-      "search": "Zoeken",
       "columnCategory": "Categorie",
       "columnSkill": "Skill",
       "noResults": "Geen skills gevonden voor \"{{term}}\".",

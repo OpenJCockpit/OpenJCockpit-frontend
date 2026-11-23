@@ -1,3 +1,4 @@
+import { logger } from '@openjcockpit/api';
 import { useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from '@openjcockpit/i18n';
@@ -100,7 +101,7 @@ export function SkillsPanel() {
       setForm(draft);
     } catch (err) {
       setError(t('skills.draftFailed'));
-      console.warn(err);
+      logger.warn(err);
     }
   }
 
@@ -122,7 +123,7 @@ export function SkillsPanel() {
       setEditingName(null);
     } catch (err) {
       setError(t('skills.saveFailed'));
-      console.warn(err);
+      logger.warn(err);
     } finally {
       setSaving(false);
     }
@@ -138,7 +139,7 @@ export function SkillsPanel() {
       }));
     } catch (err) {
       setError(t('skills.deleteFailed'));
-      console.warn(err);
+      logger.warn(err);
     }
   }
 

@@ -1,3 +1,4 @@
+import { logger } from '@openjcockpit/api';
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from '@openjcockpit/i18n';
@@ -72,7 +73,7 @@ export function SubagentsPanel() {
       setForm(draft);
     } catch (err) {
       setError(t('subagents.draftFailed'));
-      console.warn(err);
+      logger.warn(err);
     }
   }
 
@@ -92,7 +93,7 @@ export function SubagentsPanel() {
       setEditingName(null);
     } catch (err) {
       setError(t('subagents.saveFailed'));
-      console.warn(err);
+      logger.warn(err);
     } finally {
       setSaving(false);
     }
@@ -104,7 +105,7 @@ export function SubagentsPanel() {
       updateItems((prev) => prev.filter((i) => i.name !== name));
     } catch (err) {
       setError(t('subagents.deleteFailed'));
-      console.warn(err);
+      logger.warn(err);
     }
   }
 

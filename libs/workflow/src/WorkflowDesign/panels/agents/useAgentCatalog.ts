@@ -1,3 +1,4 @@
+import { logger } from '@openjcockpit/api';
 import { useQuery } from '@tanstack/react-query';
 import { getAgentCatalog } from '@openjcockpit/api';
 
@@ -10,7 +11,7 @@ export function useAgentCatalog() {
       try {
         return await getAgentCatalog();
       } catch (err) {
-        console.warn(err);
+        logger.warn(err);
         throw err;
       }
     },

@@ -1,11 +1,10 @@
 import { useId, useState } from 'react';
 import { ADMIN_PERMISSION, useCan } from '@openjcockpit/hub-contract';
 import { useTranslation } from '@openjcockpit/i18n';
-import { feedbackErrorClass, fieldHintClass, cx } from '@openjcockpit/ui';
+import { SettingsGroup, SettingsRow, StatusMessage } from '@openjcockpit/ui';
 import { ConfirmActionDialog } from '../ConfirmActionDialog/ConfirmActionDialog';
 import { updateSpecQueueSettings } from '@openjcockpit/api';
 import type { SpecQueueSettings } from '@openjcockpit/api';
-import styles from './AutoMergeSettingToggle.module.scss';
 
 interface Props {
   projectId: string;
@@ -20,6 +19,7 @@ export function AutoMergeSettingToggle({ projectId, autoMergeAllowed, onChanged 
   const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const descriptionId = useId();
+  const controlId = useId();
 
   async function apply(value: boolean) {
     setBusy(true);
@@ -50,9 +50,20 @@ export function AutoMergeSettingToggle({ projectId, autoMergeAllowed, onChanged 
   }
 
   return (
-    <div>
-      <label className={styles.autoMergeSettingControl}>
+    <SettingsGroup>
+      <SettingsRow
+        label={t('autoMergeSetting.label')}
+        htmlFor={controlId}
+        description={
+          <span id={descriptionId} data-testid="auto-merge-setting-description">
+            {canChange
+              ? t('autoMergeSetting.descriptionAdmin')
+              : t('autoMergeSetting.descriptionReadOnly')}
+          </span>
+        }
+      >
         <input
+          id={controlId}
           type="checkbox"
           data-testid="auto-merge-setting-toggle"
           checked={autoMergeAllowed}
@@ -60,21 +71,11 @@ export function AutoMergeSettingToggle({ projectId, autoMergeAllowed, onChanged 
           aria-describedby={descriptionId}
           onChange={(e) => handleChange(e.target.checked)}
         />
-        <span>{t('autoMergeSetting.label')}</span>
-      </label>
-      <p
-        id={descriptionId}
-        className={cx(fieldHintClass, styles.autoMergeSettingDescription)}
-        data-testid="auto-merge-setting-description"
-      >
-        {canChange
-          ? t('autoMergeSetting.descriptionAdmin')
-          : t('autoMergeSetting.descriptionReadOnly')}
-      </p>
+      </SettingsRow>
       {error && !confirming && (
-        <p className={feedbackErrorClass} role="alert" data-testid="auto-merge-setting-error">
+        <StatusMessage variant="error" role="alert" data-testid="auto-merge-setting-error">
           {error}
-        </p>
+        </StatusMessage>
       )}
       {confirming && (
         <ConfirmActionDialog
@@ -88,6 +89,6 @@ export function AutoMergeSettingToggle({ projectId, autoMergeAllowed, onChanged 
           onCancel={cancelConfirmation}
         />
       )}
-    </div>
+    </SettingsGroup>
   );
 }

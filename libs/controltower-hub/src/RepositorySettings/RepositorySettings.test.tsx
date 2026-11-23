@@ -69,7 +69,9 @@ describe('repository settings section', () => {
     const Section = await section();
     ct.updateControlTowerProject.mockRejectedValue(new Error('Host not allowed'));
     renderWith(<Section />);
-    await screen.findByRole('textbox', { name: /Repository name/ });
+    fireEvent.change(await screen.findByRole('textbox', { name: /Repository name/ }), {
+      target: { value: 'renamed' },
+    });
     fireEvent.click(screen.getByRole('button', { name: 'Save repository' }));
     expect(await screen.findByRole('alert')).toHaveTextContent('Host not allowed');
   });
@@ -97,7 +99,20 @@ describe('repository settings section', () => {
     const Section = await section();
     renderWith(<Section />, { permissions: [] });
     expect(await screen.findByRole('textbox', { name: /Repository name/ })).toBeDisabled();
-    expect(screen.queryByRole('button', { name: 'Save repository' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Save repository' })).toBeDisabled();
+    expect(screen.queryByRole('button', { name: 'Check connection' })).toBeNull();
+  });
+
+  it('keeps Save disabled until edited, and Reset restores the stored values', async () => {
+    const Section = await section();
+    renderWith(<Section />);
+    const name = await screen.findByRole('textbox', { name: /Repository name/ });
+    expect(screen.getByRole('button', { name: 'Save repository' })).toBeDisabled();
+    fireEvent.change(name, { target: { value: 'renamed' } });
+    expect(screen.getByRole('button', { name: 'Save repository' })).toBeEnabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Reset' }));
+    expect(name).toHaveValue('demo-repo');
+    expect(screen.getByRole('button', { name: 'Save repository' })).toBeDisabled();
   });
 
   it('retries a failed load', async () => {

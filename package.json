@@ -20,7 +20,8 @@
     "start:hub:mock": "MOCK_API=1 nx run-many -t dev -p dashboard,remote-skills-hub,remote-specs,remote-evidence,remote-quality,remote-controltower,remote-projects --parallel=8",
     "build:hub": "nx run-many -t build -p remote-skills-hub,remote-specs,remote-evidence,remote-quality,remote-controltower,remote-projects,dashboard",
     "trivy": "scripts/trivy-scan.sh",
-    "trivy:fs": "scripts/trivy-scan.sh fs"
+    "trivy:fs": "scripts/trivy-scan.sh fs",
+    "knip": "knip"
   },
   "overrides": {
     "nx": {
@@ -50,11 +51,11 @@
     "@nx/vitest": "23.3.2",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.3",
+    "@types/node": "26.6.6",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "4.7.0",
     "@vitest/coverage-v8": "4.1.11",
-    "axe-core": "4.14.0",
     "eslint": "9.39.5",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-i18next": "6.1.5",
@@ -62,6 +63,7 @@
     "eslint-plugin-react-hooks": "7.1.1",
     "globals": "17.12.0",
     "jsdom": "25.0.1",
+    "knip": "6.47.0",
     "nx": "23.3.2",
     "prettier": "3.9.6",
     "react": "19.3.1",

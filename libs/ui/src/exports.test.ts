@@ -5,7 +5,20 @@ import { pageClass, pageHeaderClass } from './Page/Page';
 
 describe('public API', () => {
   it('exposes the shared components and helpers', () => {
-    for (const name of ['Button', 'Panel', 'DataTable', 'AppShell', 'FrameOctagon', 'cx']) {
+    for (const name of [
+      'Button',
+      'Panel',
+      'DataTable',
+      'IconButton',
+      'AppShell',
+      'FrameOctagon',
+      'cx',
+      'SettingsGroup',
+      'SettingsRow',
+      'SettingsForm',
+      'SettingsStatus',
+      'DangerZone',
+    ]) {
       expect(ui).toHaveProperty(name);
     }
   });

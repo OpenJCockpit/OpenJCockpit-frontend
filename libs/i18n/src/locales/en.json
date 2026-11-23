@@ -5,6 +5,12 @@
     },
     "back": "Back",
     "somethingWrong": "Something went wrong.",
-    "reload": "Reload"
+    "reload": "Reload",
+    "settingsForm": {
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "Saved.",
+      "reset": "Reset"
+    }
   }
 }

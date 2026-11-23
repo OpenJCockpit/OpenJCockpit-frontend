@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from '@openjcockpit/i18n';
 import {
@@ -7,12 +7,13 @@ import {
   listSkillsMarketplaces,
   updateSkillsMarketplace,
 } from '@openjcockpit/api';
+import { MARKETPLACES_KEY } from '../contributions/useConnectedMarketplaces';
 import type {
   SkillsMarketplaceConnection,
   SkillsMarketplaceConnectionRequest,
 } from '@openjcockpit/api';
 
-const EMPTY_FORM: SkillsMarketplaceConnectionRequest = {
+export const EMPTY_MARKETPLACE_FORM: SkillsMarketplaceConnectionRequest = {
   name: '',
   marketplaceUrl: '',
   apiKey: '',
@@ -20,7 +21,18 @@ const EMPTY_FORM: SkillsMarketplaceConnectionRequest = {
   enabled: true,
 };
 
-import { MARKETPLACES_KEY } from '../contributions/useConnectedMarketplaces';
+export function toMarketplaceForm(
+  connection: SkillsMarketplaceConnection,
+): SkillsMarketplaceConnectionRequest {
+  return {
+    name: connection.name,
+    marketplaceUrl: connection.marketplaceUrl,
+    apiKey: '',
+    description: connection.description ?? '',
+    enabled: connection.enabled,
+  };
+}
+
 /** Marketplace connections list, form state and save / delete actions. */
 export function useSkillsHubSettings() {
   const { t } = useTranslation('skillsHub');
@@ -31,9 +43,6 @@ export function useSkillsHubSettings() {
   });
   const connections = connectionsQuery.data ?? [];
   const loaded = !connectionsQuery.isPending;
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editingHasApiKey, setEditingHasApiKey] = useState(false);
-  const [form, setForm] = useState<SkillsMarketplaceConnectionRequest>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   // `undefined` = not touched yet, so the load error (if any) is shown; `null` clears it.
   const [errorOverride, setError] = useState<string | null | undefined>(undefined);
@@ -44,7 +53,6 @@ export function useSkillsHubSettings() {
     : null;
   const error = errorOverride === undefined ? loadError : errorOverride;
   const [status, setStatus] = useState('');
-  const nameInputRef = useRef<HTMLInputElement | null>(null);
 
   function updateConnections(
     update: (prev: SkillsMarketplaceConnection[]) => SkillsMarketplaceConnection[],
@@ -54,44 +62,22 @@ export function useSkillsHubSettings() {
     );
   }
 
-  function resetForm() {
-    setEditingId(null);
-    setEditingHasApiKey(false);
-    setForm(EMPTY_FORM);
-  }
-
-  function focusName() {
-    nameInputRef.current?.focus();
-  }
-
-  function startEdit(connection: SkillsMarketplaceConnection) {
-    setEditingId(connection.id);
-    setEditingHasApiKey(connection.hasApiKey);
-    setForm({
-      name: connection.name,
-      marketplaceUrl: connection.marketplaceUrl,
-      apiKey: '',
-      description: connection.description ?? '',
-      enabled: connection.enabled,
-    });
+  function clearError() {
     setError(null);
-    focusName();
   }
 
-  function cancelEdit() {
-    resetForm();
-    setError(null);
-    focusName();
-  }
-
-  async function handleSave() {
+  /** Creates (`editingId` null) or updates a connection; resolves true when it was saved. */
+  async function saveConnection(
+    editingId: string | null,
+    form: SkillsMarketplaceConnectionRequest,
+  ): Promise<boolean> {
     if (!form.name.trim()) {
       setError(t('settings.error.nameRequired'));
-      return;
+      return false;
     }
     if (!form.marketplaceUrl.trim()) {
       setError(t('settings.error.urlRequired'));
-      return;
+      return false;
     }
     setSaving(true);
     setError(null);
@@ -111,10 +97,10 @@ export function useSkillsHubSettings() {
         );
         setStatus(t('settings.status.updated', { name: updated.name }));
       }
-      resetForm();
-      focusName();
+      return true;
     } catch (err) {
       setError(err instanceof Error ? err.message : t('settings.error.saveFailed'));
+      return false;
     } finally {
       setSaving(false);
     }
@@ -126,8 +112,6 @@ export function useSkillsHubSettings() {
       await deleteSkillsMarketplace(connection.id);
       updateConnections((prev) => prev.filter((c) => c.id !== connection.id));
       setStatus(t('settings.status.deleted', { name: connection.name }));
-      if (editingId === connection.id) resetForm();
-      focusName();
     } catch (err) {
       setError(err instanceof Error ? err.message : t('settings.error.deleteFailed'));
     }
@@ -136,17 +120,11 @@ export function useSkillsHubSettings() {
   return {
     connections,
     loaded,
-    editingId,
-    editingHasApiKey,
-    form,
-    setForm,
     saving,
     error,
     status,
-    nameInputRef,
-    startEdit,
-    cancelEdit,
-    handleSave,
+    clearError,
+    saveConnection,
     handleDelete,
   };
 }

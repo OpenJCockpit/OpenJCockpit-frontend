@@ -38,8 +38,7 @@ export function Home() {
       saved
         ? resolveLayout(saved, visibleWidgets)
         : defaultLayout(visibleWidgets, (permission) => session.has(permission)),
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- `permissions` stands in for `session.has`
-    [saved, visibleWidgets, session.permissions],
+    [saved, visibleWidgets, session],
   );
   const widgetsById = useMemo(
     () => new Map(visibleWidgets.map((widget) => [widget.id, widget])),

@@ -45,6 +45,10 @@
     outline: none;
     border-color: var(--cyan-a55);
   }
+
+  &[aria-invalid='true'] {
+    border-color: rgb(var(--danger-rgb) / 0.6);
+  }
 }
 
 :where(.fieldHint) {

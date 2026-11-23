@@ -1,3 +1,4 @@
+import { MemoryRouter } from 'react-router';
 import { act, render, renderHook, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import * as api from '@openjcockpit/api';
@@ -20,7 +21,9 @@ function wrapper({ children }: { children: React.ReactNode }) {
   const i18n = createI18n({ locale: 'en', resources: skillsHubResources });
   return (
     <I18nProvider i18n={i18n}>
-      <QueryClientProvider client={client}>{children}</QueryClientProvider>
+      <QueryClientProvider client={client}>
+        <MemoryRouter>{children}</MemoryRouter>
+      </QueryClientProvider>
     </I18nProvider>
   );
 }

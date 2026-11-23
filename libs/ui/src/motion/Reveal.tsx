@@ -1,5 +1,6 @@
 import type { CSSProperties, ElementType, ReactNode } from 'react';
 import { cx } from '../cx';
+import { cssVars } from '../cssVars';
 import styles from './Reveal.module.scss';
 
 // Entrance-animation primitive replacing the Arwes react-animated
@@ -47,22 +48,20 @@ export function Reveal({
 }: RevealProps) {
   const { y, scale } = from;
 
-  const revealStyle = {
-    ...style,
-    '--reveal-duration': `${duration}s`,
-    '--reveal-index': index,
-  } as CSSProperties & Record<`--${string}`, string | number>;
-
-  if (y !== undefined) {
-    revealStyle['--reveal-y-from'] = `${y}px`;
-  }
-  if (scale !== undefined) {
-    revealStyle['--reveal-scale-from'] = scale;
-  }
-
   return (
-    // eslint-disable-next-line no-restricted-syntax -- runtime-computed custom properties (duration, index, from)
-    <Component className={cx(styles.reveal, className)} style={revealStyle} {...rest}>
+    <Component
+      className={cx(styles.reveal, className)}
+      {...cssVars(
+        {
+          '--reveal-duration': `${duration}s`,
+          '--reveal-index': index,
+          '--reveal-y-from': y === undefined ? undefined : `${y}px`,
+          '--reveal-scale-from': scale,
+        },
+        style,
+      )}
+      {...rest}
+    >
       {children}
     </Component>
   );

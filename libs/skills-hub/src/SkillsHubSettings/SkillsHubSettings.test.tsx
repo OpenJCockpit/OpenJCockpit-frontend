@@ -29,6 +29,11 @@ async function renderSettings(connections: SkillsMarketplaceConnection[], readyT
   await screen.findByText(readyText);
 }
 
+async function openAddForm() {
+  await clickAsync(screen.getByRole('button', { name: 'New marketplace' }));
+  await screen.findByLabelText('Name *');
+}
+
 async function openEditForm() {
   await clickAsync(screen.getByRole('button', { name: 'Edit' }));
   await screen.findByPlaceholderText(KEY_PLACEHOLDER);
@@ -64,6 +69,8 @@ describe('SkillsHubSettings', () => {
 
     await renderSettings([], 'No marketplaces connected yet.');
 
+    await openAddForm();
+
     await act(async () => {
       const nameInput = screen.getByLabelText<HTMLInputElement>('Name *');
       const urlInput = screen.getByLabelText<HTMLInputElement>('Marketplace URL *');
@@ -92,7 +99,7 @@ describe('SkillsHubSettings', () => {
     expect(screen.getByText('API key set')).toBeInTheDocument();
     expect(screen.getByText('Enabled')).toBeInTheDocument();
     expect(screen.getByText('Jan 5, 2026')).toBeInTheDocument();
-    expect(screen.getByLabelText<HTMLInputElement>('API key *').value).toBe('');
+    expect(screen.queryByLabelText('API key *')).not.toBeInTheDocument();
     expect(screen.getByRole('status')).toHaveTextContent('Acme Skills" has been added.');
   });
 
@@ -102,6 +109,8 @@ describe('SkillsHubSettings', () => {
     );
 
     await renderSettings([], 'No marketplaces connected yet.');
+
+    await openAddForm();
 
     await act(async () => {
       setInputValue(screen.getByLabelText('Name *'), 'Acme Skills');
@@ -202,11 +211,6 @@ describe('SkillsHubSettings', () => {
   it('exposes accessible form controls, a semantic table, and a live region (AC-22/23/24/25)', async () => {
     await renderSettings([CONNECTION], 'Acme Skills');
 
-    expect(screen.getByLabelText('Name *')).toBeInTheDocument();
-    expect(screen.getByLabelText('Marketplace URL *')).toBeInTheDocument();
-    const keyInput = screen.getByLabelText(/^API key/);
-    expect(keyInput).toHaveAttribute('type', 'password');
-
     const columnHeaders = screen.getAllByRole('columnheader').map((h) => h.textContent);
     expect(columnHeaders).toEqual([
       'Name',
@@ -222,5 +226,11 @@ describe('SkillsHubSettings', () => {
     expect(screen.getByRole('button', { name: 'Edit' })).not.toHaveAttribute('href');
 
     expect(screen.getByRole('status')).toBeInTheDocument();
+
+    await openAddForm();
+    expect(screen.getByLabelText('Name *')).toBeInTheDocument();
+    expect(screen.getByLabelText('Marketplace URL *')).toBeInTheDocument();
+    const keyInput = screen.getByLabelText(/^API key/);
+    expect(keyInput).toHaveAttribute('type', 'password');
   });
 });

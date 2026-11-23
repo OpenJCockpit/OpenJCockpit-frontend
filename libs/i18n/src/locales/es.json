@@ -5,6 +5,12 @@
     },
     "back": "Volver",
     "somethingWrong": "Algo salió mal.",
-    "reload": "Recargar"
+    "reload": "Recargar",
+    "settingsForm": {
+      "save": "Guardar",
+      "saving": "Guardando…",
+      "saved": "Guardado.",
+      "reset": "Restablecer"
+    }
   }
 }

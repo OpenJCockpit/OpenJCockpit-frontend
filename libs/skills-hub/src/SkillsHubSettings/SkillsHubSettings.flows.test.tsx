@@ -1,9 +1,10 @@
-import { fireEvent, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as api from '@openjcockpit/api';
 import type { SkillsMarketplaceConnection } from '@openjcockpit/api';
 import { SkillsHubSettings } from './SkillsHubSettings';
 import { clickAsync, renderAsync } from '../testUtils';
+import { withQueryClient } from '../testQueryClient';
 
 vi.mock('@openjcockpit/api', async (importOriginal) =>
   (await import('../testUtils')).automockApiClients(await importOriginal()),
@@ -26,10 +27,21 @@ function connection(
   };
 }
 
+async function renderAt(route: string) {
+  await act(async () => {
+    render(withQueryClient(<SkillsHubSettings />, { route }));
+  });
+}
+
 async function open(connections: SkillsMarketplaceConnection[]) {
   vi.mocked(api.listSkillsMarketplaces).mockResolvedValue(connections);
   await renderAsync(<SkillsHubSettings />);
-  await screen.findByText('New marketplace');
+  await screen.findByRole('button', { name: 'New marketplace' });
+}
+
+async function openAdd(connections: SkillsMarketplaceConnection[]) {
+  await open(connections);
+  await clickAsync(screen.getByRole('button', { name: 'New marketplace' }));
 }
 
 function type(label: string, value: string) {
@@ -71,14 +83,14 @@ describe('SkillsHubSettings — flows', () => {
   });
 
   it('requires a name before saving', async () => {
-    await open([]);
+    await openAdd([]);
     await clickAsync(screen.getByRole('button', { name: 'Save' }));
     expect(screen.getByRole('alert')).toHaveTextContent('Name is required.');
     expect(api.createSkillsMarketplace).not.toHaveBeenCalled();
   });
 
   it('requires a marketplace URL before saving', async () => {
-    await open([]);
+    await openAdd([]);
     type('Name *', 'Acme');
     await clickAsync(screen.getByRole('button', { name: 'Save' }));
     expect(screen.getByRole('alert')).toHaveTextContent('Marketplace URL is required.');
@@ -86,7 +98,7 @@ describe('SkillsHubSettings — flows', () => {
   });
 
   it('adds new connections in name order and announces the result', async () => {
-    await open([connection({ name: 'Zulu' })]);
+    await openAdd([connection({ name: 'Zulu' })]);
     vi.mocked(api.createSkillsMarketplace).mockImplementation(async (req) =>
       connection({ id: 'mp-9', name: req.name }),
     );
@@ -109,7 +121,7 @@ describe('SkillsHubSettings — flows', () => {
     expect(names.findIndex((t) => t.includes('Alpha'))).toBeLessThan(
       names.findIndex((t) => t.includes('Zulu')),
     );
-    expect(screen.getByLabelText('Name *')).toHaveValue('');
+    expect(screen.queryByLabelText('Name *')).not.toBeInTheDocument();
   });
 
   it('prefills the form on edit and updates the row', async () => {
@@ -117,7 +129,7 @@ describe('SkillsHubSettings — flows', () => {
     vi.mocked(api.updateSkillsMarketplace).mockImplementation(async (id, req) =>
       connection({ id, name: req.name }),
     );
-    await clickAsync(within(row('Acme Skills')).getByText('Edit'));
+    await clickAsync(within(row('Acme Skills')).getByLabelText('Edit'));
 
     expect(screen.getByText('Edit marketplace')).toBeInTheDocument();
     expect(screen.getByLabelText('Name *')).toHaveValue('Acme Skills');
@@ -132,7 +144,7 @@ describe('SkillsHubSettings — flows', () => {
       expect.objectContaining({ name: 'Acme 2', apiKey: '' }),
     );
     expect(screen.getByRole('status')).toHaveTextContent('Marketplace "Acme 2" has been updated.');
-    expect(screen.getByText('New marketplace')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'New marketplace' })).toBeInTheDocument();
   });
 
   it('leaves other connections untouched when updating one', async () => {
@@ -140,7 +152,7 @@ describe('SkillsHubSettings — flows', () => {
     vi.mocked(api.updateSkillsMarketplace).mockImplementation(async (id, req) =>
       connection({ id, name: req.name }),
     );
-    await clickAsync(within(row('Acme Skills')).getByText('Edit'));
+    await clickAsync(within(row('Acme Skills')).getByLabelText('Edit'));
     type('Name *', 'Acme 2');
     await clickAsync(screen.getByRole('button', { name: 'Save' }));
 
@@ -150,7 +162,7 @@ describe('SkillsHubSettings — flows', () => {
 
   it('edits a connection that has no description as an empty field', async () => {
     await open([connection({ description: null })]);
-    await clickAsync(within(row('Acme Skills')).getByText('Edit'));
+    await clickAsync(within(row('Acme Skills')).getByLabelText('Edit'));
     expect(screen.getByLabelText('Description')).toHaveValue('');
   });
 
@@ -161,6 +173,7 @@ describe('SkillsHubSettings — flows', () => {
     );
     await renderAsync(<SkillsHubSettings />);
     await screen.findByRole('alert');
+    await clickAsync(screen.getByRole('button', { name: 'New marketplace' }));
     type('Name *', 'Alpha');
     type('Marketplace URL *', 'https://a.example.com');
     type('API key *', 'k');
@@ -172,27 +185,29 @@ describe('SkillsHubSettings — flows', () => {
 
   it('asks for a key on edit when the connection has none', async () => {
     await open([connection({ hasApiKey: false })]);
-    await clickAsync(within(row('Acme Skills')).getByText('Edit'));
+    await clickAsync(within(row('Acme Skills')).getByLabelText('Edit'));
     expect(screen.getByPlaceholderText('Required — no API key set yet')).toBeInTheDocument();
   });
 
-  it('cancels an edit and resets the form', async () => {
+  it('keeps the add and edit forms on their own screens, apart from the list', async () => {
     await open([connection()]);
-    await clickAsync(within(row('Acme Skills')).getByText('Edit'));
-    await clickAsync(screen.getByRole('button', { name: 'Cancel' }));
-    expect(screen.getByText('New marketplace')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Name *')).not.toBeInTheDocument();
+
+    await clickAsync(screen.getByRole('button', { name: 'New marketplace' }));
     expect(screen.getByLabelText('Name *')).toHaveValue('');
+    expect(screen.queryByRole('table')).not.toBeInTheDocument();
+    await clickAsync(screen.getByRole('button', { name: 'Cancel' }));
+    expect(screen.getByRole('table')).toBeInTheDocument();
+
+    await clickAsync(within(row('Acme Skills')).getByLabelText('Edit'));
+    expect(screen.queryByRole('table')).not.toBeInTheDocument();
+    await clickAsync(screen.getByRole('button', { name: 'Cancel' }));
+    expect(screen.getByRole('table')).toBeInTheDocument();
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
-  it('focuses the name field after starting an edit', async () => {
-    await open([connection()]);
-    await clickAsync(within(row('Acme Skills')).getByText('Edit'));
-    expect(screen.getByLabelText('Name *')).toHaveFocus();
-  });
-
   it('shows the server message when saving fails, and a fallback for non-Errors', async () => {
-    await open([]);
+    await openAdd([]);
     type('Name *', 'A');
     type('Marketplace URL *', 'u');
     vi.mocked(api.createSkillsMarketplace).mockRejectedValueOnce(new Error('duplicate url'));
@@ -205,26 +220,6 @@ describe('SkillsHubSettings — flows', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('Failed to save the marketplace.');
   });
 
-  it('resets the form when the connection being edited is deleted', async () => {
-    await open([connection()]);
-    vi.mocked(api.deleteSkillsMarketplace).mockResolvedValue(undefined);
-    await clickAsync(within(row('Acme Skills')).getByText('Edit'));
-    await clickAsync(within(row('Acme Skills')).getByText('Delete'));
-    await clickAsync(screen.getByTestId('confirm-action-confirm'));
-    expect(screen.getByText('New marketplace')).toBeInTheDocument();
-    expect(screen.queryByText('Acme Skills', { selector: 'strong' })).not.toBeInTheDocument();
-  });
-
-  it('keeps the form when a different connection is deleted', async () => {
-    await open([connection(), connection({ id: 'mp-2', name: 'Other' })]);
-    vi.mocked(api.deleteSkillsMarketplace).mockResolvedValue(undefined);
-    await clickAsync(within(row('Acme Skills')).getByText('Edit'));
-    await clickAsync(within(row('Other')).getByText('Delete'));
-    await clickAsync(screen.getByTestId('confirm-action-confirm'));
-    expect(screen.getByText('Edit marketplace')).toBeInTheDocument();
-    expect(screen.getByRole('status')).toHaveTextContent('Marketplace "Other" has been deleted.');
-  });
-
   it('falls back to a generic message when deleting fails with a non-Error', async () => {
     await open([connection()]);
     vi.mocked(api.deleteSkillsMarketplace).mockRejectedValue('boom');
@@ -232,5 +227,20 @@ describe('SkillsHubSettings — flows', () => {
     await clickAsync(screen.getByTestId('confirm-action-confirm'));
     expect(screen.getByRole('alert')).toHaveTextContent('Failed to delete the marketplace.');
     expect(screen.getByText('Acme Skills')).toBeInTheDocument();
+  });
+
+  it('waits for the list before showing the edit form of a deep link', async () => {
+    vi.mocked(api.listSkillsMarketplaces).mockReturnValue(new Promise(() => {}));
+    await renderAt('/mp-1/edit');
+    expect(screen.getByText('Loading marketplaces…')).toBeInTheDocument();
+  });
+
+  it('sends a deep link to an unknown marketplace back to the list', async () => {
+    vi.mocked(api.listSkillsMarketplaces).mockResolvedValue([connection()]);
+    await renderAt('/nope/edit');
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'New marketplace' })).toBeInTheDocument(),
+    );
+    expect(screen.queryByLabelText('Name *')).not.toBeInTheDocument();
   });
 });

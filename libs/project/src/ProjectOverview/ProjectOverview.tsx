@@ -11,6 +11,7 @@ import { useTranslation } from '@openjcockpit/i18n';
 import { StatusChip, formTitleClass, fieldHintClass } from '@openjcockpit/ui';
 import { WithTranslations } from '../registerTranslations';
 import { projectSetupStatus, type SetupItemState } from '../projectSetupStatus';
+import { specInitQueryKey } from '../useProjectSetupComplete';
 import styles from './ProjectOverview.module.scss';
 
 const CHIP_KIND = { done: 'ok', todo: 'waiting', pending: 'review', unknown: 'neutral' } as const;
@@ -25,7 +26,7 @@ export function ProjectOverview() {
   const isAdmin = useCan(ADMIN_PERMISSION);
   // A failed request (inactive project, Git unreachable) leaves the spec folder "unknown", not "todo".
   const specInit = useQuery({
-    queryKey: ['projects', project.id, 'spec-init-status'],
+    queryKey: specInitQueryKey(project.id),
     queryFn: ({ signal }) => getSpecInitStatus(project.id, signal),
     retry: false,
   });

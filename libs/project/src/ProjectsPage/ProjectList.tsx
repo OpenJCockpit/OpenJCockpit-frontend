@@ -9,6 +9,8 @@ import {
   DataTableRow,
   fieldHintClass,
   Button,
+  HiddenHeader,
+  IconButton,
   StatusChip,
   cx,
 } from '@openjcockpit/ui';
@@ -34,7 +36,9 @@ export function ProjectList({ projects, selectedId, onSelect, onSettings, onTogg
           <th>{t('list.environment')}</th>
           <th>{t('list.gitStatus')}</th>
           <th>{t('list.status')}</th>
-          <th>{t('list.actions')}</th>
+          <th>
+            <HiddenHeader>{t('list.actions')}</HiddenHeader>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -78,14 +82,18 @@ export function ProjectList({ projects, selectedId, onSelect, onSettings, onTogg
                 {t('list.select')}
               </Button>
               {onSettings && (
-                <Button variant="secondary" onClick={() => onSettings(project)}>
-                  {t('list.settings')}
-                </Button>
+                <IconButton
+                  icon="settings"
+                  label={t('list.settings')}
+                  onClick={() => onSettings(project)}
+                />
               )}
               {onToggleActive && (
-                <Button variant="secondary" onClick={() => onToggleActive(project)}>
-                  {project.active === 1 ? t('list.deactivate') : t('list.activate')}
-                </Button>
+                <IconButton
+                  icon={project.active === 1 ? 'pause' : 'play'}
+                  label={project.active === 1 ? t('list.deactivate') : t('list.activate')}
+                  onClick={() => onToggleActive(project)}
+                />
               )}
             </Actions>
           </DataTableRow>

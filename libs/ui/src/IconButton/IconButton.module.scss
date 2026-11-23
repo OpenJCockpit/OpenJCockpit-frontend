@@ -1,0 +1,21 @@
+// `button.iconButton` outranks the variant rules in Button.module.scss, which also set font-size
+// and padding. The glyph is sized explicitly so it stays readable whatever the font size is.
+button.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  line-height: 1;
+
+  & svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 2px;
+  }
+}

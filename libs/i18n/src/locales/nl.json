@@ -5,6 +5,12 @@
     },
     "back": "Terug",
     "somethingWrong": "Er is iets misgegaan.",
-    "reload": "Opnieuw laden"
+    "reload": "Opnieuw laden",
+    "settingsForm": {
+      "save": "Opslaan",
+      "saving": "Opslaan…",
+      "saved": "Opgeslagen.",
+      "reset": "Herstellen"
+    }
   }
 }

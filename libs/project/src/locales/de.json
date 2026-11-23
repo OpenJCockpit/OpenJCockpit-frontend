@@ -53,7 +53,6 @@
       "description": "Beschreibung",
       "descriptionPlaceholder": "Kurze Beschreibung",
       "newProjectCheckbox": "Neues Projekt (Repository existiert noch nicht — Git-Prüfung überspringen)",
-      "save": "Speichern",
       "saving": "⟳ Wird gespeichert…",
       "cancel": "Abbrechen"
     },

@@ -5,6 +5,12 @@
     },
     "back": "Zurück",
     "somethingWrong": "Etwas ist schiefgelaufen.",
-    "reload": "Neu laden"
+    "reload": "Neu laden",
+    "settingsForm": {
+      "save": "Speichern",
+      "saving": "Speichern…",
+      "saved": "Gespeichert.",
+      "reset": "Zurücksetzen"
+    }
   }
 }
