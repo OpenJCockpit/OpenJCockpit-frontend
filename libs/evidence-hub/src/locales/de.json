@@ -5,31 +5,43 @@
     "retry": "Erneut versuchen",
     "noProject": "Wähle ein Projekt, um dies zu sehen.",
     "back": "Zurück zum Dashboard",
-    "sampleData": "Beispieldaten",
     "title": "Ausführungsnachweis",
     "by": "Von: {{actor}}",
-    "events": {
-      "specLoaded": "Spezifikation geladen",
-      "impactAnalysisRecorded": "Auswirkungsanalyse erfasst",
-      "testSetGenerated": "Testsatz erzeugt",
-      "implementationProposalSaved": "Implementierungsvorschlag gespeichert",
-      "humanApprovalLogged": "Menschliche Freigabe protokolliert",
-      "evidenceDataRecorded": "Nachweisdaten erfasst"
-    },
-    "actors": {
-      "requirement": "Anforderungs-Agent",
-      "impact": "Auswirkungsanalyse-Agent",
-      "testDesign": "Testdesign-Agent",
-      "implementation": "Implementierungs-Agent",
-      "review": "Review-Agent",
-      "evidence": "Nachweis-Agent"
-    },
     "noRuns": "Noch keine Läufe.",
     "status": {
       "ok": "Erledigt",
       "running": "Läuft",
       "waiting": "Wartet",
       "failed": "Fehlgeschlagen"
+    },
+    "noEvents": "Für diesen Lauf wurden keine Ereignisse erfasst.",
+    "duration_one": "{{count}} Min.",
+    "duration_other": "{{count}} Min.",
+    "runs": {
+      "title": "Frühere Läufe",
+      "loadMore": "Mehr laden",
+      "failedEvents_one": "{{count}} fehlgeschlagenes Ereignis",
+      "failedEvents_other": "{{count}} fehlgeschlagene Ereignisse"
+    },
+    "summary": {
+      "title": "Zusammenfassung des Laufs",
+      "workflow": "Workflow",
+      "startedBy": "Gestartet von",
+      "startedAt": "Gestartet",
+      "duration": "Dauer",
+      "branch": "Branch",
+      "commit": "Commit"
+    },
+    "runStatus": {
+      "completed": "Abgeschlossen",
+      "failed": "Fehlgeschlagen",
+      "running": "Läuft",
+      "waiting": "Wartet"
+    },
+    "source": {
+      "agent": "Agent",
+      "approval": "Freigabe",
+      "git": "Git"
     }
   }
 }

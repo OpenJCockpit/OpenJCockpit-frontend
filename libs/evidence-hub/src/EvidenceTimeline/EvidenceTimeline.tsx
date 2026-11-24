@@ -1,14 +1,7 @@
-import type { EvidenceStatus, EvidenceTimelineEvent } from '@openjcockpit/api';
+import type { EvidenceTimelineEvent } from '@openjcockpit/api';
 import { useFormatters, useTranslation } from '@openjcockpit/i18n';
+import { STATUS_GLYPHS } from '../glyphs';
 import styles from '../EvidenceList/EvidenceList.module.scss';
-
-/** Decorative glyphs, not translatable copy. */
-const GLYPHS: Record<EvidenceStatus, string> = {
-  ok: '✓',
-  running: '…',
-  waiting: '⏸',
-  failed: '✕',
-};
 
 interface Props {
   /** Events as the server sends them, oldest first. */
@@ -42,7 +35,7 @@ export function EvidenceTimeline({ events, limit }: Props) {
                 role="img"
                 aria-label={t(`status.${event.status}`)}
               >
-                {GLYPHS[event.status]}
+                {STATUS_GLYPHS[event.status]}
               </span>
             </article>
           );

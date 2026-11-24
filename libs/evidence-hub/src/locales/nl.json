@@ -5,31 +5,43 @@
     "retry": "Opnieuw proberen",
     "noProject": "Kies een project om dit te zien.",
     "back": "Terug naar dashboard",
-    "sampleData": "Voorbeelddata",
     "title": "Uitvoeringsbewijs",
     "by": "Door: {{actor}}",
-    "events": {
-      "specLoaded": "Specificatie geladen",
-      "impactAnalysisRecorded": "Impactanalyse vastgelegd",
-      "testSetGenerated": "Testset gegenereerd",
-      "implementationProposalSaved": "Implementatievoorstel opgeslagen",
-      "humanApprovalLogged": "Menselijke goedkeuring vastgelegd",
-      "evidenceDataRecorded": "Bewijsgegevens vastgelegd"
-    },
-    "actors": {
-      "requirement": "Requirement-agent",
-      "impact": "Impactanalyse-agent",
-      "testDesign": "Testontwerp-agent",
-      "implementation": "Implementatie-agent",
-      "review": "Review-agent",
-      "evidence": "Bewijs-agent"
-    },
     "noRuns": "Nog geen runs.",
     "status": {
       "ok": "Gereed",
       "running": "Bezig",
       "waiting": "Wacht",
       "failed": "Mislukt"
+    },
+    "noEvents": "Geen gebeurtenissen vastgelegd voor deze run.",
+    "duration_one": "{{count}} min",
+    "duration_other": "{{count}} min",
+    "runs": {
+      "title": "Eerdere runs",
+      "loadMore": "Meer laden",
+      "failedEvents_one": "{{count}} mislukte gebeurtenis",
+      "failedEvents_other": "{{count}} mislukte gebeurtenissen"
+    },
+    "summary": {
+      "title": "Samenvatting van de run",
+      "workflow": "Workflow",
+      "startedBy": "Gestart door",
+      "startedAt": "Gestart",
+      "duration": "Duur",
+      "branch": "Branch",
+      "commit": "Commit"
+    },
+    "runStatus": {
+      "completed": "Voltooid",
+      "failed": "Mislukt",
+      "running": "Bezig",
+      "waiting": "Wachtend"
+    },
+    "source": {
+      "agent": "Agent",
+      "approval": "Goedkeuring",
+      "git": "Git"
     }
   }
 }

@@ -5,31 +5,43 @@
     "retry": "Reintentar",
     "noProject": "Selecciona un proyecto para verlo.",
     "back": "Volver al panel",
-    "sampleData": "Datos de ejemplo",
     "title": "Evidencia de ejecución",
     "by": "Por: {{actor}}",
-    "events": {
-      "specLoaded": "Especificación cargada",
-      "impactAnalysisRecorded": "Análisis de impacto registrado",
-      "testSetGenerated": "Conjunto de pruebas generado",
-      "implementationProposalSaved": "Propuesta de implementación guardada",
-      "humanApprovalLogged": "Aprobación humana registrada",
-      "evidenceDataRecorded": "Datos de evidencia registrados"
-    },
-    "actors": {
-      "requirement": "Agente de requisitos",
-      "impact": "Agente de análisis de impacto",
-      "testDesign": "Agente de diseño de pruebas",
-      "implementation": "Agente de implementación",
-      "review": "Agente de revisión",
-      "evidence": "Agente de evidencia"
-    },
     "noRuns": "Aún no hay ejecuciones.",
     "status": {
       "ok": "Hecho",
       "running": "En curso",
       "waiting": "En espera",
       "failed": "Fallido"
+    },
+    "noEvents": "No se registraron eventos para esta ejecución.",
+    "duration_one": "{{count}} min",
+    "duration_other": "{{count}} min",
+    "runs": {
+      "title": "Ejecuciones anteriores",
+      "loadMore": "Cargar más",
+      "failedEvents_one": "{{count}} evento fallido",
+      "failedEvents_other": "{{count}} eventos fallidos"
+    },
+    "summary": {
+      "title": "Resumen de la ejecución",
+      "workflow": "Workflow",
+      "startedBy": "Iniciada por",
+      "startedAt": "Inicio",
+      "duration": "Duración",
+      "branch": "Rama",
+      "commit": "Commit"
+    },
+    "runStatus": {
+      "completed": "Completada",
+      "failed": "Fallida",
+      "running": "En curso",
+      "waiting": "En espera"
+    },
+    "source": {
+      "agent": "Agente",
+      "approval": "Aprobación",
+      "git": "Git"
     }
   }
 }

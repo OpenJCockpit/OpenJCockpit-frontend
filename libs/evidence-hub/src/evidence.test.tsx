@@ -3,7 +3,12 @@ import { createMemoryRouter, RouterProvider } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { describe, expect, it, vi } from 'vitest';
 import * as api from '@openjcockpit/api';
-import type { EvidenceRun, EvidenceTimelineEvent, Project, Workspace } from '@openjcockpit/api';
+import type {
+  EvidenceRun,
+  EvidenceRunPage,
+  EvidenceTimelineEvent,
+  Project,
+} from '@openjcockpit/api';
 import { createI18n, I18nProvider } from '@openjcockpit/i18n';
 import { isAppDefinition } from '@openjcockpit/hub-contract';
 import {
@@ -15,23 +20,12 @@ import { evidenceApp } from './index';
 
 vi.mock('@openjcockpit/api', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@openjcockpit/api')>()),
-  loadWorkspace: vi.fn(),
+  loadEvidenceRuns: vi.fn(),
+  loadEvidenceRun: vi.fn(),
   loadLatestEvidenceRun: vi.fn(),
 }));
 
 const PROJECT = { id: 'p1', name: 'Demo', customerId: 'c1' } as Project;
-const WORKSPACE = {
-  evidenceEvents: [
-    { time: '13:16', title: 'Spec loaded', actor: 'Requirement Agent', status: 'ok' },
-    { time: '13:22', title: 'Human approval logged', actor: 'Review Agent', status: 'ok' },
-    { time: '13:30', title: 'Custom step', actor: 'Custom Agent', status: 'ok' },
-  ],
-  qualityControls: [
-    { name: 'Unit test coverage', status: 'Compliant', statusText: '92%' },
-    { name: 'Custom gate', status: 'Compliant', statusText: '' },
-  ],
-} as unknown as Workspace;
-
 const event = (n: number, extra: Partial<EvidenceTimelineEvent> = {}): EvidenceTimelineEvent => ({
   timestamp: `2026-11-24T10:0${n}:00Z`,
   source: 'agent',
@@ -140,21 +134,6 @@ describe('evidenceApp', () => {
     expect(await screen.findByText('Loading…')).toBeInTheDocument();
   });
 
-  it('mounts its page route with the full list', async () => {
-    vi.mocked(api.loadWorkspace).mockResolvedValue(WORKSPACE);
-    const routes = await evidenceApp.loadRoutes();
-    renderWith(<RouterProvider router={createMemoryRouter(routes)} />);
-    expect(await screen.findByRole('heading', { level: 1 })).toBeInTheDocument();
-    expect(await screen.findByText('Spec loaded')).toBeInTheDocument();
-  });
-
-  it('shows the page error state and its loading state', async () => {
-    vi.mocked(api.loadWorkspace).mockRejectedValue(new Error('boom'));
-    const routes = await evidenceApp.loadRoutes();
-    renderWith(<RouterProvider router={createMemoryRouter(routes)} />);
-    expect(await screen.findByText('Failed to load the data.')).toBeInTheDocument();
-  });
-
   it('retries the widget load', async () => {
     vi.mocked(api.loadLatestEvidenceRun).mockRejectedValueOnce(new Error('boom'));
     vi.mocked(api.loadLatestEvidenceRun).mockResolvedValue(RUN);
@@ -164,65 +143,173 @@ describe('evidenceApp', () => {
     expect(await screen.findByText('Step 7')).toBeInTheDocument();
   });
 
-  it('queries the page workspace by customer id, falling back to the project id', async () => {
-    vi.mocked(api.loadWorkspace).mockResolvedValue(WORKSPACE);
-    const routes = await evidenceApp.loadRoutes();
-    renderWith(<RouterProvider router={createMemoryRouter(routes)} />, {
-      id: 'p2',
-      name: 'Solo',
-    } as Project);
-    await screen.findByText('Spec loaded');
-    expect(api.loadWorkspace).toHaveBeenLastCalledWith('p2', expect.anything());
-  });
+  describe('page', () => {
+    const summary = (runId: string, extra = {}) => ({
+      runId,
+      workflowId: 'spec-to-pr',
+      status: 'COMPLETED',
+      startedAt: '2026-11-24T10:00:00Z',
+      completedAt: '2026-11-24T10:30:00Z',
+      startedBy: 'Jan',
+      branch: 'feature/x',
+      eventCount: 3,
+      failedEventCount: 0,
+      ...extra,
+    });
+    const PAGE1: EvidenceRunPage = {
+      items: [summary('r1'), summary('r2', { status: 'FAILED', failedEventCount: 2 })],
+      total: 3,
+      limit: 2,
+      offset: 0,
+    };
+    const runOf = (runId: string): EvidenceRun => ({
+      details: {
+        runId,
+        workflowId: 'spec-to-pr',
+        status: 'COMPLETED',
+        startedBy: 'Jan',
+        startedAt: '2026-11-24T10:00:00Z',
+        completedAt: '2026-11-24T10:30:00Z',
+        branch: 'feature/x',
+        commitHash: 'abc123',
+        artifacts: [],
+      },
+      events: [
+        event(1, { title: `${runId} first` }),
+        event(2, { title: `${runId} second` }),
+        event(3, { source: 'git', agentId: null, title: `${runId} pushed` }),
+      ],
+    });
 
-  it('sends the page to the project list without a project and loads nothing', async () => {
-    vi.mocked(api.loadWorkspace).mockClear();
-    const routes = [
-      { path: '/projects', element: <p>projects</p> },
-      { path: '/evidence', children: await evidenceApp.loadRoutes() },
-    ];
-    renderWith(
-      <RouterProvider router={createMemoryRouter(routes, { initialEntries: ['/evidence'] })} />,
-      null,
-    );
-    expect(await screen.findByText('projects')).toBeInTheDocument();
-    expect(api.loadWorkspace).not.toHaveBeenCalled();
-  });
+    async function renderPage(initialEntries = ['/evidence'], project: Project | null = PROJECT) {
+      const routes = [
+        { path: '/projects', element: <p>projects</p> },
+        { path: '/home', element: <p>dashboard</p> },
+        { path: '/evidence', children: await evidenceApp.loadRoutes() },
+      ];
+      return renderWith(
+        <RouterProvider router={createMemoryRouter(routes, { initialEntries })} />,
+        project,
+      );
+    }
 
-  it('retries the page load and shows its loading state', async () => {
-    vi.mocked(api.loadWorkspace).mockReturnValueOnce(new Promise(() => {}));
-    const routes = await evidenceApp.loadRoutes();
-    const { unmount } = renderWith(<RouterProvider router={createMemoryRouter(routes)} />);
-    expect(await screen.findByText('Loading…')).toBeInTheDocument();
-    unmount();
-    vi.mocked(api.loadWorkspace).mockRejectedValueOnce(new Error('boom'));
-    vi.mocked(api.loadWorkspace).mockResolvedValue(WORKSPACE);
-    renderWith(<RouterProvider router={createMemoryRouter(routes)} />);
-    fireEvent.click(await screen.findByRole('button', { name: 'Retry' }));
-    expect(await screen.findByText('Spec loaded')).toBeInTheDocument();
-  });
+    it('shows the latest run by default with summary and grouped timeline', async () => {
+      vi.mocked(api.loadEvidenceRuns).mockResolvedValue(PAGE1);
+      vi.mocked(api.loadEvidenceRun).mockImplementation(async (_p, id) => runOf(id));
+      await renderPage();
+      expect(await screen.findByText('r1 first')).toBeInTheDocument();
+      expect(api.loadEvidenceRun).toHaveBeenCalledWith('p1', 'r1', expect.anything());
+      expect(screen.getByText('abc123')).toBeInTheDocument();
+      expect(screen.getByText('feature/x')).toBeInTheDocument();
+      expect(screen.queryByText('Sample data')).not.toBeInTheDocument();
+      // two agent events of one agent form a step, the git event another
+      expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(2);
+    });
 
-  it('goes back to the dashboard from the default header', async () => {
-    vi.mocked(api.loadWorkspace).mockResolvedValue(WORKSPACE);
-    const routes = [
-      { path: '/home', element: <p>dashboard</p> },
-      { path: '/evidence', children: await evidenceApp.loadRoutes() },
-    ];
-    renderWith(
-      <RouterProvider router={createMemoryRouter(routes, { initialEntries: ['/evidence'] })} />,
-    );
-    fireEvent.click(await screen.findByTitle('Back to dashboard'));
-    expect(await screen.findByText('dashboard')).toBeInTheDocument();
-  });
+    it('selects a run from the list and keeps it in the URL', async () => {
+      vi.mocked(api.loadEvidenceRuns).mockResolvedValue(PAGE1);
+      vi.mocked(api.loadEvidenceRun).mockImplementation(async (_p, id) => runOf(id));
+      await renderPage();
+      await screen.findByText('r1 first');
+      fireEvent.click(screen.getByText('2 failed events'));
+      expect(await screen.findByText('r2 first')).toBeInTheDocument();
+    });
 
-  // The lazy locale chunk is transformed on first import, which is slow on a cold CI runner.
-  // The test timeout must exceed the inner findBy timeout, or the test dies before the wait does.
-  it('loads a non-English translation lazily', { timeout: 20_000 }, async () => {
-    vi.mocked(api.loadWorkspace).mockResolvedValue(WORKSPACE);
-    const routes = await evidenceApp.loadRoutes();
-    renderWith(<RouterProvider router={createMemoryRouter(routes)} />, PROJECT, 'nl');
-    expect(
-      await screen.findByText(/Uitvoeringsbewijs/, undefined, { timeout: 15_000 }),
-    ).toBeInTheDocument();
+    it('opens the run named in ?run=', async () => {
+      vi.mocked(api.loadEvidenceRuns).mockResolvedValue(PAGE1);
+      vi.mocked(api.loadEvidenceRun).mockImplementation(async (_p, id) => runOf(id));
+      await renderPage(['/evidence?run=r2']);
+      expect(await screen.findByText('r2 first')).toBeInTheDocument();
+      expect(api.loadEvidenceRun).not.toHaveBeenCalledWith('p1', 'r1', expect.anything());
+    });
+
+    it('loads more runs', async () => {
+      vi.mocked(api.loadEvidenceRuns).mockResolvedValueOnce(PAGE1);
+      vi.mocked(api.loadEvidenceRuns).mockResolvedValueOnce({
+        items: [summary('r3', { startedBy: 'Third' })],
+        total: 3,
+        limit: 2,
+        offset: 2,
+      });
+      vi.mocked(api.loadEvidenceRun).mockImplementation(async (_p, id) => runOf(id));
+      await renderPage();
+      fireEvent.click(await screen.findByRole('button', { name: 'Load more' }));
+      expect(await screen.findByText(/Third/)).toBeInTheDocument();
+      expect(api.loadEvidenceRuns).toHaveBeenLastCalledWith(
+        'p1',
+        { limit: 20, offset: 2 },
+        expect.anything(),
+      );
+      expect(screen.queryByRole('button', { name: 'Load more' })).not.toBeInTheDocument();
+    });
+
+    it('shows an empty state without runs', async () => {
+      vi.mocked(api.loadEvidenceRuns).mockResolvedValue({
+        items: [],
+        total: 0,
+        limit: 20,
+        offset: 0,
+      });
+      await renderPage();
+      expect(await screen.findByText('No runs yet.')).toBeInTheDocument();
+    });
+
+    it('shows a retryable error when the run list fails, and a loading state', async () => {
+      vi.mocked(api.loadEvidenceRuns).mockReturnValueOnce(new Promise(() => {}));
+      const first = await renderPage();
+      expect(await screen.findByText('Loading…')).toBeInTheDocument();
+      first.unmount();
+      vi.mocked(api.loadEvidenceRuns).mockRejectedValueOnce(new Error('boom'));
+      vi.mocked(api.loadEvidenceRuns).mockResolvedValue(PAGE1);
+      vi.mocked(api.loadEvidenceRun).mockImplementation(async (_p, id) => runOf(id));
+      await renderPage();
+      fireEvent.click(await screen.findByRole('button', { name: 'Retry' }));
+      expect(await screen.findByText('r1 first')).toBeInTheDocument();
+    });
+
+    it('shows an error for a run that fails to load', async () => {
+      vi.mocked(api.loadEvidenceRuns).mockResolvedValue(PAGE1);
+      vi.mocked(api.loadEvidenceRun).mockRejectedValue(new Error('boom'));
+      await renderPage();
+      expect(await screen.findByText('Failed to load the data.')).toBeInTheDocument();
+    });
+
+    it('shows a hint when a run has no events', async () => {
+      vi.mocked(api.loadEvidenceRuns).mockResolvedValue(PAGE1);
+      vi.mocked(api.loadEvidenceRun).mockResolvedValue({ ...runOf('r1'), events: [] });
+      await renderPage();
+      expect(await screen.findByText('No events recorded for this run.')).toBeInTheDocument();
+    });
+
+    it('sends the page to the project list without a project and loads nothing', async () => {
+      vi.mocked(api.loadEvidenceRuns).mockClear();
+      await renderPage(['/evidence'], null);
+      expect(await screen.findByText('projects')).toBeInTheDocument();
+      expect(api.loadEvidenceRuns).not.toHaveBeenCalled();
+    });
+
+    it('goes back to the dashboard from the default header', async () => {
+      vi.mocked(api.loadEvidenceRuns).mockResolvedValue(PAGE1);
+      vi.mocked(api.loadEvidenceRun).mockImplementation(async (_p, id) => runOf(id));
+      await renderPage();
+      fireEvent.click(await screen.findByTitle('Back to dashboard'));
+      expect(await screen.findByText('dashboard')).toBeInTheDocument();
+    });
+
+    // The lazy locale chunk is transformed on first import, which is slow on a cold CI runner.
+    // The test timeout must exceed the inner findBy timeout, or the test dies before the wait does.
+    it('loads a non-English translation lazily', { timeout: 20_000 }, async () => {
+      vi.mocked(api.loadEvidenceRuns).mockResolvedValue({
+        items: [],
+        total: 0,
+        limit: 20,
+        offset: 0,
+      });
+      const routes = await evidenceApp.loadRoutes();
+      renderWith(<RouterProvider router={createMemoryRouter(routes)} />, PROJECT, 'nl');
+      expect(
+        await screen.findByText(/Uitvoeringsbewijs/, undefined, { timeout: 15_000 }),
+      ).toBeInTheDocument();
+    });
   });
 });

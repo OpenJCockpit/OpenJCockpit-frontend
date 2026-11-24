@@ -1,0 +1,55 @@
+.runs {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+.dropdown {
+  display: none;
+}
+.rail {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.run {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  padding: 10px 12px;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  &:hover,
+  &[aria-current='true'] {
+    border-color: var(--cyan-a45);
+  }
+}
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  overflow-wrap: anywhere;
+}
+.meta {
+  color: var(--muted);
+  font-size: 12px;
+}
+.failedBadge {
+  color: var(--danger);
+  font-size: 12px;
+}
+@media (max-width: 800px) {
+  .dropdown {
+    display: block;
+  }
+  .rail {
+    display: none;
+  }
+}
