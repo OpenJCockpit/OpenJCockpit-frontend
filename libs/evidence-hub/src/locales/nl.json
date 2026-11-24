@@ -22,8 +22,11 @@
     "runs": {
       "columnRun": "Run",
       "columnStatus": "Status",
+      "columnActions": "Acties",
       "search": "Runs zoeken",
       "searchPlaceholder": "Workflow, status, persoon of branch",
+      "workflowFilter": "Filter op workflow",
+      "allWorkflows": "Alle workflows",
       "noMatches": "Geen runs gevonden voor deze zoekopdracht.",
       "title": "Eerdere runs",
       "loadMore": "Meer laden",
@@ -66,6 +69,30 @@
     },
     "artifacts": {
       "title": "Gegenereerde artefacten"
+    },
+    "export": {
+      "button": "Exporteren",
+      "json": "JSON (volledige gegevens)",
+      "csv": "CSV (tijdlijngebeurtenissen)",
+      "markdown": "Markdown (rapport)",
+      "pdf": "PDF (rapport)",
+      "includeOutputs": "Agent-uitvoer meenemen",
+      "scope": {
+        "run": "Deze run exporteren",
+        "workflow": "Alle runs van {{workflow}} exporteren",
+        "project": "Alle runs van het project exporteren"
+      },
+      "dateRange": "Periode",
+      "dateFrom": "Van",
+      "dateTo": "Tot",
+      "progress": "{{done}} van {{total}} runs",
+      "expired": "Deze export is verlopen. Start hem opnieuw.",
+      "tooManyJobs": "Er lopen te veel exports. Probeer het zo opnieuw.",
+      "failed": "De export is mislukt. Probeer het opnieuw.",
+      "inProgress": "Exporteren…",
+      "cancel": "Export annuleren",
+      "formats": "Exportformaat",
+      "rowAction": "Run {{run}} exporteren"
     }
   }
 }

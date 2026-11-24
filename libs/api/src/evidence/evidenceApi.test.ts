@@ -1,6 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { setAuthToken } from '../core/http';
+import { ApiError } from '../core/http';
 import {
+  cancelEvidenceExport,
+  createEvidenceExport,
+  downloadEvidenceExport,
+  exportEvidenceRun,
+  getEvidenceExport,
   loadEvidenceOutput,
   loadEvidenceRun,
   loadEvidenceRuns,
@@ -76,5 +82,113 @@ describe('evidenceApi', () => {
   ])('%s rejects with a prefixed error', async (_name, call, message) => {
     mockFetch.mockResolvedValueOnce(fail(Number(message.slice(-3))));
     await expect(call()).rejects.toThrow(message);
+  });
+  describe('export', () => {
+    const file = (name: string | null) => ({
+      ok: true,
+      status: 200,
+      blob: () => Promise.resolve(new Blob(['x'])),
+      headers: new Headers(name ? { 'Content-Disposition': `attachment; filename="${name}"` } : {}),
+    });
+
+    it('exportEvidenceRun GETs the export with format and includeOutputs, and uses the server filename', async () => {
+      mockFetch.mockResolvedValue(file('evidence-r1.csv'));
+      const result = await exportEvidenceRun('p1', 'r 1', { format: 'csv' });
+      expect(mockFetch.mock.calls[0]![0]).toBe(
+        '/api/projects/p1/evidence/runs/r%201/export?format=csv&includeOutputs=false',
+      );
+      expect(mockFetch.mock.calls[0]![1].headers).toMatchObject({ Authorization: 'Bearer tok' });
+      expect(result.filename).toBe('evidence-r1.csv');
+      expect(await result.blob.text()).toBe('x');
+    });
+
+    it.each([
+      ['json', 'json'],
+      ['csv', 'csv'],
+      ['markdown', 'md'],
+      ['pdf', 'pdf'],
+    ] as const)(
+      'exportEvidenceRun falls back to evidence-<runId>.<ext> for %s',
+      async (format, ext) => {
+        mockFetch.mockResolvedValue(file(null));
+        const result = await exportEvidenceRun('p1', 'r1', { format, includeOutputs: true });
+        expect(result.filename).toBe(`evidence-r1.${ext}`);
+        expect(mockFetch.mock.calls[0]![0]).toContain('includeOutputs=true');
+      },
+    );
+
+    it('exportEvidenceRun rejects for a run of another project', async () => {
+      mockFetch.mockResolvedValue(fail(404));
+      await expect(exportEvidenceRun('p1', 'r1', { format: 'json' })).rejects.toMatchObject({
+        status: 404,
+      });
+    });
+
+    it('createEvidenceExport POSTs the request and resolves with the job', async () => {
+      mockFetch.mockResolvedValue(ok({ jobId: 'j1', status: 'queued' }));
+      const request = {
+        scope: 'workflow',
+        workflowId: 'w1',
+        format: 'pdf',
+        includeOutputs: false,
+      } as const;
+      await expect(createEvidenceExport('p1', request)).resolves.toEqual({
+        jobId: 'j1',
+        status: 'queued',
+      });
+      expect(mockFetch.mock.calls[0]![0]).toBe('/api/projects/p1/evidence/exports');
+      expect(mockFetch.mock.calls[0]![1]).toMatchObject({
+        method: 'POST',
+        body: JSON.stringify(request),
+      });
+    });
+
+    it('createEvidenceExport explains a 429 as too many jobs', async () => {
+      mockFetch.mockResolvedValue(fail(429));
+      const error = await createEvidenceExport('p1', { scope: 'project', format: 'csv' }).catch(
+        (e: unknown) => e,
+      );
+      expect(error).toBeInstanceOf(ApiError);
+      expect(error).toMatchObject({ status: 429, message: 'Too many export jobs running: 429' });
+    });
+
+    it('createEvidenceExport reports other failures generically', async () => {
+      mockFetch.mockResolvedValue(fail(500));
+      await expect(
+        createEvidenceExport('p1', { scope: 'project', format: 'csv' }),
+      ).rejects.toMatchObject({ status: 500, message: 'Failed to start evidence export: 500' });
+    });
+
+    it('getEvidenceExport GETs the job status and encodes the ids', async () => {
+      const job = { jobId: 'j/1', status: 'running', progress: { runsDone: 1, runsTotal: 4 } };
+      mockFetch.mockResolvedValue(ok(job));
+      await expect(getEvidenceExport('p1', 'j/1')).resolves.toEqual(job);
+      expect(mockFetch.mock.calls[0]![0]).toBe('/api/projects/p1/evidence/exports/j%2F1');
+    });
+
+    it('downloadEvidenceExport returns the file, with a fallback filename', async () => {
+      mockFetch.mockResolvedValueOnce(file('evidence-w1-runs.json'));
+      mockFetch.mockResolvedValueOnce(file(null));
+      expect((await downloadEvidenceExport('p1', 'j1')).filename).toBe('evidence-w1-runs.json');
+      expect((await downloadEvidenceExport('p1', 'j1')).filename).toBe('evidence-j1');
+      expect(mockFetch.mock.calls[0]![0]).toBe('/api/projects/p1/evidence/exports/j1/download');
+    });
+
+    it('downloadEvidenceExport keeps the status for a not-ready (409) and an expired (410) job', async () => {
+      mockFetch.mockResolvedValueOnce(fail(409));
+      mockFetch.mockResolvedValueOnce(fail(410));
+      await expect(downloadEvidenceExport('p1', 'j1')).rejects.toMatchObject({ status: 409 });
+      await expect(downloadEvidenceExport('p1', 'j1')).rejects.toMatchObject({
+        status: 410,
+        message: 'The evidence export has expired: 410',
+      });
+    });
+
+    it('cancelEvidenceExport DELETEs the job', async () => {
+      mockFetch.mockResolvedValue({ ok: true, status: 204 });
+      await cancelEvidenceExport('p1', 'j1');
+      expect(mockFetch.mock.calls[0]![0]).toBe('/api/projects/p1/evidence/exports/j1');
+      expect(mockFetch.mock.calls[0]![1]).toMatchObject({ method: 'DELETE' });
+    });
   });
 });

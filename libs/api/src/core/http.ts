@@ -120,6 +120,45 @@ export async function apiRequest<T>(path: string, options: RequestOptions): Prom
   return (await apiFetch(path, options)).json();
 }
 
+/** A downloaded file: the bytes plus the filename the server suggested (undefined when it sent none). */
+export interface BlobResponse {
+  blob: Blob;
+  filename?: string;
+}
+
+/**
+ * Filename from a `Content-Disposition` header (RFC 6266): `filename*=UTF-8''...` wins over
+ * `filename="..."`. Path separators are dropped so the name is safe to hand to a download.
+ */
+export function filenameFromContentDisposition(header: string | null): string | undefined {
+  if (!header) return undefined;
+  let name: string | undefined;
+  const encoded = /filename\*\s*=\s*UTF-8''([^;]+)/i.exec(header)?.[1];
+  if (encoded) {
+    try {
+      name = decodeURIComponent(encoded.trim());
+    } catch {
+      name = undefined;
+    }
+  }
+  name ??=
+    /filename\s*=\s*"([^"]*)"/i.exec(header)?.[1] ?? /filename\s*=\s*([^;]+)/i.exec(header)?.[1];
+  const safe = name?.split(/[\\/]/).pop()?.trim();
+  return safe || undefined;
+}
+
+/**
+ * Authenticated download with the same auth, 401 refresh and error handling as `apiRequest`.
+ * A plain link cannot send the Bearer header, so the caller saves the returned Blob.
+ */
+export async function apiRequestBlob(path: string, options: RequestOptions): Promise<BlobResponse> {
+  const response = await apiFetch(path, options);
+  return {
+    blob: await response.blob(),
+    filename: filenameFromContentDisposition(response.headers.get('Content-Disposition')),
+  };
+}
+
 /** Like `apiRequest` for endpoints that answer without a body (DELETE, activate, ...). */
 export async function apiRequestVoid(path: string, options: RequestOptions): Promise<void> {
   await apiFetch(path, options);

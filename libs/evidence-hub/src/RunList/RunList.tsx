@@ -1,9 +1,19 @@
 import { Link } from 'react-router';
 import type { EvidenceRunSummary } from '@openjcockpit/api';
 import { useLocale, useTranslation } from '@openjcockpit/i18n';
-import { Button, DataTable, fieldHintClass, Icon, IconBox, StatusChip } from '@openjcockpit/ui';
+import {
+  Actions,
+  Button,
+  DataTable,
+  fieldHintClass,
+  HiddenHeader,
+  Icon,
+  IconBox,
+  StatusChip,
+} from '@openjcockpit/ui';
 import { durationMinutes, relativeAge, runStatusKind } from '../runFormat';
 import { evidenceRunPath } from '../routePaths';
+import { RunExportAction } from './RunExportAction';
 import styles from './RunList.module.scss';
 
 interface Props {
@@ -27,6 +37,9 @@ export function RunList({ runs, emptyText, hasMore, loadingMore, onLoadMore }: P
           <tr>
             <th>{t('runs.columnRun')}</th>
             <th>{t('runs.columnStatus')}</th>
+            <th>
+              <HiddenHeader>{t('runs.columnActions')}</HiddenHeader>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -61,12 +74,15 @@ export function RunList({ runs, emptyText, hasMore, loadingMore, onLoadMore }: P
                     kind={runStatusKind(run.status)}
                   />
                 </td>
+                <Actions as="td">
+                  <RunExportAction runId={run.runId} name={run.workflowId ?? run.runId} />
+                </Actions>
               </tr>
             );
           })}
           {runs.length === 0 && (
             <tr>
-              <td colSpan={2} className={fieldHintClass}>
+              <td colSpan={3} className={fieldHintClass}>
                 {emptyText}
               </td>
             </tr>

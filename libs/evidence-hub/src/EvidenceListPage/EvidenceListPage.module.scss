@@ -2,12 +2,20 @@
   padding: 16px;
   color: var(--muted);
 }
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 20px;
+}
 .search {
   position: relative;
   display: flex;
+  flex: 1;
   align-items: center;
+  min-width: 200px;
   max-width: 360px;
-  margin-bottom: 20px;
   & > svg {
     position: absolute;
     left: 12px;

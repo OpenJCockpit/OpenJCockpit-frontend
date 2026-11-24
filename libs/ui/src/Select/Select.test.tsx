@@ -140,4 +140,10 @@ describe('Select', () => {
     fireEvent.keyDown(trigger, { key: 'Enter' });
     expect(onChange).toHaveBeenCalledWith('c');
   });
+
+  it('can open upwards', () => {
+    render(<Select label="Pick" value="a" options={options} onChange={vi.fn()} openUp />);
+    fireEvent.click(screen.getByRole('combobox', { name: 'Pick' }));
+    expect(screen.getByRole('listbox').className).toMatch(/listUp/);
+  });
 });

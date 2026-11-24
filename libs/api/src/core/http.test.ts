@@ -1,8 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   apiRequest,
+  apiRequestBlob,
   apiRequestVoid,
   authHeaders,
+  filenameFromContentDisposition,
   isAbortError,
   isServiceUnavailable,
   setAuthToken,
@@ -322,6 +324,105 @@ describe('server error codes', () => {
 
     await expect(apiRequestVoid('/api/x', { errorMessage: 'Failed' })).rejects.toMatchObject({
       message: 'A connection with this name already exists',
+    });
+  });
+});
+
+describe('filenameFromContentDisposition', () => {
+  it('reads a quoted and an unquoted filename', () => {
+    expect(filenameFromContentDisposition('attachment; filename="evidence-r1.csv"')).toBe(
+      'evidence-r1.csv',
+    );
+    expect(filenameFromContentDisposition('attachment; filename=evidence-r1.csv')).toBe(
+      'evidence-r1.csv',
+    );
+  });
+
+  it('prefers the RFC 6266 encoded filename and decodes it', () => {
+    expect(
+      filenameFromContentDisposition(
+        `attachment; filename="fallback.csv"; filename*=UTF-8''caf%C3%A9.csv`,
+      ),
+    ).toBe('café.csv');
+  });
+
+  it('falls back to the plain filename when the encoded one is malformed', () => {
+    expect(
+      filenameFromContentDisposition(`attachment; filename="a.csv"; filename*=UTF-8''%E0%A4%A`),
+    ).toBe('a.csv');
+  });
+
+  it('drops path separators', () => {
+    expect(filenameFromContentDisposition('attachment; filename="../../etc/passwd"')).toBe(
+      'passwd',
+    );
+    expect(filenameFromContentDisposition('attachment; filename="C:\\temp\\x.pdf"')).toBe('x.pdf');
+  });
+
+  it('returns undefined without a usable header', () => {
+    expect(filenameFromContentDisposition(null)).toBeUndefined();
+    expect(filenameFromContentDisposition('attachment')).toBeUndefined();
+    expect(filenameFromContentDisposition('attachment; filename=""')).toBeUndefined();
+  });
+});
+
+describe('apiRequestBlob', () => {
+  beforeEach(() => {
+    mockFetch.mockReset();
+    vi.stubGlobal('fetch', mockFetch);
+    setAuthToken('tok');
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    setSessionRefresher(null);
+  });
+
+  const file = (name: string | null) => ({
+    ok: true,
+    status: 200,
+    blob: () => Promise.resolve(new Blob(['a,b'])),
+    headers: new Headers(name ? { 'Content-Disposition': `attachment; filename="${name}"` } : {}),
+  });
+
+  it('sends the Bearer header and resolves with the blob and the server filename', async () => {
+    mockFetch.mockResolvedValue(file('x.csv'));
+
+    const result = await apiRequestBlob('/api/x', { errorMessage: 'Failed' });
+
+    expect(mockFetch.mock.calls[0]![1].headers).toMatchObject({ Authorization: 'Bearer tok' });
+    expect(await result.blob.text()).toBe('a,b');
+    expect(result.filename).toBe('x.csv');
+  });
+
+  it('leaves the filename undefined when the server sends none', async () => {
+    mockFetch.mockResolvedValue(file(null));
+
+    expect((await apiRequestBlob('/api/x', { errorMessage: 'Failed' })).filename).toBeUndefined();
+  });
+
+  it('renews the session once on a 401 and retries', async () => {
+    setSessionRefresher(() => Promise.resolve('fresh'));
+    mockFetch
+      .mockResolvedValueOnce({ ok: false, status: 401, json: () => Promise.reject(new Error()) })
+      .mockResolvedValueOnce(file('x.csv'));
+
+    await apiRequestBlob('/api/x', { errorMessage: 'Failed' });
+
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+    expect(mockFetch.mock.calls[1]![1].headers).toMatchObject({ Authorization: 'Bearer fresh' });
+  });
+
+  it('rejects with an ApiError on a non-2xx response', async () => {
+    mockFetch.mockResolvedValue({
+      ok: false,
+      status: 410,
+      json: () => Promise.reject(new Error()),
+    });
+
+    await expect(apiRequestBlob('/api/x', { errorMessage: 'Gone' })).rejects.toMatchObject({
+      status: 410,
+      message: 'Gone: 410',
     });
   });
 });

@@ -22,8 +22,11 @@
     "runs": {
       "columnRun": "Run",
       "columnStatus": "Status",
+      "columnActions": "Actions",
       "search": "Search runs",
       "searchPlaceholder": "Workflow, status, person or branch",
+      "workflowFilter": "Filter by workflow",
+      "allWorkflows": "All workflows",
       "noMatches": "No runs match your search.",
       "title": "Past runs",
       "loadMore": "Load more",
@@ -66,6 +69,30 @@
     },
     "artifacts": {
       "title": "Generated artifacts"
+    },
+    "export": {
+      "button": "Export",
+      "json": "JSON (full data)",
+      "csv": "CSV (timeline events)",
+      "markdown": "Markdown (report)",
+      "pdf": "PDF (report)",
+      "includeOutputs": "Include agent outputs",
+      "scope": {
+        "run": "Export this run",
+        "workflow": "Export all runs of {{workflow}}",
+        "project": "Export all runs of the project"
+      },
+      "dateRange": "Date range",
+      "dateFrom": "From",
+      "dateTo": "To",
+      "progress": "{{done}} of {{total}} runs",
+      "expired": "This export has expired. Start it again.",
+      "tooManyJobs": "Too many exports are running. Try again shortly.",
+      "failed": "The export failed. Try again.",
+      "inProgress": "Exporting…",
+      "cancel": "Cancel export",
+      "formats": "Export format",
+      "rowAction": "Export run {{run}}"
     }
   }
 }

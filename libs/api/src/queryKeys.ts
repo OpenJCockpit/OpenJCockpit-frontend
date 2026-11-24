@@ -4,6 +4,8 @@ export const queryKeys = {
   evidenceRuns: (projectId: string) => ['evidence', projectId, 'runs'] as const,
   evidenceRun: (projectId: string, runId: string) => ['evidence', projectId, 'run', runId] as const,
   evidenceLatest: (projectId: string) => ['evidence', projectId, 'latest'] as const,
+  evidenceExport: (projectId: string, jobId: string) =>
+    ['evidence', projectId, 'export', jobId] as const,
   evidenceOutput: (projectId: string, runId: string, agentKey: string) =>
     ['evidence', projectId, 'run', runId, 'output', agentKey] as const,
   projectSpecs: (projectId: string) => ['project-specs', projectId] as const,

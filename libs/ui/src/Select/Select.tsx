@@ -22,6 +22,8 @@ interface Props {
   block?: boolean;
   /** Renders the trigger like a text input (form fields, settings rows) instead of the compact cyan pill. */
   field?: boolean;
+  /** Opens the list above the trigger instead of below it, for controls at the bottom of the screen. */
+  openUp?: boolean;
   className?: string;
   'aria-describedby'?: string;
   'aria-invalid'?: AriaAttributes['aria-invalid'];
@@ -39,6 +41,7 @@ export function Select({
   disabled,
   block,
   field,
+  openUp,
   className,
   ...rest
 }: Props) {
@@ -135,7 +138,12 @@ export function Select({
         <span className={styles.chevron} aria-hidden="true" />
       </button>
       {open && !disabled && (
-        <ul id={listId} role="listbox" aria-label={label} className={styles.list}>
+        <ul
+          id={listId}
+          role="listbox"
+          aria-label={label}
+          className={cx(styles.list, openUp && styles.listUp)}
+        >
           {options.map((o, i) => (
             // Keyboard handling lives on the combobox trigger, which keeps focus (aria-activedescendant).
             // eslint-disable-next-line jsx-a11y/click-events-have-key-events -- keys are handled on the trigger
