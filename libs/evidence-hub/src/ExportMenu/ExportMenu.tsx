@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import type { EvidenceExportFormat, EvidenceExportProgress } from '@openjcockpit/api';
 import { useTranslation } from '@openjcockpit/i18n';
 import { Button, CheckboxField, formInputClass, Icon, IconButton } from '@openjcockpit/ui';
@@ -56,22 +57,31 @@ export function ExportMenu({
   const [includeOutputs, setIncludeOutputs] = useState(false);
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
+  const [pos, setPos] = useState<{ top: number; right: number } | null>(null);
   const root = useRef<HTMLDivElement>(null);
+  const popover = useRef<HTMLDivElement>(null);
   const popoverId = useId();
 
   useEffect(() => {
     if (!open) return;
     const onPointer = (e: MouseEvent) => {
-      if (!root.current?.contains(e.target as Node)) setOpen(false);
+      const target = e.target as Node;
+      if (!root.current?.contains(target) && !popover.current?.contains(target)) setOpen(false);
     };
+    // The popover is fixed to the viewport, so it would drift away from its button on scroll or resize.
+    const close = () => setOpen(false);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpen(false);
     };
     document.addEventListener('mousedown', onPointer);
     document.addEventListener('keydown', onKey);
+    window.addEventListener('resize', close);
+    window.addEventListener('scroll', close, true);
     return () => {
       document.removeEventListener('mousedown', onPointer);
       document.removeEventListener('keydown', onKey);
+      window.removeEventListener('resize', close);
+      window.removeEventListener('scroll', close, true);
     };
   }, [open]);
 
@@ -80,6 +90,12 @@ export function ExportMenu({
     const outputs = includeOutputs && OUTPUT_FORMATS.has(format);
     if (dateRange) onExport(format, outputs, { from: from || undefined, to: to || undefined });
     else onExport(format, outputs);
+  };
+
+  const toggle = () => {
+    const rect = root.current?.getBoundingClientRect();
+    if (rect) setPos({ top: rect.bottom, right: window.innerWidth - rect.right });
+    setOpen((v) => !v);
   };
 
   return (
@@ -91,7 +107,7 @@ export function ExportMenu({
           aria-expanded={open}
           aria-controls={open ? popoverId : undefined}
           disabled={disabled || pending}
-          onClick={() => setOpen((v) => !v)}
+          onClick={toggle}
         />
       ) : (
         <Button
@@ -100,60 +116,65 @@ export function ExportMenu({
           aria-expanded={open}
           aria-controls={open ? popoverId : undefined}
           disabled={disabled || pending}
-          onClick={() => setOpen((v) => !v)}
+          onClick={toggle}
         >
           <Icon name="download" /> {pending ? t('export.inProgress') : t('export.button')}
         </Button>
       )}
-      {open && (
-        <div
-          className={styles.popover}
-          id={popoverId}
-          role="group"
-          aria-label={t('export.formats')}
-        >
-          {FORMATS.map((format) => (
-            <button
-              key={format}
-              type="button"
-              className={styles.item}
-              onClick={() => choose(format)}
-            >
-              {t(`export.${format}`)}
-            </button>
-          ))}
-          <CheckboxField
-            label={t('export.includeOutputs')}
-            checked={includeOutputs}
-            onChange={setIncludeOutputs}
-          />
-          {dateRange && (
-            <fieldset className={styles.dates}>
-              <legend>{t('export.dateRange')}</legend>
-              <label>
-                {t('export.dateFrom')}
-                <input
-                  className={formInputClass}
-                  type="date"
-                  value={from}
-                  max={to || undefined}
-                  onChange={(e) => setFrom(e.target.value)}
-                />
-              </label>
-              <label>
-                {t('export.dateTo')}
-                <input
-                  className={formInputClass}
-                  type="date"
-                  value={to}
-                  min={from || undefined}
-                  onChange={(e) => setTo(e.target.value)}
-                />
-              </label>
-            </fieldset>
-          )}
-        </div>
-      )}
+      {open &&
+        pos &&
+        createPortal(
+          <div
+            ref={popover}
+            className={styles.popover}
+            style={{ top: pos.top, right: pos.right }}
+            id={popoverId}
+            role="group"
+            aria-label={t('export.formats')}
+          >
+            {FORMATS.map((format) => (
+              <button
+                key={format}
+                type="button"
+                className={styles.item}
+                onClick={() => choose(format)}
+              >
+                {t(`export.${format}`)}
+              </button>
+            ))}
+            <CheckboxField
+              label={t('export.includeOutputs')}
+              checked={includeOutputs}
+              onChange={setIncludeOutputs}
+            />
+            {dateRange && (
+              <fieldset className={styles.dates}>
+                <legend>{t('export.dateRange')}</legend>
+                <label>
+                  {t('export.dateFrom')}
+                  <input
+                    className={formInputClass}
+                    type="date"
+                    value={from}
+                    max={to || undefined}
+                    onChange={(e) => setFrom(e.target.value)}
+                  />
+                </label>
+                <label>
+                  {t('export.dateTo')}
+                  <input
+                    className={formInputClass}
+                    type="date"
+                    value={to}
+                    min={from || undefined}
+                    onChange={(e) => setTo(e.target.value)}
+                  />
+                </label>
+              </fieldset>
+            )}
+          </div>,
+          document.body,
+        )}
       {progress && (
         <p className={styles.progress} role="status">
           {t('export.progress', { done: progress.runsDone, total: progress.runsTotal })}
