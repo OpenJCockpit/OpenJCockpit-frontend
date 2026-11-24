@@ -128,6 +128,8 @@ export function useEvidenceExportJob(workflowId?: string) {
   return {
     start: (options: EvidenceExportJobOptions) => create.mutate(options),
     cancel: () => {
+      // The cancel button only renders with progress, which needs a job id: the empty case is unreachable.
+      /* v8 ignore next -- @preserve */
       if (jobId) cancel.mutate(jobId);
     },
     running,

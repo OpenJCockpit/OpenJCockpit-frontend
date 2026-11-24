@@ -84,4 +84,30 @@ describe('ExportMenu', () => {
     expect(onCancel).toHaveBeenCalled();
     expect(screen.getByRole('alert')).toHaveTextContent('This export has expired');
   });
+
+  it('closes when the window resizes or scrolls, since the popover is fixed to the viewport', () => {
+    renderMenu();
+    open();
+    fireEvent(window, new Event('resize'));
+    expect(screen.queryByRole('group')).not.toBeInTheDocument();
+    open();
+    fireEvent.scroll(window);
+    expect(screen.queryByRole('group')).not.toBeInTheDocument();
+  });
+
+  it('stays open on a press inside the popover and ignores other keys', () => {
+    renderMenu();
+    open();
+    fireEvent.mouseDown(screen.getByRole('group'));
+    fireEvent.keyDown(document, { key: 'a' });
+    expect(screen.getByRole('group')).toBeInTheDocument();
+  });
+
+  it('passes both dates, or none when they are cleared', () => {
+    const onExport = renderMenu({ dateRange: true });
+    open();
+    fireEvent.change(screen.getByLabelText('To'), { target: { value: '2026-11-30' } });
+    fireEvent.click(screen.getByText('JSON (full data)'));
+    expect(onExport).toHaveBeenCalledWith('json', false, { from: undefined, to: '2026-11-30' });
+  });
 });

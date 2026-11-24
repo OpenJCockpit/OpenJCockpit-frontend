@@ -351,6 +351,38 @@ describe('evidenceApp', () => {
         expect(api.createEvidenceExport).toHaveBeenCalledTimes(2);
       });
 
+      it('shows a generic error when starting the export fails otherwise', async () => {
+        vi.mocked(api.createEvidenceExport).mockRejectedValue(new api.ApiError('boom', 500));
+        await renderPage();
+        await exportAll();
+        expect(await screen.findByRole('alert')).toHaveTextContent('The export failed');
+      });
+
+      it('shows a generic error when the download fails', async () => {
+        vi.mocked(api.getEvidenceExport).mockResolvedValue(job('done', 3));
+        vi.mocked(api.downloadEvidenceExport).mockRejectedValue(new Error('network'));
+        await renderPage();
+        await exportAll();
+        expect(await screen.findByRole('alert')).toHaveTextContent('The export failed');
+      });
+
+      it('ignores a download that fails after the page is gone', async () => {
+        vi.mocked(api.getEvidenceExport).mockResolvedValue(job('done', 3));
+        let fail: (e: unknown) => void = () => {};
+        vi.mocked(api.downloadEvidenceExport).mockReturnValue(
+          new Promise((_resolve, reject) => {
+            fail = reject;
+          }),
+        );
+        const view = await renderPage();
+        await exportAll();
+        await waitFor(() => expect(api.downloadEvidenceExport).toHaveBeenCalled());
+        view.unmount();
+        fail(new Error('aborted'));
+        await new Promise((r) => setTimeout(r, 0));
+        expect(saveBlob).not.toHaveBeenCalled();
+      });
+
       it('shows an error when too many exports run (429)', async () => {
         vi.mocked(api.createEvidenceExport).mockRejectedValue(new api.ApiError('busy', 429));
         await renderPage();
@@ -378,6 +410,23 @@ describe('evidenceApp', () => {
         expect(api.getEvidenceExport).toHaveBeenCalledWith('p1', 'j1', expect.anything());
         expect(api.createEvidenceExport).not.toHaveBeenCalled();
       });
+
+      it('still starts without a stored job when sessionStorage throws', async () => {
+        const getItem = Storage.prototype.getItem;
+        const spy = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(function (
+          this: Storage,
+          key: string,
+        ) {
+          if (key.startsWith('evidence-export-job:')) throw new Error('blocked');
+          return getItem.call(this, key);
+        });
+        await renderPage();
+        expect(
+          await screen.findByRole('button', { name: 'Export all runs of the project' }),
+        ).toBeInTheDocument();
+        expect(api.getEvidenceExport).not.toHaveBeenCalled();
+        spy.mockRestore();
+      });
     });
 
     it('shows a run with summary and grouped timeline on its own route', async () => {
@@ -392,6 +441,15 @@ describe('evidenceApp', () => {
       expect(screen.queryByText('Sample data')).not.toBeInTheDocument();
       // two agent events of one agent form a step, the git event another
       expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(2);
+    });
+
+    it('lists runs that have no workflow', async () => {
+      vi.mocked(api.loadEvidenceRuns).mockResolvedValue({
+        ...PAGE1,
+        items: [summary('r1', { workflowId: null })],
+      });
+      await renderPage();
+      expect(await screen.findByText('r1')).toBeInTheDocument();
     });
 
     it('filters the listed runs by search text', async () => {

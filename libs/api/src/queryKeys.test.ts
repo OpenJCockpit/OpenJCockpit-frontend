@@ -7,6 +7,7 @@ describe('queryKeys', () => {
     expect(queryKeys.evidenceRuns('p1')).toEqual(['evidence', 'p1', 'runs']);
     expect(queryKeys.evidenceRun('p1', 'r1')).toEqual(['evidence', 'p1', 'run', 'r1']);
     expect(queryKeys.evidenceLatest('p1')).toEqual(['evidence', 'p1', 'latest']);
+    expect(queryKeys.evidenceExport('p1', 'j1')).toEqual(['evidence', 'p1', 'export', 'j1']);
     expect(queryKeys.evidenceOutput('p1', 'r1', 'a')).toEqual([
       'evidence',
       'p1',

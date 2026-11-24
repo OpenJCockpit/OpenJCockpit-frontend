@@ -152,6 +152,13 @@ describe('evidenceApi', () => {
       expect(error).toMatchObject({ status: 429, message: 'Too many export jobs running: 429' });
     });
 
+    it('createEvidenceExport reports other failures generically', async () => {
+      mockFetch.mockResolvedValue(fail(500));
+      await expect(
+        createEvidenceExport('p1', { scope: 'project', format: 'csv' }),
+      ).rejects.toMatchObject({ status: 500, message: 'Failed to start evidence export: 500' });
+    });
+
     it('getEvidenceExport GETs the job status and encodes the ids', async () => {
       const job = { jobId: 'j/1', status: 'running', progress: { runsDone: 1, runsTotal: 4 } };
       mockFetch.mockResolvedValue(ok(job));

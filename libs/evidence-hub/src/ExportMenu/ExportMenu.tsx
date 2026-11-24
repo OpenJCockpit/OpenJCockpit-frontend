@@ -94,6 +94,8 @@ export function ExportMenu({
 
   const toggle = () => {
     const rect = root.current?.getBoundingClientRect();
+    // The root is mounted whenever the button can be clicked, so the empty case is unreachable.
+    /* v8 ignore next -- @preserve */
     if (rect) setPos({ top: rect.bottom, right: window.innerWidth - rect.right });
     setOpen((v) => !v);
   };
@@ -127,6 +129,7 @@ export function ExportMenu({
           <div
             ref={popover}
             className={styles.popover}
+            // eslint-disable-next-line no-restricted-syntax -- position comes from the measured button rect at runtime
             style={{ top: pos.top, right: pos.right }}
             id={popoverId}
             role="group"
