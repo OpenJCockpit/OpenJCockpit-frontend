@@ -23,6 +23,13 @@
       "implementation": "Implementation Agent",
       "review": "Review Agent",
       "evidence": "Evidence Agent"
+    },
+    "noRuns": "No runs yet.",
+    "status": {
+      "ok": "Done",
+      "running": "Running",
+      "waiting": "Waiting",
+      "failed": "Failed"
     }
   }
 }

@@ -23,6 +23,13 @@
       "implementation": "Implementierungs-Agent",
       "review": "Review-Agent",
       "evidence": "Nachweis-Agent"
+    },
+    "noRuns": "Noch keine Läufe.",
+    "status": {
+      "ok": "Erledigt",
+      "running": "Läuft",
+      "waiting": "Wartet",
+      "failed": "Fehlgeschlagen"
     }
   }
 }

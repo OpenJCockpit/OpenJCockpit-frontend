@@ -3,7 +3,7 @@ import { createMemoryRouter, RouterProvider } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { describe, expect, it, vi } from 'vitest';
 import * as api from '@openjcockpit/api';
-import type { Project, Workspace } from '@openjcockpit/api';
+import type { EvidenceRun, EvidenceTimelineEvent, Project, Workspace } from '@openjcockpit/api';
 import { createI18n, I18nProvider } from '@openjcockpit/i18n';
 import { isAppDefinition } from '@openjcockpit/hub-contract';
 import {
@@ -16,6 +16,7 @@ import { evidenceApp } from './index';
 vi.mock('@openjcockpit/api', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@openjcockpit/api')>()),
   loadWorkspace: vi.fn(),
+  loadLatestEvidenceRun: vi.fn(),
 }));
 
 const PROJECT = { id: 'p1', name: 'Demo', customerId: 'c1' } as Project;
@@ -30,6 +31,19 @@ const WORKSPACE = {
     { name: 'Custom gate', status: 'Compliant', statusText: '' },
   ],
 } as unknown as Workspace;
+
+const event = (n: number, extra: Partial<EvidenceTimelineEvent> = {}): EvidenceTimelineEvent => ({
+  timestamp: `2026-11-24T10:0${n}:00Z`,
+  source: 'agent',
+  agentId: 'review',
+  title: `Step ${n}`,
+  status: 'ok',
+  ...extra,
+});
+const RUN = {
+  details: { runId: 'r1', status: 'COMPLETED', artifacts: [] },
+  events: [1, 2, 3, 4, 5, 6, 7].map((n) => event(n)),
+} as EvidenceRun;
 
 function renderWith(
   ui: React.ReactNode,
@@ -65,32 +79,62 @@ describe('evidenceApp', () => {
     expect(evidenceApp.widgets![0]!.link).toBe('/evidence');
   });
 
-  it('loads the workspace of the selected project in the widget', async () => {
-    vi.mocked(api.loadWorkspace).mockResolvedValue(WORKSPACE);
+  it('shows the 5 newest events of the latest run in the widget', async () => {
+    vi.mocked(api.loadLatestEvidenceRun).mockResolvedValue(RUN);
     const Widget = await widget();
     renderWith(<Widget />);
-    expect(await screen.findByText('Spec loaded')).toBeInTheDocument();
-    expect(api.loadWorkspace).toHaveBeenCalledWith('c1', expect.anything());
+    expect(await screen.findByText('Step 7')).toBeInTheDocument();
+    expect(screen.getByText('Step 3')).toBeInTheDocument();
+    expect(screen.queryByText('Step 2')).not.toBeInTheDocument();
+    expect(api.loadLatestEvidenceRun).toHaveBeenCalledWith('p1', expect.anything());
+  });
+
+  it('shows approvers and agents, and flags a failed event', async () => {
+    vi.mocked(api.loadLatestEvidenceRun).mockResolvedValue({
+      ...RUN,
+      events: [
+        event(1, { source: 'approval', actor: 'Maria', agentId: null, title: 'Approved' }),
+        event(2, { source: 'git', agentId: null, title: 'Pushed' }),
+        event(3, { title: 'Broke', status: 'failed' }),
+      ],
+    });
+    const Widget = await widget();
+    renderWith(<Widget />);
+    expect(await screen.findByText('By: Maria')).toBeInTheDocument();
+    expect(screen.getByText('By: review')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Failed' })).toBeInTheDocument();
+    expect(screen.getAllByRole('img', { name: 'Done' })).toHaveLength(2);
+  });
+
+  it('shows an empty state when the project has no run', async () => {
+    const Widget = await widget();
+    vi.mocked(api.loadLatestEvidenceRun).mockResolvedValueOnce(null);
+    const first = renderWith(<Widget />);
+    expect(await screen.findByTestId('evidence-widget-empty')).toBeInTheDocument();
+    first.unmount();
+    vi.mocked(api.loadLatestEvidenceRun).mockResolvedValueOnce({ ...RUN, events: [] });
+    renderWith(<Widget />);
+    expect(await screen.findByTestId('evidence-widget-empty')).toBeInTheDocument();
   });
 
   it('shows a hint without a project and loads nothing', async () => {
-    vi.mocked(api.loadWorkspace).mockClear();
+    vi.mocked(api.loadLatestEvidenceRun).mockClear();
     const Widget = await widget();
     renderWith(<Widget />, null);
     expect(await screen.findByTestId('evidence-widget-no-project')).toBeInTheDocument();
-    expect(api.loadWorkspace).not.toHaveBeenCalled();
+    expect(api.loadLatestEvidenceRun).not.toHaveBeenCalled();
   });
 
-  it('shows a retryable error when the workspace fails to load', async () => {
-    vi.mocked(api.loadWorkspace).mockRejectedValue(new Error('boom'));
+  it('shows a retryable error when the latest run fails to load', async () => {
+    vi.mocked(api.loadLatestEvidenceRun).mockRejectedValue(new Error('boom'));
     const Widget = await widget();
     renderWith(<Widget />);
     expect(await screen.findByText('Failed to load the data.')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument();
   });
 
-  it('shows a loading state before the workspace arrives', async () => {
-    vi.mocked(api.loadWorkspace).mockReturnValue(new Promise(() => {}));
+  it('shows a loading state before the latest run arrives', async () => {
+    vi.mocked(api.loadLatestEvidenceRun).mockReturnValue(new Promise(() => {}));
     const Widget = await widget();
     renderWith(<Widget />);
     expect(await screen.findByText('Loading…')).toBeInTheDocument();
@@ -112,20 +156,37 @@ describe('evidenceApp', () => {
   });
 
   it('retries the widget load', async () => {
-    vi.mocked(api.loadWorkspace).mockRejectedValueOnce(new Error('boom'));
-    vi.mocked(api.loadWorkspace).mockResolvedValue(WORKSPACE);
+    vi.mocked(api.loadLatestEvidenceRun).mockRejectedValueOnce(new Error('boom'));
+    vi.mocked(api.loadLatestEvidenceRun).mockResolvedValue(RUN);
     const Widget = await widget();
     renderWith(<Widget />);
     fireEvent.click(await screen.findByRole('button', { name: 'Retry' }));
-    expect(await screen.findByText('Spec loaded')).toBeInTheDocument();
+    expect(await screen.findByText('Step 7')).toBeInTheDocument();
   });
 
-  it('falls back to the project id when it has no customer', async () => {
+  it('queries the page workspace by customer id, falling back to the project id', async () => {
     vi.mocked(api.loadWorkspace).mockResolvedValue(WORKSPACE);
-    const Widget = await widget();
-    renderWith(<Widget />, { id: 'p2', name: 'Solo' } as Project);
+    const routes = await evidenceApp.loadRoutes();
+    renderWith(<RouterProvider router={createMemoryRouter(routes)} />, {
+      id: 'p2',
+      name: 'Solo',
+    } as Project);
     await screen.findByText('Spec loaded');
     expect(api.loadWorkspace).toHaveBeenLastCalledWith('p2', expect.anything());
+  });
+
+  it('sends the page to the project list without a project and loads nothing', async () => {
+    vi.mocked(api.loadWorkspace).mockClear();
+    const routes = [
+      { path: '/projects', element: <p>projects</p> },
+      { path: '/evidence', children: await evidenceApp.loadRoutes() },
+    ];
+    renderWith(
+      <RouterProvider router={createMemoryRouter(routes, { initialEntries: ['/evidence'] })} />,
+      null,
+    );
+    expect(await screen.findByText('projects')).toBeInTheDocument();
+    expect(api.loadWorkspace).not.toHaveBeenCalled();
   });
 
   it('retries the page load and shows its loading state', async () => {

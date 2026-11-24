@@ -23,6 +23,13 @@
       "implementation": "Implementatie-agent",
       "review": "Review-agent",
       "evidence": "Bewijs-agent"
+    },
+    "noRuns": "Nog geen runs.",
+    "status": {
+      "ok": "Gereed",
+      "running": "Bezig",
+      "waiting": "Wacht",
+      "failed": "Mislukt"
     }
   }
 }

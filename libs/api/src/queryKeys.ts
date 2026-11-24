@@ -1,6 +1,11 @@
 /** TanStack Query keys shared across features; build keys here so cache reads, writes and invalidations cannot drift apart. */
 export const queryKeys = {
   workspace: (customerId: string) => ['workspace', customerId] as const,
+  evidenceRuns: (projectId: string) => ['evidence', projectId, 'runs'] as const,
+  evidenceRun: (projectId: string, runId: string) => ['evidence', projectId, 'run', runId] as const,
+  evidenceLatest: (projectId: string) => ['evidence', projectId, 'latest'] as const,
+  evidenceOutput: (projectId: string, runId: string, agentKey: string) =>
+    ['evidence', projectId, 'run', runId, 'output', agentKey] as const,
   projectSpecs: (projectId: string) => ['project-specs', projectId] as const,
   projectSpecFiles: (projectId: string | null) => ['project-specs', projectId, 'files'] as const,
   specQueue: (projectId: string | null) => ['spec-queue', projectId, 'queue'] as const,

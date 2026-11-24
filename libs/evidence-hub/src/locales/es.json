@@ -23,6 +23,13 @@
       "implementation": "Agente de implementación",
       "review": "Agente de revisión",
       "evidence": "Agente de evidencia"
+    },
+    "noRuns": "Aún no hay ejecuciones.",
+    "status": {
+      "ok": "Hecho",
+      "running": "En curso",
+      "waiting": "En espera",
+      "failed": "Fallido"
     }
   }
 }

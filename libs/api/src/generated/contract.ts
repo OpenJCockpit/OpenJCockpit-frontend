@@ -213,6 +213,241 @@ export interface EvidenceDetails {
   lastUpdate: string;
 }
 
+/**
+ * Where an evidence event came from.
+ */
+export type EvidenceSource = typeof EvidenceSource[keyof typeof EvidenceSource];
+
+
+export const EvidenceSource = {
+  agent: 'agent',
+  approval: 'approval',
+  git: 'git',
+} as const;
+
+export type EvidenceStatus = typeof EvidenceStatus[keyof typeof EvidenceStatus];
+
+
+export const EvidenceStatus = {
+  ok: 'ok',
+  running: 'running',
+  waiting: 'waiting',
+  failed: 'failed',
+} as const;
+
+/**
+ * Where an evidence event came from.
+ */
+export type EvidenceTimelineEventSource = typeof EvidenceTimelineEventSource[keyof typeof EvidenceTimelineEventSource];
+
+
+export const EvidenceTimelineEventSource = {
+  agent: 'agent',
+  approval: 'approval',
+  git: 'git',
+} as const;
+
+export type EvidenceTimelineEventStatus = typeof EvidenceTimelineEventStatus[keyof typeof EvidenceTimelineEventStatus];
+
+
+export const EvidenceTimelineEventStatus = {
+  ok: 'ok',
+  running: 'running',
+  waiting: 'waiting',
+  failed: 'failed',
+} as const;
+
+/**
+ * One entry of the merged agent, approval and git timeline of a run.
+ */
+export interface EvidenceTimelineEvent {
+  timestamp: string;
+  /** Where an evidence event came from. */
+  source: EvidenceTimelineEventSource;
+  /**
+     * Agent that produced the event (agent source only).
+     * @nullable
+     */
+  agentId?: string | null;
+  /**
+     * Person who made the decision (approval source only).
+     * @nullable
+     */
+  actor?: string | null;
+  /** Short, single-line summary. */
+  title: string;
+  /**
+     * Remainder of the text when the title was shortened, or the decision comment or git message.
+     * @nullable
+     */
+  detail?: string | null;
+  /**
+     * Agent key to pass to the outputs endpoint for the full output. Never the raw agent-output URI.
+     * @nullable
+     */
+  outputRef?: string | null;
+  status: EvidenceTimelineEventStatus;
+}
+
+export interface EvidenceRunDetails {
+  runId: string;
+  /** @nullable */
+  workflowId?: string | null;
+  /** Run status reported by the agent service, or the git job status when the agent service is unreachable. */
+  status: string;
+  /** @nullable */
+  startedBy?: string | null;
+  /** @nullable */
+  startedAt?: string | null;
+  /** @nullable */
+  completedAt?: string | null;
+  /** @nullable */
+  branch?: string | null;
+  /** @nullable */
+  commitHash?: string | null;
+  artifacts: string[];
+  /** @nullable */
+  failureSummary?: string | null;
+}
+
+export type EvidenceRunDetailsProperty = {
+  runId: string;
+  /** @nullable */
+  workflowId?: string | null;
+  /** Run status reported by the agent service, or the git job status when the agent service is unreachable. */
+  status: string;
+  /** @nullable */
+  startedBy?: string | null;
+  /** @nullable */
+  startedAt?: string | null;
+  /** @nullable */
+  completedAt?: string | null;
+  /** @nullable */
+  branch?: string | null;
+  /** @nullable */
+  commitHash?: string | null;
+  artifacts: string[];
+  /** @nullable */
+  failureSummary?: string | null;
+};
+
+/**
+ * Where an evidence event came from.
+ */
+export type EvidenceRunEventsItemSource = typeof EvidenceRunEventsItemSource[keyof typeof EvidenceRunEventsItemSource];
+
+
+export const EvidenceRunEventsItemSource = {
+  agent: 'agent',
+  approval: 'approval',
+  git: 'git',
+} as const;
+
+export type EvidenceRunEventsItemStatus = typeof EvidenceRunEventsItemStatus[keyof typeof EvidenceRunEventsItemStatus];
+
+
+export const EvidenceRunEventsItemStatus = {
+  ok: 'ok',
+  running: 'running',
+  waiting: 'waiting',
+  failed: 'failed',
+} as const;
+
+/**
+ * One entry of the merged agent, approval and git timeline of a run.
+ */
+export type EvidenceRunEventsItem = {
+  timestamp: string;
+  /** Where an evidence event came from. */
+  source: EvidenceRunEventsItemSource;
+  /**
+     * Agent that produced the event (agent source only).
+     * @nullable
+     */
+  agentId?: string | null;
+  /**
+     * Person who made the decision (approval source only).
+     * @nullable
+     */
+  actor?: string | null;
+  /** Short, single-line summary. */
+  title: string;
+  /**
+     * Remainder of the text when the title was shortened, or the decision comment or git message.
+     * @nullable
+     */
+  detail?: string | null;
+  /**
+     * Agent key to pass to the outputs endpoint for the full output. Never the raw agent-output URI.
+     * @nullable
+     */
+  outputRef?: string | null;
+  status: EvidenceRunEventsItemStatus;
+};
+
+export interface EvidenceRun {
+  details: EvidenceRunDetailsProperty;
+  /** All events sorted by timestamp, oldest first. */
+  events: EvidenceRunEventsItem[];
+}
+
+export interface EvidenceRunSummary {
+  runId: string;
+  /** @nullable */
+  workflowId?: string | null;
+  status: string;
+  /** @nullable */
+  startedAt?: string | null;
+  /** @nullable */
+  completedAt?: string | null;
+  /** @nullable */
+  startedBy?: string | null;
+  /** @nullable */
+  branch?: string | null;
+  /**
+     * Agent events of the run. Null when the agent service could not be reached.
+     * @nullable
+     */
+  eventCount?: number | null;
+  /** @nullable */
+  failedEventCount?: number | null;
+}
+
+export type EvidenceRunPageItemsItem = {
+  runId: string;
+  /** @nullable */
+  workflowId?: string | null;
+  status: string;
+  /** @nullable */
+  startedAt?: string | null;
+  /** @nullable */
+  completedAt?: string | null;
+  /** @nullable */
+  startedBy?: string | null;
+  /** @nullable */
+  branch?: string | null;
+  /**
+     * Agent events of the run. Null when the agent service could not be reached.
+     * @nullable
+     */
+  eventCount?: number | null;
+  /** @nullable */
+  failedEventCount?: number | null;
+};
+
+export interface EvidenceRunPage {
+  /** Runs of the project, newest first. Empty when the project has no run yet. */
+  items: EvidenceRunPageItemsItem[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface EvidenceOutput {
+  agentKey: string;
+  output: string;
+}
+
 export interface QualityControl {
   name: string;
   status: string;
@@ -4842,6 +5077,213 @@ export type GetJobEvents200Item = {
   eventType?: string;
   message?: string;
   createdAt?: string;
+};
+
+export type ListEvidenceRunsParams = {
+  /**
+   * @minimum 1
+   * @maximum 100
+   */
+  limit?: number;
+  /** @minimum 0 */
+  offset?: number;
+};
+
+export type ListEvidenceRuns200ItemsItem = {
+  runId: string;
+  /** @nullable */
+  workflowId?: string | null;
+  status: string;
+  /** @nullable */
+  startedAt?: string | null;
+  /** @nullable */
+  completedAt?: string | null;
+  /** @nullable */
+  startedBy?: string | null;
+  /** @nullable */
+  branch?: string | null;
+  /**
+     * Agent events of the run. Null when the agent service could not be reached.
+     * @nullable
+     */
+  eventCount?: number | null;
+  /** @nullable */
+  failedEventCount?: number | null;
+};
+
+export type ListEvidenceRuns200 = {
+  /** Runs of the project, newest first. Empty when the project has no run yet. */
+  items: ListEvidenceRuns200ItemsItem[];
+  total: number;
+  limit: number;
+  offset: number;
+};
+
+export type GetEvidenceRun200Details = {
+  runId: string;
+  /** @nullable */
+  workflowId?: string | null;
+  /** Run status reported by the agent service, or the git job status when the agent service is unreachable. */
+  status: string;
+  /** @nullable */
+  startedBy?: string | null;
+  /** @nullable */
+  startedAt?: string | null;
+  /** @nullable */
+  completedAt?: string | null;
+  /** @nullable */
+  branch?: string | null;
+  /** @nullable */
+  commitHash?: string | null;
+  artifacts: string[];
+  /** @nullable */
+  failureSummary?: string | null;
+};
+
+/**
+ * Where an evidence event came from.
+ */
+export type GetEvidenceRun200EventsItemSource = typeof GetEvidenceRun200EventsItemSource[keyof typeof GetEvidenceRun200EventsItemSource];
+
+
+export const GetEvidenceRun200EventsItemSource = {
+  agent: 'agent',
+  approval: 'approval',
+  git: 'git',
+} as const;
+
+export type GetEvidenceRun200EventsItemStatus = typeof GetEvidenceRun200EventsItemStatus[keyof typeof GetEvidenceRun200EventsItemStatus];
+
+
+export const GetEvidenceRun200EventsItemStatus = {
+  ok: 'ok',
+  running: 'running',
+  waiting: 'waiting',
+  failed: 'failed',
+} as const;
+
+/**
+ * One entry of the merged agent, approval and git timeline of a run.
+ */
+export type GetEvidenceRun200EventsItem = {
+  timestamp: string;
+  /** Where an evidence event came from. */
+  source: GetEvidenceRun200EventsItemSource;
+  /**
+     * Agent that produced the event (agent source only).
+     * @nullable
+     */
+  agentId?: string | null;
+  /**
+     * Person who made the decision (approval source only).
+     * @nullable
+     */
+  actor?: string | null;
+  /** Short, single-line summary. */
+  title: string;
+  /**
+     * Remainder of the text when the title was shortened, or the decision comment or git message.
+     * @nullable
+     */
+  detail?: string | null;
+  /**
+     * Agent key to pass to the outputs endpoint for the full output. Never the raw agent-output URI.
+     * @nullable
+     */
+  outputRef?: string | null;
+  status: GetEvidenceRun200EventsItemStatus;
+};
+
+export type GetEvidenceRun200 = {
+  details: GetEvidenceRun200Details;
+  /** All events sorted by timestamp, oldest first. */
+  events: GetEvidenceRun200EventsItem[];
+};
+
+export type GetEvidenceRunOutput200 = {
+  agentKey: string;
+  output: string;
+};
+
+export type GetLatestEvidenceRun200Details = {
+  runId: string;
+  /** @nullable */
+  workflowId?: string | null;
+  /** Run status reported by the agent service, or the git job status when the agent service is unreachable. */
+  status: string;
+  /** @nullable */
+  startedBy?: string | null;
+  /** @nullable */
+  startedAt?: string | null;
+  /** @nullable */
+  completedAt?: string | null;
+  /** @nullable */
+  branch?: string | null;
+  /** @nullable */
+  commitHash?: string | null;
+  artifacts: string[];
+  /** @nullable */
+  failureSummary?: string | null;
+};
+
+/**
+ * Where an evidence event came from.
+ */
+export type GetLatestEvidenceRun200EventsItemSource = typeof GetLatestEvidenceRun200EventsItemSource[keyof typeof GetLatestEvidenceRun200EventsItemSource];
+
+
+export const GetLatestEvidenceRun200EventsItemSource = {
+  agent: 'agent',
+  approval: 'approval',
+  git: 'git',
+} as const;
+
+export type GetLatestEvidenceRun200EventsItemStatus = typeof GetLatestEvidenceRun200EventsItemStatus[keyof typeof GetLatestEvidenceRun200EventsItemStatus];
+
+
+export const GetLatestEvidenceRun200EventsItemStatus = {
+  ok: 'ok',
+  running: 'running',
+  waiting: 'waiting',
+  failed: 'failed',
+} as const;
+
+/**
+ * One entry of the merged agent, approval and git timeline of a run.
+ */
+export type GetLatestEvidenceRun200EventsItem = {
+  timestamp: string;
+  /** Where an evidence event came from. */
+  source: GetLatestEvidenceRun200EventsItemSource;
+  /**
+     * Agent that produced the event (agent source only).
+     * @nullable
+     */
+  agentId?: string | null;
+  /**
+     * Person who made the decision (approval source only).
+     * @nullable
+     */
+  actor?: string | null;
+  /** Short, single-line summary. */
+  title: string;
+  /**
+     * Remainder of the text when the title was shortened, or the decision comment or git message.
+     * @nullable
+     */
+  detail?: string | null;
+  /**
+     * Agent key to pass to the outputs endpoint for the full output. Never the raw agent-output URI.
+     * @nullable
+     */
+  outputRef?: string | null;
+  status: GetLatestEvidenceRun200EventsItemStatus;
+};
+
+export type GetLatestEvidenceRun200 = {
+  details: GetLatestEvidenceRun200Details;
+  /** All events sorted by timestamp, oldest first. */
+  events: GetLatestEvidenceRun200EventsItem[];
 };
 
 export type List200ItemMcpToolsItem = {
