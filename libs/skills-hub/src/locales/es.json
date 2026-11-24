@@ -12,24 +12,38 @@
       "settings": "Ajustes",
       "searchPlaceholder": "Buscar una skill…",
       "searchLabel": "Buscar una skill",
-      "columnCategory": "Categoría",
       "columnSkill": "Skill",
       "noResults": "No se encontraron skills para \"{{term}}\".",
-      "category": {
-        "dev": "Dev",
-        "ops": "Ops",
-        "security": "Seguridad"
-      },
-      "skills": {
-        "grill-me": {
-          "name": "Grill Me",
-          "description": "Revisión adversarial que pone a prueba el código y las decisiones de diseño antes de su lanzamiento."
-        },
-        "software-quality": {
-          "name": "Calidad de software",
-          "description": "Linting automatizado, cobertura de pruebas y comprobaciones de quality gates a lo largo del pipeline de entrega."
-        }
+      "columnSource": "Origen",
+      "sourceLocal": "Local",
+      "loading": "Cargando skills…",
+      "loadError": "No se pudo cargar el catálogo de skills.",
+      "empty": "Aún no hay skills disponibles.",
+      "sourceFailed": "No se pudo cargar {{name}}: {{outcome}}.",
+      "outcome": {
+        "AUTH_FAILED": "error de autenticación",
+        "UNREACHABLE": "inaccesible",
+        "TIMEOUT": "tiempo de espera agotado",
+        "INVALID_RESPONSE": "respuesta no válida",
+        "BLOCKED_BY_POLICY": "bloqueado por política",
+        "CONFIG_ERROR": "error de configuración"
       }
+    },
+    "detail": {
+      "description": "Descripción",
+      "noDescription": "Sin descripción.",
+      "inputContract": "Contrato de entrada",
+      "outputContract": "Contrato de salida",
+      "executionInstructions": "Instrucciones de ejecución",
+      "policyNotes": "Notas de políticas/validación",
+      "mcpTools": "Herramientas MCP",
+      "noMcpTools": "Sin herramientas MCP.",
+      "externalNote": "Las skills de marketplace solo exponen nombre y descripción; no hay más detalles disponibles.",
+      "backTitle": "Volver a las skills",
+      "notFound": "Esta skill ya no está disponible.",
+      "loading": "Cargando skill…",
+      "loadError": "No se pudo cargar la skill.",
+      "allSkills": "Todas las skills"
     },
     "settings": {
       "loading": "Cargando marketplaces…",

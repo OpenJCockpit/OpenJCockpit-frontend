@@ -12,24 +12,38 @@
       "settings": "Instellingen",
       "searchPlaceholder": "Zoek een skill…",
       "searchLabel": "Zoek een skill",
-      "columnCategory": "Categorie",
       "columnSkill": "Skill",
       "noResults": "Geen skills gevonden voor \"{{term}}\".",
-      "category": {
-        "dev": "Dev",
-        "ops": "Ops",
-        "security": "Beveiliging"
-      },
-      "skills": {
-        "grill-me": {
-          "name": "Grill Me",
-          "description": "Kritische review die code en ontwerpbeslissingen op de proef stelt voordat ze live gaan."
-        },
-        "software-quality": {
-          "name": "Softwarekwaliteit",
-          "description": "Geautomatiseerde linting, testdekking en quality-gate-controles in de hele leveringspijplijn."
-        }
+      "columnSource": "Bron",
+      "sourceLocal": "Lokaal",
+      "loading": "Skills laden…",
+      "loadError": "De skillcatalogus kon niet worden geladen.",
+      "empty": "Nog geen skills beschikbaar.",
+      "sourceFailed": "{{name}} kon niet worden geladen: {{outcome}}.",
+      "outcome": {
+        "AUTH_FAILED": "authenticatie mislukt",
+        "UNREACHABLE": "niet bereikbaar",
+        "TIMEOUT": "time-out",
+        "INVALID_RESPONSE": "ongeldig antwoord",
+        "BLOCKED_BY_POLICY": "geblokkeerd door beleid",
+        "CONFIG_ERROR": "configuratiefout"
       }
+    },
+    "detail": {
+      "description": "Beschrijving",
+      "noDescription": "Geen beschrijving opgegeven.",
+      "inputContract": "Invoercontract",
+      "outputContract": "Uitvoercontract",
+      "executionInstructions": "Uitvoeringsinstructies",
+      "policyNotes": "Beleids-/validatienotities",
+      "mcpTools": "MCP-tools",
+      "noMcpTools": "Geen MCP-tools.",
+      "externalNote": "Marketplace-skills tonen alleen een naam en beschrijving; verdere details zijn niet beschikbaar.",
+      "backTitle": "Terug naar skills",
+      "notFound": "Deze skill is niet meer beschikbaar.",
+      "loading": "Skill laden…",
+      "loadError": "De skill kon niet worden geladen.",
+      "allSkills": "Alle skills"
     },
     "settings": {
       "loading": "Marketplaces laden…",

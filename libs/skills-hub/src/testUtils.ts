@@ -4,9 +4,9 @@ import type { ReactElement } from 'react';
 import { withQueryClient } from './testQueryClient';
 
 /** Renders inside `act` so effects and their resolved mocks settle before assertions. */
-export async function renderAsync(ui: ReactElement) {
+export async function renderAsync(ui: ReactElement, options?: { route?: string }) {
   await act(async () => {
-    render(withQueryClient(ui));
+    render(withQueryClient(ui, options));
   });
 }
 
