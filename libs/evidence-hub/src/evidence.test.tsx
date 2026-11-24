@@ -23,6 +23,7 @@ vi.mock('@openjcockpit/api', async (importOriginal) => ({
   loadEvidenceRuns: vi.fn(),
   loadEvidenceRun: vi.fn(),
   loadLatestEvidenceRun: vi.fn(),
+  loadEvidenceOutput: vi.fn(),
 }));
 
 const PROJECT = { id: 'p1', name: 'Demo', customerId: 'c1' } as Project;
@@ -241,6 +242,111 @@ describe('evidenceApp', () => {
         expect.anything(),
       );
       expect(screen.queryByRole('button', { name: 'Load more' })).not.toBeInTheDocument();
+    });
+
+    const DETAILED: EvidenceRun = {
+      details: {
+        ...runOf('r1').details,
+        branch: 'feature/x',
+        commitHash: 'abc123',
+        artifacts: ['impact.md', 'fix.patch'],
+        failureSummary: 'Implementation agent failed.',
+      },
+      events: [
+        event(1, { title: 'Spec loaded', outputRef: 'requirement' }),
+        event(2, { title: 'Broke', status: 'failed', detail: 'Three tests are red.' }),
+        event(3, { source: 'approval', agentId: null, actor: 'Maria', title: 'Approved' }),
+        event(4, { source: 'git', agentId: null, title: 'Pushed feature/x' }),
+        event(5, { source: 'git', agentId: null, title: 'Cloned repository' }),
+      ],
+    };
+    const withGit = { ...PROJECT, gitUrl: 'git@github.com:org/repo.git' } as Project;
+
+    async function openDetailed() {
+      vi.mocked(api.loadEvidenceRuns).mockResolvedValue(PAGE1);
+      vi.mocked(api.loadEvidenceRun).mockResolvedValue(DETAILED);
+      await renderPage(['/evidence'], withGit);
+      await screen.findByText('Spec loaded');
+    }
+
+    it('shows the failure summary and the generated artifacts', async () => {
+      await openDetailed();
+      expect(screen.getByRole('alert')).toHaveTextContent('Implementation agent failed.');
+      expect(screen.getByText('impact.md')).toBeInTheDocument();
+      expect(screen.getByText('fix.patch')).toBeInTheDocument();
+    });
+
+    it('filters by source, status and failed only', async () => {
+      await openDetailed();
+      fireEvent.click(screen.getByTestId('evidence-filter-source'));
+      fireEvent.click(screen.getByRole('option', { name: 'Git' }));
+      expect(screen.queryByText('Spec loaded')).not.toBeInTheDocument();
+      expect(screen.getByText('Cloned repository')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByTestId('evidence-filter-source'));
+      fireEvent.click(screen.getByRole('option', { name: 'All sources' }));
+      fireEvent.click(screen.getByLabelText('Failed only'));
+      expect(screen.getByText('Broke')).toBeInTheDocument();
+      expect(screen.queryByText('Spec loaded')).not.toBeInTheDocument();
+
+      fireEvent.click(screen.getByTestId('evidence-filter-source'));
+      fireEvent.click(screen.getByRole('option', { name: 'Approval' }));
+      expect(screen.getByText('No events match the filters.')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByLabelText('Failed only'));
+      fireEvent.click(screen.getByTestId('evidence-filter-status'));
+      fireEvent.click(screen.getByRole('option', { name: 'Done' }));
+      expect(screen.getByText('Approved')).toBeInTheDocument();
+    });
+
+    it('expands a row to its detail and loads the agent output only then', async () => {
+      vi.mocked(api.loadEvidenceOutput).mockResolvedValue({
+        agentKey: 'requirement',
+        output: 'Full requirement output',
+      });
+      await openDetailed();
+      expect(api.loadEvidenceOutput).not.toHaveBeenCalled();
+      fireEvent.click(screen.getByRole('button', { name: 'Spec loaded' }));
+      expect(await screen.findByText('Full requirement output')).toBeInTheDocument();
+      expect(api.loadEvidenceOutput).toHaveBeenCalledWith(
+        'p1',
+        'r1',
+        'requirement',
+        expect.anything(),
+      );
+      fireEvent.click(screen.getByRole('button', { name: 'Broke' }));
+      expect(screen.getByText('Three tests are red.')).toBeInTheDocument();
+      fireEvent.click(screen.getByRole('button', { name: 'Broke' }));
+      expect(screen.queryByText('Three tests are red.')).not.toBeInTheDocument();
+    });
+
+    it('shows a retryable error when the agent output fails to load', async () => {
+      vi.mocked(api.loadEvidenceOutput).mockRejectedValueOnce(new Error('boom'));
+      vi.mocked(api.loadEvidenceOutput).mockResolvedValue({
+        agentKey: 'requirement',
+        output: 'ok now',
+      });
+      await openDetailed();
+      fireEvent.click(screen.getByRole('button', { name: 'Spec loaded' }));
+      fireEvent.click(await screen.findByRole('button', { name: 'Retry' }));
+      expect(await screen.findByText('ok now')).toBeInTheDocument();
+    });
+
+    it('links the commit, the branch and git events that name them', async () => {
+      await openDetailed();
+      expect(screen.getByRole('link', { name: 'abc123' })).toHaveAttribute(
+        'href',
+        'https://github.com/org/repo/commit/abc123',
+      );
+      expect(screen.getAllByRole('link', { name: 'feature/x' })[0]).toHaveAttribute(
+        'href',
+        'https://github.com/org/repo/tree/feature/x',
+      );
+      expect(screen.getByRole('link', { name: 'Pushed feature/x' })).toHaveAttribute(
+        'href',
+        'https://github.com/org/repo/tree/feature/x',
+      );
+      expect(screen.queryByRole('link', { name: 'Cloned repository' })).not.toBeInTheDocument();
     });
 
     it('shows an empty state without runs', async () => {

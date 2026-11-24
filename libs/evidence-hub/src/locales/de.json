@@ -42,6 +42,23 @@
       "agent": "Agent",
       "approval": "Freigabe",
       "git": "Git"
+    },
+    "output": "Agent-Ausgabe",
+    "openInGit": "Im Repository öffnen",
+    "noMatches": "Keine Ereignisse entsprechen den Filtern.",
+    "filters": {
+      "title": "Filter",
+      "source": "Quelle",
+      "status": "Status",
+      "allSources": "Alle Quellen",
+      "allStatuses": "Alle Status",
+      "failedOnly": "Nur fehlgeschlagen"
+    },
+    "failure": {
+      "title": "Fehlerzusammenfassung"
+    },
+    "artifacts": {
+      "title": "Erzeugte Artefakte"
     }
   }
 }

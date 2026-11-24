@@ -1,14 +1,25 @@
 import type { EvidenceRunDetails } from '@openjcockpit/api';
 import { useFormatters, useTranslation } from '@openjcockpit/i18n';
 import { StatusChip } from '@openjcockpit/ui';
+import { branchUrl, commitUrl } from '../gitLinks';
 import { durationMinutes, runStatusKind } from '../runFormat';
 import styles from './RunSummary.module.scss';
 
 /** Header card of the selected run: status, workflow, who started it, duration, branch and commit. */
-export function RunSummary({ details }: { details: EvidenceRunDetails }) {
+export function RunSummary({
+  details,
+  gitUrl,
+}: {
+  details: EvidenceRunDetails;
+  gitUrl?: string | null;
+}) {
   const { t } = useTranslation('evidence');
   const { formatDateTime } = useFormatters();
   const minutes = durationMinutes(details.startedAt, details.completedAt);
+  const links: Record<string, string | null> = {
+    [details.branch ?? '']: branchUrl(gitUrl, details.branch),
+    [details.commitHash ?? '']: commitUrl(gitUrl, details.commitHash),
+  };
   const rows: [string, string | null | undefined][] = [
     [t('summary.workflow'), details.workflowId],
     [t('summary.startedBy'), details.startedBy],
@@ -27,7 +38,15 @@ export function RunSummary({ details }: { details: EvidenceRunDetails }) {
         {rows.map(([label, value]) => (
           <div key={label}>
             <dt>{label}</dt>
-            <dd>{value || '–'}</dd>
+            <dd>
+              {value && links[value] ? (
+                <a href={links[value]} target="_blank" rel="noreferrer noopener">
+                  {value}
+                </a>
+              ) : (
+                value || '–'
+              )}
+            </dd>
           </div>
         ))}
       </dl>

@@ -42,6 +42,23 @@
       "agent": "Agent",
       "approval": "Goedkeuring",
       "git": "Git"
+    },
+    "output": "Agent-uitvoer",
+    "openInGit": "Openen in repository",
+    "noMatches": "Geen gebeurtenissen voldoen aan de filters.",
+    "filters": {
+      "title": "Filters",
+      "source": "Bron",
+      "status": "Status",
+      "allSources": "Alle bronnen",
+      "allStatuses": "Alle statussen",
+      "failedOnly": "Alleen mislukt"
+    },
+    "failure": {
+      "title": "Samenvatting van de fout"
+    },
+    "artifacts": {
+      "title": "Gegenereerde artefacten"
     }
   }
 }

@@ -1,7 +1,6 @@
-import type { EvidenceTimelineEvent } from '@openjcockpit/api';
-import { useFormatters, useLocale, useTranslation } from '@openjcockpit/i18n';
-import { STATUS_GLYPHS } from '../glyphs';
-import { relativeAge } from '../runFormat';
+import type { EvidenceRunDetails, EvidenceTimelineEvent } from '@openjcockpit/api';
+import { useTranslation } from '@openjcockpit/i18n';
+import { EventRow } from './EventRow';
 import styles from './GroupedTimeline.module.scss';
 
 interface Group {
@@ -23,11 +22,15 @@ function groupSteps(events: EvidenceTimelineEvent[]): Group[] {
   return groups;
 }
 
-/** A run's events oldest first, grouped by agent step, with absolute time and relative age. */
-export function GroupedTimeline({ events }: { events: EvidenceTimelineEvent[] }) {
+interface Props {
+  events: EvidenceTimelineEvent[];
+  run: EvidenceRunDetails;
+  gitUrl?: string | null;
+}
+
+/** A run's events oldest first, grouped by agent step, each row expandable. */
+export function GroupedTimeline({ events, run, gitUrl }: Props) {
   const { t } = useTranslation('evidence');
-  const { formatTime } = useFormatters();
-  const { locale } = useLocale();
   return (
     <div className={styles.timeline}>
       {groupSteps(events).map((group, index) => (
@@ -37,28 +40,9 @@ export function GroupedTimeline({ events }: { events: EvidenceTimelineEvent[] })
               ? group.agentId
               : t(`source.${group.source}`)}
           </h3>
-          {group.events.map((event, i) => {
-            const who = event.actor ?? event.agentId;
-            return (
-              <article className={styles.event} key={`${event.timestamp}-${i}`}>
-                <time dateTime={event.timestamp} title={relativeAge(event.timestamp, locale)}>
-                  {formatTime(event.timestamp, { timeStyle: 'short' })}
-                  <small>{relativeAge(event.timestamp, locale)}</small>
-                </time>
-                <div>
-                  <strong>{event.title}</strong>
-                  {who && <span>{t('by', { actor: who })}</span>}
-                </div>
-                <span
-                  className={`${styles.check} ${event.status === 'failed' ? styles.failed : ''}`}
-                  role="img"
-                  aria-label={t(`status.${event.status}`)}
-                >
-                  {STATUS_GLYPHS[event.status]}
-                </span>
-              </article>
-            );
-          })}
+          {group.events.map((event, i) => (
+            <EventRow key={`${event.timestamp}-${i}`} event={event} run={run} gitUrl={gitUrl} />
+          ))}
         </section>
       ))}
     </div>
