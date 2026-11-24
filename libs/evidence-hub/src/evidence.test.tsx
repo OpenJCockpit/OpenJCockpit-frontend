@@ -194,12 +194,23 @@ describe('evidenceApp', () => {
       );
     }
 
-    it('shows the latest run by default with summary and grouped timeline', async () => {
+    it('lists the runs on the index route without loading any run', async () => {
+      vi.mocked(api.loadEvidenceRuns).mockResolvedValue(PAGE1);
+      vi.mocked(api.loadEvidenceRun).mockClear();
+      await renderPage();
+      expect(await screen.findByText('2 failed events')).toBeInTheDocument();
+      expect(screen.getAllByRole('link')).toHaveLength(2);
+      expect(screen.getAllByRole('link')[0]).toHaveAttribute('href', '/evidence/r1');
+      expect(api.loadEvidenceRun).not.toHaveBeenCalled();
+    });
+
+    it('shows a run with summary and grouped timeline on its own route', async () => {
       vi.mocked(api.loadEvidenceRuns).mockResolvedValue(PAGE1);
       vi.mocked(api.loadEvidenceRun).mockImplementation(async (_p, id) => runOf(id));
-      await renderPage();
+      await renderPage(['/evidence/r1']);
       expect(await screen.findByText('r1 first')).toBeInTheDocument();
       expect(api.loadEvidenceRun).toHaveBeenCalledWith('p1', 'r1', expect.anything());
+      expect(api.loadEvidenceRuns).not.toHaveBeenCalled();
       expect(screen.getByText('abc123')).toBeInTheDocument();
       expect(screen.getByText('feature/x')).toBeInTheDocument();
       expect(screen.queryByText('Sample data')).not.toBeInTheDocument();
@@ -207,21 +218,29 @@ describe('evidenceApp', () => {
       expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(2);
     });
 
-    it('selects a run from the list and keeps it in the URL', async () => {
+    it('filters the listed runs by search text', async () => {
+      vi.mocked(api.loadEvidenceRuns).mockResolvedValue({
+        ...PAGE1,
+        items: [summary('r1', { startedBy: 'Jan' }), summary('r2', { startedBy: 'Maria' })],
+      });
+      await renderPage();
+      await screen.findByText(/Jan/);
+      fireEvent.change(screen.getByTestId('evidence-run-search'), { target: { value: 'mar' } });
+      expect(screen.queryByText(/Jan/)).not.toBeInTheDocument();
+      expect(screen.getByText(/Maria/)).toBeInTheDocument();
+      fireEvent.change(screen.getByTestId('evidence-run-search'), { target: { value: 'zzz' } });
+      expect(screen.getByText('No runs match your search.')).toBeInTheDocument();
+    });
+
+    it('opens a run from the list and returns to the list', async () => {
       vi.mocked(api.loadEvidenceRuns).mockResolvedValue(PAGE1);
       vi.mocked(api.loadEvidenceRun).mockImplementation(async (_p, id) => runOf(id));
       await renderPage();
-      await screen.findByText('r1 first');
-      fireEvent.click(screen.getByText('2 failed events'));
-      expect(await screen.findByText('r2 first')).toBeInTheDocument();
-    });
-
-    it('opens the run named in ?run=', async () => {
-      vi.mocked(api.loadEvidenceRuns).mockResolvedValue(PAGE1);
-      vi.mocked(api.loadEvidenceRun).mockImplementation(async (_p, id) => runOf(id));
-      await renderPage(['/evidence?run=r2']);
+      fireEvent.click(await screen.findByText('2 failed events'));
       expect(await screen.findByText('r2 first')).toBeInTheDocument();
       expect(api.loadEvidenceRun).not.toHaveBeenCalledWith('p1', 'r1', expect.anything());
+      fireEvent.click(screen.getByRole('button', { name: /All runs/ }));
+      expect(await screen.findByText('2 failed events')).toBeInTheDocument();
     });
 
     it('loads more runs', async () => {
@@ -232,7 +251,6 @@ describe('evidenceApp', () => {
         limit: 2,
         offset: 2,
       });
-      vi.mocked(api.loadEvidenceRun).mockImplementation(async (_p, id) => runOf(id));
       await renderPage();
       fireEvent.click(await screen.findByRole('button', { name: 'Load more' }));
       expect(await screen.findByText(/Third/)).toBeInTheDocument();
@@ -265,7 +283,7 @@ describe('evidenceApp', () => {
     async function openDetailed() {
       vi.mocked(api.loadEvidenceRuns).mockResolvedValue(PAGE1);
       vi.mocked(api.loadEvidenceRun).mockResolvedValue(DETAILED);
-      await renderPage(['/evidence'], withGit);
+      await renderPage(['/evidence/r1'], withGit);
       await screen.findByText('Spec loaded');
     }
 
@@ -367,23 +385,22 @@ describe('evidenceApp', () => {
       first.unmount();
       vi.mocked(api.loadEvidenceRuns).mockRejectedValueOnce(new Error('boom'));
       vi.mocked(api.loadEvidenceRuns).mockResolvedValue(PAGE1);
-      vi.mocked(api.loadEvidenceRun).mockImplementation(async (_p, id) => runOf(id));
       await renderPage();
       fireEvent.click(await screen.findByRole('button', { name: 'Retry' }));
-      expect(await screen.findByText('r1 first')).toBeInTheDocument();
+      expect(await screen.findByText('2 failed events')).toBeInTheDocument();
     });
 
     it('shows an error for a run that fails to load', async () => {
       vi.mocked(api.loadEvidenceRuns).mockResolvedValue(PAGE1);
       vi.mocked(api.loadEvidenceRun).mockRejectedValue(new Error('boom'));
-      await renderPage();
+      await renderPage(['/evidence/r1']);
       expect(await screen.findByText('Failed to load the data.')).toBeInTheDocument();
     });
 
     it('shows a hint when a run has no events', async () => {
       vi.mocked(api.loadEvidenceRuns).mockResolvedValue(PAGE1);
       vi.mocked(api.loadEvidenceRun).mockResolvedValue({ ...runOf('r1'), events: [] });
-      await renderPage();
+      await renderPage(['/evidence/r1']);
       expect(await screen.findByText('No events recorded for this run.')).toBeInTheDocument();
     });
 
@@ -396,7 +413,6 @@ describe('evidenceApp', () => {
 
     it('goes back to the dashboard from the default header', async () => {
       vi.mocked(api.loadEvidenceRuns).mockResolvedValue(PAGE1);
-      vi.mocked(api.loadEvidenceRun).mockImplementation(async (_p, id) => runOf(id));
       await renderPage();
       fireEvent.click(await screen.findByTitle('Back to dashboard'));
       expect(await screen.findByText('dashboard')).toBeInTheDocument();

@@ -1,55 +1,39 @@
-.runs {
-  display: grid;
-  gap: 10px;
-  align-content: start;
-}
-.dropdown {
-  display: none;
-}
-.rail {
-  display: grid;
-  gap: 6px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.run {
-  display: grid;
-  gap: 4px;
-  width: 100%;
-  padding: 10px 12px;
-  text-align: left;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-  border-radius: 10px;
-  border: 1px solid transparent;
-  background: transparent;
-  &:hover,
-  &[aria-current='true'] {
-    border-color: var(--cyan-a45);
+.table {
+  min-width: 480px;
+  & td {
+    vertical-align: middle;
   }
 }
-.head {
-  display: flex;
+.row {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 12px;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  overflow-wrap: anywhere;
+  & > span strong {
+    display: block;
+    font-size: 14px;
+  }
+  & > span span {
+    display: block;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+  & > span .failedBadge {
+    color: var(--danger);
+  }
 }
-.meta {
-  color: var(--muted);
-  font-size: 12px;
+.rowLink {
+  all: unset;
+  display: block;
+  width: 100%;
+  cursor: pointer;
+  &:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 4px;
+    border-radius: 6px;
+  }
 }
 .failedBadge {
-  color: var(--danger);
   font-size: 12px;
-}
-@media (max-width: 800px) {
-  .dropdown {
-    display: block;
-  }
-  .rail {
-    display: none;
-  }
 }
