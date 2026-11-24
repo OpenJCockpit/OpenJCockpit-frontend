@@ -26,3 +26,12 @@ export const str = (value: unknown, fallback = '') =>
   typeof value === 'string' ? value : fallback;
 export const without = (rec: Rec, ...keys: string[]) =>
   Object.fromEntries(Object.entries(rec).filter(([key]) => !keys.includes(key)));
+
+/** A handler result sent as a file download (raw body plus `Content-Disposition`) instead of JSON. */
+export class MockFile {
+  constructor(
+    readonly filename: string,
+    readonly contentType: string,
+    readonly body: string,
+  ) {}
+}

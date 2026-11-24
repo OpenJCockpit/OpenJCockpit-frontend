@@ -3,6 +3,7 @@ import type { Plugin } from 'vite';
 import { controltowerRoutes } from './controltowerRoutes';
 import { faultControl, faultFor } from './faults';
 import { routes, type Ctx } from './routes';
+import { MockFile } from './routes/router';
 import { MockError } from './store';
 
 // Dev-only: answers /api/* and /controltower-api/* from an in-memory store so the UI runs without the backend. Enabled by
@@ -50,7 +51,14 @@ export function mockApi(): Plugin {
           try {
             const body = req.method === 'GET' ? {} : await readBody(req);
             const p = match.slice(1).map(decodeURIComponent);
-            return send(200, handler({ p, query: searchParams, body }) ?? {});
+            const result = handler({ p, query: searchParams, body });
+            if (result instanceof MockFile) {
+              res.setHeader('Content-Type', result.contentType);
+              res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
+              res.statusCode = 200;
+              return res.end(result.body);
+            }
+            return send(200, result ?? {});
           } catch (error) {
             if (error instanceof MockError) {
               return send(error.status, { message: error.message, code: error.code });

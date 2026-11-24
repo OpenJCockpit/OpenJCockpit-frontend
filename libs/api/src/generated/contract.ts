@@ -418,6 +418,350 @@ export interface EvidenceOutput {
   output: string;
 }
 
+export type EvidenceExportFormat = typeof EvidenceExportFormat[keyof typeof EvidenceExportFormat];
+
+
+export const EvidenceExportFormat = {
+  json: 'json',
+  csv: 'csv',
+  markdown: 'markdown',
+  pdf: 'pdf',
+} as const;
+
+export type EvidenceExportScope = typeof EvidenceExportScope[keyof typeof EvidenceExportScope];
+
+
+export const EvidenceExportScope = {
+  run: 'run',
+  workflow: 'workflow',
+  project: 'project',
+} as const;
+
+/**
+ * Full output of one agent, as included in a JSON export.
+ */
+export interface EvidenceExportOutput {
+  agentKey: string;
+  output: string;
+  /** True when the output was cut at the size cap. */
+  truncated?: boolean;
+}
+
+export type EvidenceExportRunDetails = {
+  runId: string;
+  /** @nullable */
+  workflowId?: string | null;
+  /** Run status reported by the agent service, or the git job status when the agent service is unreachable. */
+  status: string;
+  /** @nullable */
+  startedBy?: string | null;
+  /** @nullable */
+  startedAt?: string | null;
+  /** @nullable */
+  completedAt?: string | null;
+  /** @nullable */
+  branch?: string | null;
+  /** @nullable */
+  commitHash?: string | null;
+  artifacts: string[];
+  /** @nullable */
+  failureSummary?: string | null;
+};
+
+/**
+ * Where an evidence event came from.
+ */
+export type EvidenceExportRunEventsItemSource = typeof EvidenceExportRunEventsItemSource[keyof typeof EvidenceExportRunEventsItemSource];
+
+
+export const EvidenceExportRunEventsItemSource = {
+  agent: 'agent',
+  approval: 'approval',
+  git: 'git',
+} as const;
+
+export type EvidenceExportRunEventsItemStatus = typeof EvidenceExportRunEventsItemStatus[keyof typeof EvidenceExportRunEventsItemStatus];
+
+
+export const EvidenceExportRunEventsItemStatus = {
+  ok: 'ok',
+  running: 'running',
+  waiting: 'waiting',
+  failed: 'failed',
+} as const;
+
+/**
+ * One entry of the merged agent, approval and git timeline of a run.
+ */
+export type EvidenceExportRunEventsItem = {
+  timestamp: string;
+  /** Where an evidence event came from. */
+  source: EvidenceExportRunEventsItemSource;
+  /**
+     * Agent that produced the event (agent source only).
+     * @nullable
+     */
+  agentId?: string | null;
+  /**
+     * Person who made the decision (approval source only).
+     * @nullable
+     */
+  actor?: string | null;
+  /** Short, single-line summary. */
+  title: string;
+  /**
+     * Remainder of the text when the title was shortened, or the decision comment or git message.
+     * @nullable
+     */
+  detail?: string | null;
+  /**
+     * Agent key to pass to the outputs endpoint for the full output. Never the raw agent-output URI.
+     * @nullable
+     */
+  outputRef?: string | null;
+  status: EvidenceExportRunEventsItemStatus;
+};
+
+/**
+ * Full output of one agent, as included in a JSON export.
+ */
+export type EvidenceExportRunOutputsItem = {
+  agentKey: string;
+  output: string;
+  /** True when the output was cut at the size cap. */
+  truncated?: boolean;
+};
+
+/**
+ * One run in an export. `error` is set (and details/events empty) when the run could not be loaded.
+ */
+export interface EvidenceExportRun {
+  runId: string;
+  details?: EvidenceExportRunDetails;
+  events: EvidenceExportRunEventsItem[];
+  /** Present only with includeOutputs=true. */
+  outputs?: EvidenceExportRunOutputsItem[];
+  /** True when outputs were requested but the agent service could not be reached. */
+  outputsUnavailable?: boolean;
+  /** @nullable */
+  error?: string | null;
+}
+
+export type EvidenceExportBundleScope = typeof EvidenceExportBundleScope[keyof typeof EvidenceExportBundleScope];
+
+
+export const EvidenceExportBundleScope = {
+  run: 'run',
+  workflow: 'workflow',
+  project: 'project',
+} as const;
+
+export type EvidenceExportBundleRunsItemDetails = {
+  runId: string;
+  /** @nullable */
+  workflowId?: string | null;
+  /** Run status reported by the agent service, or the git job status when the agent service is unreachable. */
+  status: string;
+  /** @nullable */
+  startedBy?: string | null;
+  /** @nullable */
+  startedAt?: string | null;
+  /** @nullable */
+  completedAt?: string | null;
+  /** @nullable */
+  branch?: string | null;
+  /** @nullable */
+  commitHash?: string | null;
+  artifacts: string[];
+  /** @nullable */
+  failureSummary?: string | null;
+};
+
+/**
+ * Where an evidence event came from.
+ */
+export type EvidenceExportBundleRunsItemEventsItemSource = typeof EvidenceExportBundleRunsItemEventsItemSource[keyof typeof EvidenceExportBundleRunsItemEventsItemSource];
+
+
+export const EvidenceExportBundleRunsItemEventsItemSource = {
+  agent: 'agent',
+  approval: 'approval',
+  git: 'git',
+} as const;
+
+export type EvidenceExportBundleRunsItemEventsItemStatus = typeof EvidenceExportBundleRunsItemEventsItemStatus[keyof typeof EvidenceExportBundleRunsItemEventsItemStatus];
+
+
+export const EvidenceExportBundleRunsItemEventsItemStatus = {
+  ok: 'ok',
+  running: 'running',
+  waiting: 'waiting',
+  failed: 'failed',
+} as const;
+
+/**
+ * One entry of the merged agent, approval and git timeline of a run.
+ */
+export type EvidenceExportBundleRunsItemEventsItem = {
+  timestamp: string;
+  /** Where an evidence event came from. */
+  source: EvidenceExportBundleRunsItemEventsItemSource;
+  /**
+     * Agent that produced the event (agent source only).
+     * @nullable
+     */
+  agentId?: string | null;
+  /**
+     * Person who made the decision (approval source only).
+     * @nullable
+     */
+  actor?: string | null;
+  /** Short, single-line summary. */
+  title: string;
+  /**
+     * Remainder of the text when the title was shortened, or the decision comment or git message.
+     * @nullable
+     */
+  detail?: string | null;
+  /**
+     * Agent key to pass to the outputs endpoint for the full output. Never the raw agent-output URI.
+     * @nullable
+     */
+  outputRef?: string | null;
+  status: EvidenceExportBundleRunsItemEventsItemStatus;
+};
+
+/**
+ * Full output of one agent, as included in a JSON export.
+ */
+export type EvidenceExportBundleRunsItemOutputsItem = {
+  agentKey: string;
+  output: string;
+  /** True when the output was cut at the size cap. */
+  truncated?: boolean;
+};
+
+/**
+ * One run in an export. `error` is set (and details/events empty) when the run could not be loaded.
+ */
+export type EvidenceExportBundleRunsItem = {
+  runId: string;
+  details?: EvidenceExportBundleRunsItemDetails;
+  events: EvidenceExportBundleRunsItemEventsItem[];
+  /** Present only with includeOutputs=true. */
+  outputs?: EvidenceExportBundleRunsItemOutputsItem[];
+  /** True when outputs were requested but the agent service could not be reached. */
+  outputsUnavailable?: boolean;
+  /** @nullable */
+  error?: string | null;
+};
+
+/**
+ * JSON export of a workflow or project.
+ */
+export interface EvidenceExportBundle {
+  scope: EvidenceExportBundleScope;
+  /** @nullable */
+  workflowId?: string | null;
+  exportedAt: string;
+  runs: EvidenceExportBundleRunsItem[];
+}
+
+export type EvidenceExportRequestScope = typeof EvidenceExportRequestScope[keyof typeof EvidenceExportRequestScope];
+
+
+export const EvidenceExportRequestScope = {
+  workflow: 'workflow',
+  project: 'project',
+} as const;
+
+export type EvidenceExportRequestFormat = typeof EvidenceExportRequestFormat[keyof typeof EvidenceExportRequestFormat];
+
+
+export const EvidenceExportRequestFormat = {
+  json: 'json',
+  csv: 'csv',
+  markdown: 'markdown',
+  pdf: 'pdf',
+} as const;
+
+export interface EvidenceExportRequest {
+  scope: EvidenceExportRequestScope;
+  /**
+     * Required for workflow scope.
+     * @nullable
+     */
+  workflowId?: string | null;
+  format: EvidenceExportRequestFormat;
+  includeOutputs?: boolean;
+  /** @nullable */
+  from?: string | null;
+  /** @nullable */
+  to?: string | null;
+}
+
+export type EvidenceExportJobStatus = typeof EvidenceExportJobStatus[keyof typeof EvidenceExportJobStatus];
+
+
+export const EvidenceExportJobStatus = {
+  queued: 'queued',
+  running: 'running',
+  done: 'done',
+  failed: 'failed',
+  cancelled: 'cancelled',
+} as const;
+
+export type EvidenceExportJobCreatedStatus = typeof EvidenceExportJobCreatedStatus[keyof typeof EvidenceExportJobCreatedStatus];
+
+
+export const EvidenceExportJobCreatedStatus = {
+  queued: 'queued',
+  running: 'running',
+  done: 'done',
+  failed: 'failed',
+  cancelled: 'cancelled',
+} as const;
+
+export interface EvidenceExportJobCreated {
+  jobId: string;
+  status: EvidenceExportJobCreatedStatus;
+}
+
+export interface EvidenceExportProgress {
+  runsDone: number;
+  runsTotal: number;
+}
+
+export type EvidenceExportJobStatusProperty = typeof EvidenceExportJobStatusProperty[keyof typeof EvidenceExportJobStatusProperty];
+
+
+export const EvidenceExportJobStatusProperty = {
+  queued: 'queued',
+  running: 'running',
+  done: 'done',
+  failed: 'failed',
+  cancelled: 'cancelled',
+} as const;
+
+export type EvidenceExportJobProgress = {
+  runsDone: number;
+  runsTotal: number;
+};
+
+export interface EvidenceExportJob {
+  jobId: string;
+  status: EvidenceExportJobStatusProperty;
+  progress: EvidenceExportJobProgress;
+  /** @nullable */
+  filename?: string | null;
+  /** @nullable */
+  sizeBytes?: number | null;
+  /** @nullable */
+  error?: string | null;
+  /** @nullable */
+  expiresAt?: string | null;
+}
+
 export interface QualityControl {
   name: string;
   status: string;
@@ -5157,6 +5501,101 @@ export type GetEvidenceRun200 = {
 export type GetEvidenceRunOutput200 = {
   agentKey: string;
   output: string;
+};
+
+export type ExportEvidenceRunParams = {
+  format: ExportEvidenceRunFormat;
+  /** Include agent outputs (json, markdown, pdf). CSV only carries the outputRef. */
+  includeOutputs?: boolean;
+};
+
+export type ExportEvidenceRunFormat = typeof ExportEvidenceRunFormat[keyof typeof ExportEvidenceRunFormat];
+
+
+export const ExportEvidenceRunFormat = {
+  json: 'json',
+  csv: 'csv',
+  markdown: 'markdown',
+  pdf: 'pdf',
+} as const;
+
+export type CreateEvidenceExportBodyScope = typeof CreateEvidenceExportBodyScope[keyof typeof CreateEvidenceExportBodyScope];
+
+
+export const CreateEvidenceExportBodyScope = {
+  workflow: 'workflow',
+  project: 'project',
+} as const;
+
+export type CreateEvidenceExportBodyFormat = typeof CreateEvidenceExportBodyFormat[keyof typeof CreateEvidenceExportBodyFormat];
+
+
+export const CreateEvidenceExportBodyFormat = {
+  json: 'json',
+  csv: 'csv',
+  markdown: 'markdown',
+  pdf: 'pdf',
+} as const;
+
+export type CreateEvidenceExportBody = {
+  scope: CreateEvidenceExportBodyScope;
+  /**
+     * Required for workflow scope.
+     * @nullable
+     */
+  workflowId?: string | null;
+  format: CreateEvidenceExportBodyFormat;
+  includeOutputs?: boolean;
+  /** @nullable */
+  from?: string | null;
+  /** @nullable */
+  to?: string | null;
+};
+
+export type CreateEvidenceExport202Status = typeof CreateEvidenceExport202Status[keyof typeof CreateEvidenceExport202Status];
+
+
+export const CreateEvidenceExport202Status = {
+  queued: 'queued',
+  running: 'running',
+  done: 'done',
+  failed: 'failed',
+  cancelled: 'cancelled',
+} as const;
+
+export type CreateEvidenceExport202 = {
+  jobId: string;
+  status: CreateEvidenceExport202Status;
+};
+
+export type GetEvidenceExport200Status = typeof GetEvidenceExport200Status[keyof typeof GetEvidenceExport200Status];
+
+
+export const GetEvidenceExport200Status = {
+  queued: 'queued',
+  running: 'running',
+  done: 'done',
+  failed: 'failed',
+  cancelled: 'cancelled',
+} as const;
+
+export type GetEvidenceExport200Progress = {
+  runsDone: number;
+  runsTotal: number;
+};
+
+export type GetEvidenceExport200 = {
+  jobId: string;
+  status: GetEvidenceExport200Status;
+  progress: GetEvidenceExport200Progress;
+  /** @nullable */
+  filename?: string | null;
+  /** @nullable */
+  sizeBytes?: number | null;
+  /** @nullable */
+  error?: string | null;
+  /** @nullable */
+  expiresAt?: string | null;
 };
 
 export type GetLatestEvidenceRun200Details = {

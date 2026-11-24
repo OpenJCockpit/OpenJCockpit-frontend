@@ -2,6 +2,7 @@
 // the match order (e.g. `/api/workflows/export` must be registered before `/api/workflows/:id`).
 import './projects';
 import './evidence';
+import './evidenceExport';
 import './specs';
 import './workflows';
 import './definitions';

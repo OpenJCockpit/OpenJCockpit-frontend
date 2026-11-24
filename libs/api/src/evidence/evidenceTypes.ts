@@ -8,3 +8,12 @@ export type {
   EvidenceStatus,
   EvidenceTimelineEvent,
 } from '../generated/contract';
+export type {
+  EvidenceExportFormat,
+  EvidenceExportJob,
+  EvidenceExportJobCreated,
+  EvidenceExportJobStatus,
+  EvidenceExportProgress,
+  EvidenceExportRequest,
+  EvidenceExportScope,
+} from '../generated/contract';
