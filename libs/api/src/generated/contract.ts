@@ -78,20 +78,6 @@ export type WorkspacePullRequestsItem = {
   statusKind: WorkspacePullRequestsItemStatusKind;
 };
 
-export type WorkspaceEvidenceEventsItem = {
-  time: string;
-  title: string;
-  actor: string;
-  status: string;
-};
-
-export type WorkspaceEvidenceDetails = {
-  specVersion: string;
-  runId: string;
-  agentFlow: string;
-  lastUpdate: string;
-};
-
 export type WorkspaceQualityControlsItem = {
   name: string;
   status: string;
@@ -118,8 +104,6 @@ export interface Workspace {
   specs: WorkspaceSpecsItem[];
   agents: WorkspaceAgentsItem[];
   pullRequests: WorkspacePullRequestsItem[];
-  evidenceEvents: WorkspaceEvidenceEventsItem[];
-  evidenceDetails: WorkspaceEvidenceDetails;
   qualityControls: WorkspaceQualityControlsItem[];
   stack: WorkspaceStackItem[];
   footer: WorkspaceFooter;
@@ -197,20 +181,6 @@ export interface PullRequestSummary {
   status: string;
   /** Visual status category the dashboard maps to a status chip colour. */
   statusKind: PullRequestSummaryStatusKind;
-}
-
-export interface EvidenceEvent {
-  time: string;
-  title: string;
-  actor: string;
-  status: string;
-}
-
-export interface EvidenceDetails {
-  specVersion: string;
-  runId: string;
-  agentFlow: string;
-  lastUpdate: string;
 }
 
 /**
@@ -2382,20 +2352,6 @@ export type Workspace200PullRequestsItem = {
   statusKind: Workspace200PullRequestsItemStatusKind;
 };
 
-export type Workspace200EvidenceEventsItem = {
-  time: string;
-  title: string;
-  actor: string;
-  status: string;
-};
-
-export type Workspace200EvidenceDetails = {
-  specVersion: string;
-  runId: string;
-  agentFlow: string;
-  lastUpdate: string;
-};
-
 export type Workspace200QualityControlsItem = {
   name: string;
   status: string;
@@ -2422,8 +2378,6 @@ export type Workspace200 = {
   specs: Workspace200SpecsItem[];
   agents: Workspace200AgentsItem[];
   pullRequests: Workspace200PullRequestsItem[];
-  evidenceEvents: Workspace200EvidenceEventsItem[];
-  evidenceDetails: Workspace200EvidenceDetails;
   qualityControls: Workspace200QualityControlsItem[];
   stack: Workspace200StackItem[];
   footer: Workspace200Footer;

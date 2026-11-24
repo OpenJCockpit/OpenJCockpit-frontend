@@ -14,8 +14,6 @@ export type {
   SpecInitResult,
   SpecInitStatus,
   PullRequestSummary,
-  EvidenceEvent,
-  EvidenceDetails,
   QualityControl,
   StackServiceStatus,
   SkillsMarketplaceConnectionDto as SkillsMarketplaceConnection,

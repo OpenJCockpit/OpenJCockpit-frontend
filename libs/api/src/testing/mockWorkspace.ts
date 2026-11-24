@@ -160,50 +160,6 @@ export const mockWorkspace: Workspace = {
       statusKind: 'open',
     },
   ],
-  evidenceEvents: [
-    {
-      time: '13:04',
-      title: 'Spec loaded',
-      actor: 'Requirement Agent',
-      status: 'ok',
-    },
-    {
-      time: '13:07',
-      title: 'Impact analysis recorded',
-      actor: 'Impact Analysis Agent',
-      status: 'ok',
-    },
-    {
-      time: '13:12',
-      title: 'Test set generated',
-      actor: 'Test Design Agent',
-      status: 'ok',
-    },
-    {
-      time: '13:16',
-      title: 'Implementation proposal saved',
-      actor: 'Implementation Agent',
-      status: 'ok',
-    },
-    {
-      time: '13:22',
-      title: 'Human approval logged',
-      actor: 'Review Agent',
-      status: 'ok',
-    },
-    {
-      time: '13:24',
-      title: 'Evidence data recorded',
-      actor: 'Evidence Agent',
-      status: 'ok',
-    },
-  ],
-  evidenceDetails: {
-    specVersion: 'v1.3.2',
-    runId: 'run_2025-05-06_1303',
-    agentFlow: 'RQ → IA → TD → IMP → RV → EV',
-    lastUpdate: '13:24 today',
-  },
   qualityControls: [
     { name: 'Unit test coverage', status: 'Compliant', statusText: '92%' },
     { name: 'NIST 2', status: 'Compliant', statusText: '' },

@@ -177,26 +177,6 @@
       "preview": "Vorschau",
       "viewAllCount": "Alle Specs anzeigen ({{count}})"
     },
-    "evidence": {
-      "title": "Ausführungsnachweis",
-      "by": "Von: {{actor}}",
-      "events": {
-        "specLoaded": "Spezifikation geladen",
-        "impactAnalysisRecorded": "Auswirkungsanalyse erfasst",
-        "testSetGenerated": "Testsatz erzeugt",
-        "implementationProposalSaved": "Implementierungsvorschlag gespeichert",
-        "humanApprovalLogged": "Menschliche Freigabe protokolliert",
-        "evidenceDataRecorded": "Nachweisdaten erfasst"
-      },
-      "actors": {
-        "requirement": "Anforderungs-Agent",
-        "impact": "Auswirkungsanalyse-Agent",
-        "testDesign": "Testdesign-Agent",
-        "implementation": "Implementierungs-Agent",
-        "review": "Review-Agent",
-        "evidence": "Nachweis-Agent"
-      }
-    },
     "quality": {
       "title": "Qualitätsstatus",
       "controls": {

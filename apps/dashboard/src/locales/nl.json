@@ -177,26 +177,6 @@
       "preview": "Voorbeeld",
       "viewAllCount": "Alle specs bekijken ({{count}})"
     },
-    "evidence": {
-      "title": "Uitvoeringsbewijs",
-      "by": "Door: {{actor}}",
-      "events": {
-        "specLoaded": "Specificatie geladen",
-        "impactAnalysisRecorded": "Impactanalyse vastgelegd",
-        "testSetGenerated": "Testset gegenereerd",
-        "implementationProposalSaved": "Implementatievoorstel opgeslagen",
-        "humanApprovalLogged": "Menselijke goedkeuring vastgelegd",
-        "evidenceDataRecorded": "Bewijsgegevens vastgelegd"
-      },
-      "actors": {
-        "requirement": "Requirement-agent",
-        "impact": "Impactanalyse-agent",
-        "testDesign": "Testontwerp-agent",
-        "implementation": "Implementatie-agent",
-        "review": "Review-agent",
-        "evidence": "Bewijs-agent"
-      }
-    },
     "quality": {
       "title": "Kwaliteitsstatus",
       "controls": {
