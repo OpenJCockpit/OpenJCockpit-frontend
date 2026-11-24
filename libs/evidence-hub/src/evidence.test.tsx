@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { describe, expect, it, vi } from 'vitest';
@@ -17,6 +17,7 @@ import {
   FakeHubSessionProvider,
 } from '@openjcockpit/hub-contract/testing';
 import { evidenceApp } from './index';
+import { saveBlob } from './saveBlob';
 
 vi.mock('@openjcockpit/api', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@openjcockpit/api')>()),
@@ -24,7 +25,10 @@ vi.mock('@openjcockpit/api', async (importOriginal) => ({
   loadEvidenceRun: vi.fn(),
   loadLatestEvidenceRun: vi.fn(),
   loadEvidenceOutput: vi.fn(),
+  exportEvidenceRun: vi.fn(),
 }));
+
+vi.mock('./saveBlob', () => ({ saveBlob: vi.fn() }));
 
 const PROJECT = { id: 'p1', name: 'Demo', customerId: 'c1' } as Project;
 const event = (n: number, extra: Partial<EvidenceTimelineEvent> = {}): EvidenceTimelineEvent => ({
@@ -395,6 +399,30 @@ describe('evidenceApp', () => {
       vi.mocked(api.loadEvidenceRun).mockRejectedValue(new Error('boom'));
       await renderPage(['/evidence/r1']);
       expect(await screen.findByText('Failed to load the data.')).toBeInTheDocument();
+    });
+
+    it('exports the whole run from the detail page and saves the file', async () => {
+      vi.mocked(api.loadEvidenceRun).mockImplementation(async (_p, id) => runOf(id));
+      const blob = new Blob(['a,b']);
+      vi.mocked(api.exportEvidenceRun).mockResolvedValue({ blob, filename: 'evidence-r1.csv' });
+      await renderPage(['/evidence/r1']);
+      fireEvent.click(await screen.findByRole('button', { name: 'Export this run' }));
+      fireEvent.click(screen.getByText('CSV (timeline events)'));
+      await waitFor(() => expect(saveBlob).toHaveBeenCalledWith(blob, 'evidence-r1.csv'));
+      expect(api.exportEvidenceRun).toHaveBeenCalledWith('p1', 'r1', {
+        format: 'csv',
+        includeOutputs: false,
+      });
+    });
+
+    it('shows an export error and lets the user try again', async () => {
+      vi.mocked(api.loadEvidenceRun).mockImplementation(async (_p, id) => runOf(id));
+      vi.mocked(api.exportEvidenceRun).mockRejectedValueOnce(new Error('boom'));
+      await renderPage(['/evidence/r1']);
+      fireEvent.click(await screen.findByRole('button', { name: 'Export this run' }));
+      fireEvent.click(screen.getByText('JSON (full data)'));
+      expect(await screen.findByRole('alert')).toHaveTextContent('The export failed');
+      expect(screen.getByRole('button', { name: 'Export this run' })).toBeEnabled();
     });
 
     it('shows a hint when a run has no events', async () => {

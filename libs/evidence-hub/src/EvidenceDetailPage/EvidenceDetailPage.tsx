@@ -8,8 +8,10 @@ import { EvidenceFilters } from '../EvidenceFilters/EvidenceFilters';
 import { filterEvents, isFiltering, NO_FILTER } from '../eventFilter';
 import { RunOutcome } from '../RunOutcome/RunOutcome';
 import { GroupedTimeline } from '../EvidenceTimeline/GroupedTimeline';
+import { ExportMenu } from '../ExportMenu/ExportMenu';
 import { RunSummary } from '../RunSummary/RunSummary';
 import { useEvidenceRun } from '../useEvidenceRun';
+import { useExportEvidenceRun } from '../useExportEvidenceRun';
 import styles from './EvidenceDetailPage.module.scss';
 
 interface Props {
@@ -22,6 +24,7 @@ function RunDetail({ runId }: { runId: string }) {
   const { t } = useTranslation('evidence');
   const gitUrl = useHubProject().selected?.gitUrl;
   const run = useEvidenceRun(runId);
+  const exportRun = useExportEvidenceRun(runId);
   const [filter, setFilter] = useState(NO_FILTER);
   return (
     <QueryState
@@ -35,6 +38,16 @@ function RunDetail({ runId }: { runId: string }) {
         return (
           <>
             <Panel as="section">
+              <div className={styles.actions}>
+                <ExportMenu
+                  label={t('export.scope.run')}
+                  pending={exportRun.isPending}
+                  error={exportRun.isError}
+                  onExport={(format, includeOutputs) =>
+                    exportRun.mutate({ format, includeOutputs })
+                  }
+                />
+              </div>
               <RunSummary details={data.details} gitUrl={gitUrl} />
               <RunOutcome details={data.details} />
             </Panel>

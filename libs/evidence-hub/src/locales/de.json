@@ -66,6 +66,30 @@
     },
     "artifacts": {
       "title": "Erzeugte Artefakte"
+    },
+    "export": {
+      "button": "Exportieren",
+      "json": "JSON (vollständige Daten)",
+      "csv": "CSV (Zeitleisten-Ereignisse)",
+      "markdown": "Markdown (Bericht)",
+      "pdf": "PDF (Bericht)",
+      "includeOutputs": "Agent-Ausgaben einbeziehen",
+      "scope": {
+        "run": "Diesen Lauf exportieren",
+        "workflow": "Alle Läufe von {{workflow}} exportieren",
+        "project": "Alle Läufe des Projekts exportieren"
+      },
+      "dateRange": "Zeitraum",
+      "dateFrom": "Von",
+      "dateTo": "Bis",
+      "progress": "{{done}} von {{total}} Läufen",
+      "expired": "Dieser Export ist abgelaufen. Starten Sie ihn erneut.",
+      "tooManyJobs": "Es laufen zu viele Exporte. Versuchen Sie es gleich erneut.",
+      "failed": "Der Export ist fehlgeschlagen. Versuchen Sie es erneut.",
+      "inProgress": "Exportiere…",
+      "cancel": "Export abbrechen",
+      "formats": "Exportformat",
+      "rowAction": "Lauf {{run}} exportieren"
     }
   }
 }

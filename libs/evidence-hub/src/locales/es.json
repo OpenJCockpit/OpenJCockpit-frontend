@@ -66,6 +66,30 @@
     },
     "artifacts": {
       "title": "Artefactos generados"
+    },
+    "export": {
+      "button": "Exportar",
+      "json": "JSON (datos completos)",
+      "csv": "CSV (eventos de la línea de tiempo)",
+      "markdown": "Markdown (informe)",
+      "pdf": "PDF (informe)",
+      "includeOutputs": "Incluir salidas de los agentes",
+      "scope": {
+        "run": "Exportar esta ejecución",
+        "workflow": "Exportar todas las ejecuciones de {{workflow}}",
+        "project": "Exportar todas las ejecuciones del proyecto"
+      },
+      "dateRange": "Rango de fechas",
+      "dateFrom": "Desde",
+      "dateTo": "Hasta",
+      "progress": "{{done}} de {{total}} ejecuciones",
+      "expired": "Esta exportación ha caducado. Inícielo de nuevo.",
+      "tooManyJobs": "Hay demasiadas exportaciones en curso. Inténtelo de nuevo en breve.",
+      "failed": "La exportación ha fallado. Inténtelo de nuevo.",
+      "inProgress": "Exportando…",
+      "cancel": "Cancelar exportación",
+      "formats": "Formato de exportación",
+      "rowAction": "Exportar ejecución {{run}}"
     }
   }
 }
