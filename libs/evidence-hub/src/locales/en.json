@@ -22,6 +22,7 @@
     "runs": {
       "columnRun": "Run",
       "columnStatus": "Status",
+      "columnActions": "Actions",
       "search": "Search runs",
       "searchPlaceholder": "Workflow, status, person or branch",
       "noMatches": "No runs match your search.",

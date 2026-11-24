@@ -22,6 +22,7 @@
     "runs": {
       "columnRun": "Durchlauf",
       "columnStatus": "Status",
+      "columnActions": "Aktionen",
       "search": "Durchläufe suchen",
       "searchPlaceholder": "Workflow, Status, Person oder Branch",
       "noMatches": "Keine Durchläufe entsprechen der Suche.",

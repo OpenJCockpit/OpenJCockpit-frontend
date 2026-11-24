@@ -208,6 +208,26 @@ describe('evidenceApp', () => {
       expect(api.loadEvidenceRun).not.toHaveBeenCalled();
     });
 
+    it('exports a run from its list row without navigating', async () => {
+      vi.mocked(api.loadEvidenceRuns).mockResolvedValue(PAGE1);
+      vi.mocked(api.loadEvidenceRun).mockClear();
+      const blob = new Blob(['{}']);
+      vi.mocked(api.exportEvidenceRun).mockResolvedValue({ blob, filename: 'evidence-r2.json' });
+      await renderPage();
+      const buttons = await screen.findAllByRole('button', { name: 'Export run spec-to-pr' });
+      expect(buttons).toHaveLength(2);
+      fireEvent.click(buttons[1]!);
+      fireEvent.click(screen.getByText('JSON (full data)'));
+      await waitFor(() => expect(saveBlob).toHaveBeenCalledWith(blob, 'evidence-r2.json'));
+      expect(api.exportEvidenceRun).toHaveBeenCalledWith('p1', 'r2', {
+        format: 'json',
+        includeOutputs: false,
+      });
+      expect(screen.getAllByRole('link')).toHaveLength(2);
+      expect(screen.queryByText('r1 first')).not.toBeInTheDocument();
+      expect(api.loadEvidenceRun).not.toHaveBeenCalled();
+    });
+
     it('shows a run with summary and grouped timeline on its own route', async () => {
       vi.mocked(api.loadEvidenceRuns).mockResolvedValue(PAGE1);
       vi.mocked(api.loadEvidenceRun).mockImplementation(async (_p, id) => runOf(id));

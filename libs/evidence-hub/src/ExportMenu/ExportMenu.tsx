@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import type { EvidenceExportFormat } from '@openjcockpit/api';
 import { useTranslation } from '@openjcockpit/i18n';
-import { Button, CheckboxField, Icon } from '@openjcockpit/ui';
+import { Button, CheckboxField, Icon, IconButton } from '@openjcockpit/ui';
 import styles from './ExportMenu.module.scss';
 
 const FORMATS: EvidenceExportFormat[] = ['json', 'csv', 'markdown', 'pdf'];
@@ -17,10 +17,19 @@ interface Props {
   /** Shows an inline error under the button. */
   error?: boolean;
   disabled?: boolean;
+  /** Icon-only trigger for table rows; `label` stays the accessible name and tooltip. */
+  compact?: boolean;
 }
 
 /** Export button with a popover of the four formats and an "include agent outputs" toggle. */
-export function ExportMenu({ label, onExport, pending = false, error = false, disabled }: Props) {
+export function ExportMenu({
+  label,
+  onExport,
+  pending = false,
+  error = false,
+  disabled,
+  compact = false,
+}: Props) {
   const { t } = useTranslation('evidence');
   const [open, setOpen] = useState(false);
   const [includeOutputs, setIncludeOutputs] = useState(false);
@@ -50,16 +59,27 @@ export function ExportMenu({ label, onExport, pending = false, error = false, di
 
   return (
     <div className={styles.root} ref={root}>
-      <Button
-        variant="secondary"
-        aria-label={label}
-        aria-expanded={open}
-        aria-controls={open ? popoverId : undefined}
-        disabled={disabled || pending}
-        onClick={() => setOpen((v) => !v)}
-      >
-        <Icon name="download" /> {pending ? t('export.inProgress') : t('export.button')}
-      </Button>
+      {compact ? (
+        <IconButton
+          icon="download"
+          label={label}
+          aria-expanded={open}
+          aria-controls={open ? popoverId : undefined}
+          disabled={disabled || pending}
+          onClick={() => setOpen((v) => !v)}
+        />
+      ) : (
+        <Button
+          variant="secondary"
+          aria-label={label}
+          aria-expanded={open}
+          aria-controls={open ? popoverId : undefined}
+          disabled={disabled || pending}
+          onClick={() => setOpen((v) => !v)}
+        >
+          <Icon name="download" /> {pending ? t('export.inProgress') : t('export.button')}
+        </Button>
+      )}
       {open && (
         <div
           className={styles.popover}
