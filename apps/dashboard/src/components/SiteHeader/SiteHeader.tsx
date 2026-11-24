@@ -206,6 +206,7 @@ export function SiteHeader({
           <div className={styles.project}>
             <Select
               block
+              openUp
               label={t('siteHeader.activeProject')}
               value={selectedProject?.id ?? ''}
               options={projects
