@@ -89,6 +89,18 @@ describe('SkillsHubDashboard — search', () => {
     expect(screen.queryByText('grill-me')).not.toBeInTheDocument();
   });
 
+  it('keeps searching skills that have no description', async () => {
+    mockCatalog({
+      ...CATALOG,
+      externalSkills: [{ ...CATALOG.externalSkills[0]!, description: null }],
+    });
+    await setup();
+    search('acme-deploy');
+    expect(screen.getByText('acme-deploy')).toBeInTheDocument();
+    search('lint');
+    expect(screen.queryByText('acme-deploy')).not.toBeInTheDocument();
+  });
+
   it('filters by source name', async () => {
     await setup();
     search('acme');

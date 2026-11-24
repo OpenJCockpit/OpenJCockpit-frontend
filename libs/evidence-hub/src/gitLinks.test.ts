@@ -9,7 +9,15 @@ describe('gitLinks', () => {
   });
 
   it('has no base for missing, local or malformed URLs', () => {
-    for (const url of [undefined, null, '', '/srv/git/repo', 'file:///repo', 'ssh://x/y']) {
+    for (const url of [
+      undefined,
+      null,
+      '',
+      '/srv/git/repo',
+      'file:///repo',
+      'ssh://x/y',
+      'https://',
+    ]) {
       expect(repoWebUrl(url)).toBeNull();
     }
   });

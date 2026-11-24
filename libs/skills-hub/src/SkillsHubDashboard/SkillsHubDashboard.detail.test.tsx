@@ -128,4 +128,13 @@ describe('SkillDetailPage', () => {
     await clickAsync(screen.getByRole('button', { name: 'Back to skills' }));
     expect(onBack).toHaveBeenCalledTimes(1);
   });
+
+  it('says so when a marketplace skill has no description', async () => {
+    mockCatalog({
+      ...CATALOG,
+      externalSkills: [{ ...CATALOG.externalSkills[0]!, description: null }],
+    });
+    await openPage(`/skills-hub/skills/${MARKETPLACE_ID}/acme-deploy`);
+    expect(screen.getByText('No description provided.')).toBeInTheDocument();
+  });
 });
