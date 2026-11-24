@@ -1,0 +1,25 @@
+.empty {
+  padding: 16px;
+  color: var(--muted);
+}
+.search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 360px;
+  margin-bottom: 20px;
+  & > svg {
+    position: absolute;
+    left: 12px;
+    color: var(--muted);
+    pointer-events: none;
+  }
+}
+.searchInput {
+  flex: 1;
+  padding-left: 36px;
+}
+.panel {
+  padding: 4px 20px 14px;
+  overflow-x: auto;
+}

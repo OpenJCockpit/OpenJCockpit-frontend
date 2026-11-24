@@ -1,38 +1,40 @@
 import { screen } from '@testing-library/react';
-import { renderWithI18n } from '@openjcockpit/i18n/testing';
-import { skillsHubResources } from '../i18n';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SkillsHubDashboard } from './SkillsHubDashboard';
+import { clickAsync, renderAsync } from '../testUtils';
+import { mockCatalog } from './catalogFixture';
+
+vi.mock('@openjcockpit/api', async (importOriginal) =>
+  (await import('../testUtils')).automockApiClients(await importOriginal()),
+);
+
+beforeEach(() => {
+  mockCatalog();
+});
 
 describe('SkillsHubDashboard — Settings entry point', () => {
-  it('renders the Settings control as a real button, not a dead anchor', () => {
-    renderWithI18n(<SkillsHubDashboard onBack={vi.fn()} onSettings={vi.fn()} />, {
-      resources: skillsHubResources,
-    });
+  it('renders the Settings control as a real button, not a dead anchor', async () => {
+    await renderAsync(<SkillsHubDashboard onBack={vi.fn()} onSettings={vi.fn()} />);
 
     const settingsControl = screen.getByRole('button', { name: 'Settings' });
     expect(settingsControl.tagName).toBe('BUTTON');
     expect(settingsControl).not.toHaveAttribute('href');
   });
 
-  it('invokes onSettings when the Settings control is activated', () => {
+  it('invokes onSettings when the Settings control is activated', async () => {
     const onSettings = vi.fn();
-    renderWithI18n(<SkillsHubDashboard onBack={vi.fn()} onSettings={onSettings} />, {
-      resources: skillsHubResources,
-    });
+    await renderAsync(<SkillsHubDashboard onBack={vi.fn()} onSettings={onSettings} />);
 
-    screen.getByRole('button', { name: 'Settings' }).click();
+    await clickAsync(screen.getByRole('button', { name: 'Settings' }));
 
     expect(onSettings).toHaveBeenCalledTimes(1);
   });
 
-  it('invokes onBack when the back control is activated', () => {
+  it('invokes onBack when the back control is activated', async () => {
     const onBack = vi.fn();
-    renderWithI18n(<SkillsHubDashboard onBack={onBack} onSettings={vi.fn()} />, {
-      resources: skillsHubResources,
-    });
+    await renderAsync(<SkillsHubDashboard onBack={onBack} onSettings={vi.fn()} />);
 
-    screen.getByRole('button', { name: 'Back to dashboard' }).click();
+    await clickAsync(screen.getByRole('button', { name: 'Back to dashboard' }));
 
     expect(onBack).toHaveBeenCalledTimes(1);
   });

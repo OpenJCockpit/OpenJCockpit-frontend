@@ -1,9 +1,8 @@
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { renderWithI18n, renderWithPseudoI18n, untranslatedText } from '@openjcockpit/i18n/testing';
-import type { EvidenceEvent, QualityControl } from '@openjcockpit/api';
+import type { QualityControl } from '@openjcockpit/api';
 import { dashboardResources } from '../../i18n';
-import { EvidencePanel } from './EvidencePanel';
 import { QualityPanel } from './QualityPanel';
 
 // The server sends these rows as English text.
@@ -12,17 +11,6 @@ const CONTROLS: QualityControl[] = [
   { name: 'OWASP ZAP', status: 'Compliant', statusText: 'No critical issues' },
   { name: 'Dependency scan', status: 'Compliant', statusText: 'No known vulnerabilities' },
 ];
-const EVENTS: EvidenceEvent[] = [
-  {
-    time: '13:16',
-    title: 'Implementation proposal saved',
-    actor: 'Implementation Agent',
-    status: 'ok',
-  },
-  { time: '13:22', title: 'Human approval logged', actor: 'Review Agent', status: 'ok' },
-  { time: '13:24', title: 'Evidence data recorded', actor: 'Evidence Agent', status: 'ok' },
-];
-
 describe('QualityPanel', () => {
   it('shows the rows as sent in English', () => {
     renderWithI18n(<QualityPanel controls={CONTROLS} />, { resources: dashboardResources });
@@ -42,12 +30,5 @@ describe('QualityPanel', () => {
       { resources: dashboardResources },
     );
     expect(untranslatedText(document.body)).toEqual(['Custom gate']);
-  });
-});
-
-describe('EvidencePanel', () => {
-  it('translates every known event and agent name', () => {
-    renderWithPseudoI18n(<EvidencePanel events={EVENTS} />, { resources: dashboardResources });
-    expect(untranslatedText(document.body, [/^\d{2}:\d{2}$/])).toEqual([]);
   });
 });

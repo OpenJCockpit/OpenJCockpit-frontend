@@ -61,3 +61,9 @@
     }
   }
 }
+
+.check.failed {
+  color: var(--danger);
+  border-color: rgb(var(--danger-rgb) / 0.72);
+  box-shadow: 0 0 18px rgb(var(--danger-rgb) / 0.12);
+}

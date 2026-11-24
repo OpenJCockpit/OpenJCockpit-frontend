@@ -5,6 +5,7 @@ import {
   useHubHeader,
   useHubProject,
 } from '@openjcockpit/hub-contract';
+import { SkillDetailPage } from './SkillsHubDashboard/SkillDetailPage';
 import { SkillsHubDashboard } from './SkillsHubDashboard/SkillsHubDashboard';
 import { WithTranslations } from './registerTranslations';
 
@@ -24,6 +25,11 @@ function DashboardPage() {
   );
 }
 
+function SkillPage() {
+  const navigate = useNavigate();
+  return <SkillDetailPage onBack={() => void navigate(SKILLS_HUB_ROUTE)} header={useHubHeader()} />;
+}
+
 /** Relative to the app route, which the host mounts as `/skills-hub/*`. */
 export const skillsHubRoutes: RouteObject[] = [
   {
@@ -34,6 +40,7 @@ export const skillsHubRoutes: RouteObject[] = [
     ),
     children: [
       { index: true, element: <DashboardPage /> },
+      { path: 'skills/:source/:name', element: <SkillPage /> },
       // Bookmarks of the former in-page settings keep working for one release.
       { path: 'settings', element: <Navigate to={SKILLS_HUB_SETTINGS_PATH} replace /> },
     ],

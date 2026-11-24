@@ -1,15 +1,17 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router';
 import type { ReactNode } from 'react';
 import {
   Icon,
   IconBox,
-  type IconName,
   StatusChip,
   AppShell,
   AppHeader,
   Eyebrow,
   Panel,
   DataTable,
+  LoadingState,
+  StatusMessage,
   fieldHintClass,
   formInputClass,
   cx,
@@ -18,7 +20,7 @@ import {
   pageHeaderClass,
 } from '@openjcockpit/ui';
 import { useTranslation } from '@openjcockpit/i18n';
-import type { StatusKind } from '@openjcockpit/api';
+import { skillDetailPath, useSkillCatalog } from '../useSkillCatalog';
 import styles from './SkillsHubDashboard.module.scss';
 
 interface Props {
@@ -28,50 +30,24 @@ interface Props {
   header?: ReactNode;
 }
 
-type CategoryId = 'dev' | 'ops' | 'security';
-type SkillId = 'grill-me' | 'software-quality';
-
-const CATEGORY_KINDS: Record<CategoryId, StatusKind> = {
-  dev: 'done',
-  ops: 'waiting',
-  security: 'active',
-};
-
-const SKILL_CATALOG: { id: SkillId; icon: IconName; categories: CategoryId[] }[] = [
-  { id: 'grill-me', icon: 'fire', categories: ['security'] },
-  { id: 'software-quality', icon: 'check-circle', categories: ['dev', 'ops'] },
-];
-
 export function SkillsHubDashboard({ onBack, onSettings, header }: Props) {
   const [term, setTerm] = useState('');
   const { t } = useTranslation('skillsHub');
-
-  const skills = useMemo(
-    () =>
-      SKILL_CATALOG.map((skill) => ({
-        id: skill.id,
-        icon: skill.icon,
-        name: t(`dashboard.skills.${skill.id}.name`),
-        description: t(`dashboard.skills.${skill.id}.description`),
-        categories: skill.categories.map((category) => ({
-          id: category,
-          label: t(`dashboard.category.${category}`),
-          kind: CATEGORY_KINDS[category],
-        })),
-      })),
-    [t],
-  );
+  const { query: catalog, skills } = useSkillCatalog();
 
   const visibleSkills = useMemo(() => {
     const needle = term.trim().toLowerCase();
     if (!needle) return skills;
-    return skills.filter(
-      (skill) =>
-        skill.name.toLowerCase().includes(needle) ||
-        skill.description.toLowerCase().includes(needle) ||
-        skill.categories.some((category) => category.label.toLowerCase().includes(needle)),
+    return skills.filter((skill) =>
+      [skill.name, skill.description ?? '', skill.sourceName].some((text) =>
+        text.toLowerCase().includes(needle),
+      ),
     );
   }, [skills, term]);
+
+  const failedSources = (catalog.data?.sources ?? []).flatMap((source) =>
+    source.outcome === 'SUCCESS' ? [] : [{ ...source, outcome: source.outcome }],
+  );
 
   return (
     <AppShell>
@@ -100,44 +76,64 @@ export function SkillsHubDashboard({ onBack, onSettings, header }: Props) {
           />
         </div>
 
-        <Panel as="div" className={styles.skillsHubPanel}>
-          <DataTable className={styles.skillsHubTable}>
-            <thead>
-              <tr>
-                <th>{t('dashboard.columnSkill')}</th>
-                <th>{t('dashboard.columnCategory')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {visibleSkills.map((skill) => (
-                <tr key={skill.id}>
-                  <td>
-                    <div className={styles.skillRow}>
-                      <IconBox label={<Icon name={skill.icon} />} compact />
-                      <div>
-                        <strong>{skill.name}</strong> <span>{skill.description}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div className={styles.skillCategoryTags}>
-                      {skill.categories.map((category) => (
-                        <StatusChip key={category.id} label={category.label} kind={category.kind} />
-                      ))}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {visibleSkills.length === 0 && (
+        {failedSources.map((source) => (
+          <StatusMessage key={`${source.kind}:${source.marketplaceId}`} variant="error">
+            {t('dashboard.sourceFailed', {
+              name: source.name,
+              outcome: t(`dashboard.outcome.${source.outcome}`),
+            })}
+          </StatusMessage>
+        ))}
+
+        {catalog.isPending && <LoadingState>{t('dashboard.loading')}</LoadingState>}
+        {catalog.isError && (
+          <StatusMessage variant="error">{t('dashboard.loadError')}</StatusMessage>
+        )}
+
+        {catalog.isSuccess && (
+          <Panel as="div" className={styles.skillsHubPanel}>
+            <DataTable className={styles.skillsHubTable}>
+              <thead>
                 <tr>
-                  <td colSpan={2} className={fieldHintClass}>
-                    {t('dashboard.noResults', { term })}
-                  </td>
+                  <th>{t('dashboard.columnSkill')}</th>
+                  <th>{t('dashboard.columnSource')}</th>
                 </tr>
-              )}
-            </tbody>
-          </DataTable>
-        </Panel>
+              </thead>
+              <tbody>
+                {visibleSkills.map((skill) => (
+                  <tr key={`${skill.source}/${skill.name}`}>
+                    <td>
+                      <Link
+                        to={skillDetailPath(skill.source, skill.name)}
+                        className={styles.skillRowLink}
+                      >
+                        <span className={styles.skillRow}>
+                          <IconBox label={<Icon name="check-circle" />} compact />
+                          <span>
+                            <strong>{skill.name}</strong> <span>{skill.description}</span>
+                          </span>
+                        </span>
+                      </Link>
+                    </td>
+                    <td>
+                      <StatusChip
+                        label={skill.sourceName}
+                        kind={skill.isLocal ? 'done' : 'active'}
+                      />
+                    </td>
+                  </tr>
+                ))}
+                {visibleSkills.length === 0 && (
+                  <tr>
+                    <td colSpan={2} className={fieldHintClass}>
+                      {term.trim() ? t('dashboard.noResults', { term }) : t('dashboard.empty')}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </DataTable>
+          </Panel>
+        )}
       </main>
     </AppShell>
   );

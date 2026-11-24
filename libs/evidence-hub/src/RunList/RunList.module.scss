@@ -1,0 +1,39 @@
+.table {
+  min-width: 480px;
+  & td {
+    vertical-align: middle;
+  }
+}
+.row {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 12px;
+  align-items: center;
+  & > span strong {
+    display: block;
+    font-size: 14px;
+  }
+  & > span span {
+    display: block;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+  & > span .failedBadge {
+    color: var(--danger);
+  }
+}
+.rowLink {
+  all: unset;
+  display: block;
+  width: 100%;
+  cursor: pointer;
+  &:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 4px;
+    border-radius: 6px;
+  }
+}
+.failedBadge {
+  font-size: 12px;
+}

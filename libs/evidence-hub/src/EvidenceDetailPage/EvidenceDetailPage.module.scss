@@ -1,0 +1,9 @@
+.detail {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.empty {
+  padding: 16px;
+  color: var(--muted);
+}

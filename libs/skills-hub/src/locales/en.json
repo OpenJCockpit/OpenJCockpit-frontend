@@ -12,24 +12,38 @@
       "settings": "Settings",
       "searchPlaceholder": "Search for a skill…",
       "searchLabel": "Search for a skill",
-      "columnCategory": "Category",
       "columnSkill": "Skill",
       "noResults": "No skills found for \"{{term}}\".",
-      "category": {
-        "dev": "Dev",
-        "ops": "Ops",
-        "security": "Security"
-      },
-      "skills": {
-        "grill-me": {
-          "name": "Grill Me",
-          "description": "Adversarial review that stress-tests code and design decisions before they ship."
-        },
-        "software-quality": {
-          "name": "Software Quality",
-          "description": "Automated linting, test coverage, and quality-gate checks across the delivery pipeline."
-        }
+      "columnSource": "Source",
+      "sourceLocal": "Local",
+      "loading": "Loading skills…",
+      "loadError": "Could not load the skill catalogue.",
+      "empty": "No skills available yet.",
+      "sourceFailed": "{{name}} could not be loaded: {{outcome}}.",
+      "outcome": {
+        "AUTH_FAILED": "authentication failed",
+        "UNREACHABLE": "unreachable",
+        "TIMEOUT": "timed out",
+        "INVALID_RESPONSE": "invalid response",
+        "BLOCKED_BY_POLICY": "blocked by policy",
+        "CONFIG_ERROR": "configuration error"
       }
+    },
+    "detail": {
+      "description": "Description",
+      "noDescription": "No description provided.",
+      "inputContract": "Input contract",
+      "outputContract": "Output contract",
+      "executionInstructions": "Execution instructions",
+      "policyNotes": "Policy / validation notes",
+      "mcpTools": "MCP tools",
+      "noMcpTools": "No MCP tools.",
+      "externalNote": "Marketplace skills only expose a name and description; no further details are available.",
+      "backTitle": "Back to skills",
+      "notFound": "This skill is no longer available.",
+      "loading": "Loading skill…",
+      "loadError": "Could not load the skill.",
+      "allSkills": "All skills"
     },
     "settings": {
       "loading": "Loading marketplaces…",

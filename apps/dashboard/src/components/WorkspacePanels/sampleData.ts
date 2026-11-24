@@ -1,7 +1,7 @@
 import type { TFunction } from '@openjcockpit/i18n';
 
 /**
- * The server sends the Quality and Evidence sample rows as English text. Known rows are translated
+ * The server sends the Quality sample rows as English text. Known rows are translated
  * here by their text; anything else (a real value, a number) is shown as sent.
  */
 const KEYS: Record<string, Record<string, string>> = {
@@ -21,22 +21,6 @@ const KEYS: Record<string, Record<string, string>> = {
     'No known vulnerabilities': 'quality.details.noKnownVulnerabilities',
     '0 deviations': 'quality.details.noDeviations',
   },
-  'evidence.events': {
-    'Spec loaded': 'evidence.events.specLoaded',
-    'Impact analysis recorded': 'evidence.events.impactAnalysisRecorded',
-    'Test set generated': 'evidence.events.testSetGenerated',
-    'Implementation proposal saved': 'evidence.events.implementationProposalSaved',
-    'Human approval logged': 'evidence.events.humanApprovalLogged',
-    'Evidence data recorded': 'evidence.events.evidenceDataRecorded',
-  },
-  'evidence.actors': {
-    'Requirement Agent': 'evidence.actors.requirement',
-    'Impact Analysis Agent': 'evidence.actors.impact',
-    'Test Design Agent': 'evidence.actors.testDesign',
-    'Implementation Agent': 'evidence.actors.implementation',
-    'Review Agent': 'evidence.actors.review',
-    'Evidence Agent': 'evidence.actors.evidence',
-  },
 };
 
 function sampleLabel(t: TFunction<'dashboard'>, group: string, raw: string) {
@@ -48,7 +32,3 @@ export const controlName = (t: TFunction<'dashboard'>, raw: string) =>
   sampleLabel(t, 'quality.controls', raw);
 export const controlDetail = (t: TFunction<'dashboard'>, raw: string) =>
   sampleLabel(t, 'quality.details', raw);
-export const eventTitle = (t: TFunction<'dashboard'>, raw: string) =>
-  sampleLabel(t, 'evidence.events', raw);
-export const actorName = (t: TFunction<'dashboard'>, raw: string) =>
-  sampleLabel(t, 'evidence.actors', raw);

@@ -4,6 +4,17 @@ import { queryKeys } from './queryKeys';
 describe('queryKeys', () => {
   it('builds project-scoped keys', () => {
     expect(queryKeys.workspace('c1')).toEqual(['workspace', 'c1']);
+    expect(queryKeys.evidenceRuns('p1')).toEqual(['evidence', 'p1', 'runs']);
+    expect(queryKeys.evidenceRun('p1', 'r1')).toEqual(['evidence', 'p1', 'run', 'r1']);
+    expect(queryKeys.evidenceLatest('p1')).toEqual(['evidence', 'p1', 'latest']);
+    expect(queryKeys.evidenceOutput('p1', 'r1', 'a')).toEqual([
+      'evidence',
+      'p1',
+      'run',
+      'r1',
+      'output',
+      'a',
+    ]);
     expect(queryKeys.projectSpecs('p1')).toEqual(['project-specs', 'p1']);
     expect(queryKeys.projectSpecFiles('p1')).toEqual(['project-specs', 'p1', 'files']);
     expect(queryKeys.specQueue('p1')).toEqual(['spec-queue', 'p1', 'queue']);

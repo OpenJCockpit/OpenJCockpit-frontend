@@ -20,10 +20,6 @@ vi.mock('@openjcockpit/api', async (importOriginal) => ({
 
 const PROJECT = { id: 'p1', name: 'Demo', customerId: 'c1' } as Project;
 const WORKSPACE = {
-  evidenceEvents: [
-    { time: '13:16', title: 'Spec loaded', actor: 'Requirement Agent', status: 'ok' },
-    { time: '13:22', title: 'Human approval logged', actor: 'Review Agent', status: 'ok' },
-  ],
   qualityControls: [
     { name: 'Unit test coverage', status: 'Compliant', statusText: '92%' },
     { name: 'Custom gate', status: 'Compliant', statusText: '' },

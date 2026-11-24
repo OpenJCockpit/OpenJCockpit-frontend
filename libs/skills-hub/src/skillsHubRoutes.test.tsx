@@ -22,8 +22,16 @@ function Where() {
   return <p data-testid="where">{useLocation().pathname}</p>;
 }
 
-async function renderApp(options: { at: string; selected?: boolean; header?: boolean }) {
+async function renderApp(options: {
+  at: string;
+  selected?: boolean;
+  header?: boolean;
+  catalog?: api.SkillCatalog;
+}) {
   vi.mocked(api.listSkillsMarketplaces).mockResolvedValue([]);
+  vi.mocked(api.getSkillCatalog).mockResolvedValue(
+    options.catalog ?? { localSkills: [], externalSkills: [], sources: [] },
+  );
   const router = createMemoryRouter(
     [
       { path: '/skills-hub', children: skillsHubRoutes },
@@ -86,6 +94,32 @@ describe('skillsHubRoutes', () => {
     const router = await renderApp({ at: '/skills-hub' });
     await clickAsync(screen.getByTitle('Skills Hub settings'));
     expect(router.state.location.pathname).toBe('/settings/skills-hub');
+  });
+
+  it('serves the skill detail page on its own URL', async () => {
+    const catalog = {
+      localSkills: [
+        {
+          name: 'grill-me',
+          description: 'Review.',
+          inputContract: 'A diff',
+          outputContract: 'Objections',
+          executionInstructions: 'Challenge.',
+          mcpTools: [],
+        },
+      ],
+      externalSkills: [],
+      sources: [],
+    };
+    await renderApp({ at: '/skills-hub/skills/local/grill-me', catalog });
+    expect(await screen.findByRole('heading', { name: 'grill-me' })).toBeInTheDocument();
+    expect(await screen.findByText('A diff')).toBeInTheDocument();
+  });
+
+  it('goes back from the skill detail page to the list', async () => {
+    const router = await renderApp({ at: '/skills-hub/skills/local/grill-me' });
+    await clickAsync(screen.getByTitle('Back to skills'));
+    expect(router.state.location.pathname).toBe('/skills-hub');
   });
 
   it('redirects the former in-page settings route to the host settings', async () => {

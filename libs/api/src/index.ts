@@ -7,6 +7,8 @@ export * from './projects/projectsApi';
 export * from './specs/specsApi';
 export * from './skills-marketplace/skillsMarketplaceApi';
 export * from './workspace/workspaceApi';
+export * from './evidence/evidenceApi';
+export * from './evidence/evidenceTypes';
 export * from './workflow/workflowApi';
 export * from './workflow/workflowTypes';
 export * from './workflow/workflowVisibility';

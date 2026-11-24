@@ -12,24 +12,38 @@
       "settings": "Einstellungen",
       "searchPlaceholder": "Nach einem Skill suchen…",
       "searchLabel": "Nach einem Skill suchen",
-      "columnCategory": "Kategorie",
       "columnSkill": "Skill",
       "noResults": "Keine Skills für „{{term}}“ gefunden.",
-      "category": {
-        "dev": "Dev",
-        "ops": "Ops",
-        "security": "Sicherheit"
-      },
-      "skills": {
-        "grill-me": {
-          "name": "Grill Me",
-          "description": "Kritische Überprüfung, die Code und Designentscheidungen vor der Auslieferung auf die Probe stellt."
-        },
-        "software-quality": {
-          "name": "Softwarequalität",
-          "description": "Automatisiertes Linting, Testabdeckung und Quality-Gate-Prüfungen in der gesamten Delivery-Pipeline."
-        }
+      "columnSource": "Quelle",
+      "sourceLocal": "Lokal",
+      "loading": "Skills werden geladen…",
+      "loadError": "Der Skill-Katalog konnte nicht geladen werden.",
+      "empty": "Noch keine Skills verfügbar.",
+      "sourceFailed": "{{name}} konnte nicht geladen werden: {{outcome}}.",
+      "outcome": {
+        "AUTH_FAILED": "Authentifizierung fehlgeschlagen",
+        "UNREACHABLE": "nicht erreichbar",
+        "TIMEOUT": "Zeitüberschreitung",
+        "INVALID_RESPONSE": "ungültige Antwort",
+        "BLOCKED_BY_POLICY": "durch Richtlinie blockiert",
+        "CONFIG_ERROR": "Konfigurationsfehler"
       }
+    },
+    "detail": {
+      "description": "Beschreibung",
+      "noDescription": "Keine Beschreibung angegeben.",
+      "inputContract": "Eingabevertrag",
+      "outputContract": "Ausgabevertrag",
+      "executionInstructions": "Ausführungsanweisungen",
+      "policyNotes": "Richtlinien-/Validierungshinweise",
+      "mcpTools": "MCP-Tools",
+      "noMcpTools": "Keine MCP-Tools.",
+      "externalNote": "Marketplace-Skills enthalten nur Name und Beschreibung; weitere Details sind nicht verfügbar.",
+      "backTitle": "Zurück zu den Skills",
+      "notFound": "Dieser Skill ist nicht mehr verfügbar.",
+      "loading": "Skill wird geladen…",
+      "loadError": "Der Skill konnte nicht geladen werden.",
+      "allSkills": "Alle Skills"
     },
     "settings": {
       "loading": "Marktplätze werden geladen…",

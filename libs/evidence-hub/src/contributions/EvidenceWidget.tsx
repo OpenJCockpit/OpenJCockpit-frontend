@@ -1,23 +1,30 @@
 import { useTranslation } from '@openjcockpit/i18n';
 import { QueryState } from '@openjcockpit/ui';
-import { EvidenceList } from '../EvidenceList/EvidenceList';
+import { EvidenceTimeline } from '../EvidenceTimeline/EvidenceTimeline';
 import { WithTranslations } from '../registerTranslations';
-import { useWorkspace } from '../useWorkspace';
+import { useLatestEvidence } from '../useLatestEvidence';
+
+/** Newest events the dashboard widget shows. */
+const WIDGET_EVENTS = 5;
 
 function Content() {
   const { t } = useTranslation('evidence');
-  const workspace = useWorkspace();
-  if (!workspace.hasProject) {
+  const latest = useLatestEvidence();
+  if (!latest.hasProject) {
     return <p data-testid="evidence-widget-no-project">{t('noProject')}</p>;
   }
+  const noRuns = <p data-testid="evidence-widget-empty">{t('noRuns')}</p>;
   return (
     <QueryState
-      query={workspace}
+      query={latest}
       loadFailed={t('failed')}
       retryLabel={t('retry')}
       loadingLabel={t('loading')}
+      none={noRuns}
+      isEmpty={(run) => run.events.length === 0}
+      empty={noRuns}
     >
-      {(data) => <EvidenceList events={data.evidenceEvents} limit={3} />}
+      {(run) => <EvidenceTimeline events={run.events} limit={WIDGET_EVENTS} />}
     </QueryState>
   );
 }

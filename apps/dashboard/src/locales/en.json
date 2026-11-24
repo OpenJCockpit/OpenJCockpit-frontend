@@ -177,26 +177,6 @@
       "preview": "Preview",
       "viewAllCount": "View all specs ({{count}})"
     },
-    "evidence": {
-      "title": "Execution evidence",
-      "by": "By: {{actor}}",
-      "events": {
-        "specLoaded": "Spec loaded",
-        "impactAnalysisRecorded": "Impact analysis recorded",
-        "testSetGenerated": "Test set generated",
-        "implementationProposalSaved": "Implementation proposal saved",
-        "humanApprovalLogged": "Human approval logged",
-        "evidenceDataRecorded": "Evidence data recorded"
-      },
-      "actors": {
-        "requirement": "Requirement Agent",
-        "impact": "Impact Analysis Agent",
-        "testDesign": "Test Design Agent",
-        "implementation": "Implementation Agent",
-        "review": "Review Agent",
-        "evidence": "Evidence Agent"
-      }
-    },
     "quality": {
       "title": "Quality status",
       "controls": {

@@ -4,7 +4,6 @@ import type { Project } from '@openjcockpit/api';
 import { CustomerHero } from '../CustomerHero/CustomerHero';
 import { SiteHeader } from '../SiteHeader/SiteHeader';
 import { SpecWorkspace } from '../SpecWorkspace/SpecWorkspace';
-import { EvidencePanel } from '../WorkspacePanels/EvidencePanel';
 import { QualityPanel } from '../WorkspacePanels/QualityPanel';
 import { useWorkspaceQuery } from './useDashboardQueries';
 import styles from './DashboardView.module.scss';
@@ -52,12 +51,7 @@ export function DashboardView({ projects, project, onProjectChange, onLogout, us
             <SpecWorkspace project={project} />
           </Panel>
 
-          {workspace && (
-            <>
-              <QualityPanel controls={workspace.qualityControls} />
-              <EvidencePanel events={workspace.evidenceEvents} />
-            </>
-          )}
+          {workspace && <QualityPanel controls={workspace.qualityControls} />}
         </section>
       </main>
     </AppShell>
