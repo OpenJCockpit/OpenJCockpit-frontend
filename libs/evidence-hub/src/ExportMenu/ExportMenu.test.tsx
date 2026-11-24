@@ -59,4 +59,29 @@ describe('ExportMenu', () => {
     expect(screen.getByText('Exporting…')).toBeInTheDocument();
     expect(screen.getByRole('alert')).toHaveTextContent('The export failed. Try again.');
   });
+
+  it('offers no date range unless asked', () => {
+    const onExport = renderMenu();
+    open();
+    expect(screen.queryByLabelText('From')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByText('CSV (timeline events)'));
+    expect(onExport).toHaveBeenLastCalledWith('csv', false);
+  });
+
+  it('passes the chosen dates with dateRange', () => {
+    const onExport = renderMenu({ dateRange: true });
+    open();
+    fireEvent.change(screen.getByLabelText('From'), { target: { value: '2026-11-01' } });
+    fireEvent.click(screen.getByText('JSON (full data)'));
+    expect(onExport).toHaveBeenCalledWith('json', false, { from: '2026-11-01', to: undefined });
+  });
+
+  it('shows progress with a cancel button, and the expired error', () => {
+    const onCancel = vi.fn();
+    renderMenu({ progress: { runsDone: 12, runsTotal: 80 }, onCancel, error: 'expired' });
+    expect(screen.getByRole('status')).toHaveTextContent('12 of 80 runs');
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel export' }));
+    expect(onCancel).toHaveBeenCalled();
+    expect(screen.getByRole('alert')).toHaveTextContent('This export has expired');
+  });
 });

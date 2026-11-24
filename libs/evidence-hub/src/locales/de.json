@@ -25,6 +25,8 @@
       "columnActions": "Aktionen",
       "search": "Durchläufe suchen",
       "searchPlaceholder": "Workflow, Status, Person oder Branch",
+      "workflowFilter": "Nach Workflow filtern",
+      "allWorkflows": "Alle Workflows",
       "noMatches": "Keine Durchläufe entsprechen der Suche.",
       "title": "Frühere Läufe",
       "loadMore": "Mehr laden",

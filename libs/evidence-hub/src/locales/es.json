@@ -25,6 +25,8 @@
       "columnActions": "Acciones",
       "search": "Buscar ejecuciones",
       "searchPlaceholder": "Workflow, estado, persona o rama",
+      "workflowFilter": "Filtrar por flujo de trabajo",
+      "allWorkflows": "Todos los flujos de trabajo",
       "noMatches": "Ninguna ejecución coincide con la búsqueda.",
       "title": "Ejecuciones anteriores",
       "loadMore": "Cargar más",

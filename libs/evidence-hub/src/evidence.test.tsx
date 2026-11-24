@@ -1,9 +1,10 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as api from '@openjcockpit/api';
 import type {
+  EvidenceExportJob,
   EvidenceRun,
   EvidenceRunPage,
   EvidenceTimelineEvent,
@@ -26,6 +27,10 @@ vi.mock('@openjcockpit/api', async (importOriginal) => ({
   loadLatestEvidenceRun: vi.fn(),
   loadEvidenceOutput: vi.fn(),
   exportEvidenceRun: vi.fn(),
+  createEvidenceExport: vi.fn(),
+  getEvidenceExport: vi.fn(),
+  downloadEvidenceExport: vi.fn(),
+  cancelEvidenceExport: vi.fn(),
 }));
 
 vi.mock('./saveBlob', () => ({ saveBlob: vi.fn() }));
@@ -226,6 +231,153 @@ describe('evidenceApp', () => {
       expect(screen.getAllByRole('link')).toHaveLength(2);
       expect(screen.queryByText('r1 first')).not.toBeInTheDocument();
       expect(api.loadEvidenceRun).not.toHaveBeenCalled();
+    });
+
+    describe('bulk export', () => {
+      const job = (
+        status: EvidenceExportJob['status'],
+        runsDone = 0,
+        extra: Partial<EvidenceExportJob> = {},
+      ): EvidenceExportJob => ({
+        jobId: 'j1',
+        status,
+        progress: { runsDone, runsTotal: 3 },
+        ...extra,
+      });
+      const exportAll = async (
+        name = 'Export all runs of the project',
+        format = 'CSV (timeline events)',
+      ) => {
+        fireEvent.click(await screen.findByRole('button', { name }));
+        fireEvent.click(screen.getByText(format));
+      };
+      beforeEach(() => {
+        sessionStorage.clear();
+        vi.mocked(api.loadEvidenceRuns).mockResolvedValue(PAGE1);
+        vi.mocked(api.createEvidenceExport).mockReset();
+        vi.mocked(api.getEvidenceExport).mockReset();
+        vi.mocked(api.downloadEvidenceExport).mockReset();
+        vi.mocked(api.cancelEvidenceExport).mockReset().mockResolvedValue(undefined);
+        vi.mocked(saveBlob).mockClear();
+        vi.mocked(api.createEvidenceExport).mockResolvedValue({ jobId: 'j1', status: 'queued' });
+      });
+
+      it('exports the project, shows progress while polling and saves the file once when done', async () => {
+        vi.mocked(api.getEvidenceExport)
+          .mockResolvedValueOnce(job('running', 1))
+          .mockResolvedValue(job('done', 3, { filename: 'evidence-demo-all.csv' }));
+        const blob = new Blob(['a']);
+        vi.mocked(api.downloadEvidenceExport).mockResolvedValue({
+          blob,
+          filename: 'evidence-demo-all.csv',
+        });
+        await renderPage();
+        await exportAll();
+        expect(api.createEvidenceExport).toHaveBeenCalledWith('p1', {
+          scope: 'project',
+          workflowId: null,
+          format: 'csv',
+          includeOutputs: false,
+          from: null,
+          to: null,
+        });
+        expect(await screen.findByText(/1 of 3 runs/)).toBeInTheDocument();
+        await waitFor(() => expect(saveBlob).toHaveBeenCalledWith(blob, 'evidence-demo-all.csv'), {
+          timeout: 4000,
+        });
+        expect(saveBlob).toHaveBeenCalledTimes(1);
+        expect(api.downloadEvidenceExport).toHaveBeenCalledTimes(1);
+        await waitFor(() =>
+          expect(
+            screen.getByRole('button', { name: 'Export all runs of the project' }),
+          ).toBeEnabled(),
+        );
+        expect(sessionStorage.getItem('evidence-export-job:p1')).toBeNull();
+      });
+
+      it('exports one workflow, with a date range, when the list is filtered to it', async () => {
+        vi.mocked(api.loadEvidenceRuns).mockResolvedValue({
+          ...PAGE1,
+          items: [summary('r1'), summary('r3', { workflowId: 'review-only' })],
+        });
+        vi.mocked(api.getEvidenceExport).mockResolvedValue(job('running', 0));
+        await renderPage();
+        expect(
+          await screen.findByRole('button', { name: 'Export all runs of the project' }),
+        ).toBeInTheDocument();
+        fireEvent.click(screen.getByRole('combobox', { name: 'Filter by workflow' }));
+        fireEvent.click(screen.getByRole('option', { name: 'review-only' }));
+        fireEvent.click(
+          await screen.findByRole('button', { name: 'Export all runs of review-only' }),
+        );
+        fireEvent.change(screen.getByLabelText('From'), { target: { value: '2026-11-01' } });
+        fireEvent.change(screen.getByLabelText('To'), { target: { value: '2026-11-30' } });
+        fireEvent.click(screen.getByLabelText('Include agent outputs'));
+        fireEvent.click(screen.getByText('JSON (full data)'));
+        await waitFor(() =>
+          expect(api.createEvidenceExport).toHaveBeenCalledWith('p1', {
+            scope: 'workflow',
+            workflowId: 'review-only',
+            format: 'json',
+            includeOutputs: true,
+            from: '2026-11-01T00:00:00Z',
+            to: '2026-11-30T23:59:59Z',
+          }),
+        );
+      });
+
+      it('cancels the job and stops polling', async () => {
+        vi.mocked(api.getEvidenceExport).mockResolvedValue(job('running', 1));
+        await renderPage();
+        await exportAll();
+        fireEvent.click(await screen.findByRole('button', { name: 'Cancel export' }));
+        await waitFor(() => expect(api.cancelEvidenceExport).toHaveBeenCalledWith('p1', 'j1'));
+        await waitFor(() => expect(screen.queryByText(/of 3 runs/)).not.toBeInTheDocument());
+        const calls = vi.mocked(api.getEvidenceExport).mock.calls.length;
+        await new Promise((r) => setTimeout(r, 1300));
+        expect(vi.mocked(api.getEvidenceExport).mock.calls.length).toBe(calls);
+        expect(saveBlob).not.toHaveBeenCalled();
+      });
+
+      it('shows an error for a failed job and allows a retry', async () => {
+        vi.mocked(api.getEvidenceExport).mockResolvedValueOnce(job('failed', 1, { error: 'x' }));
+        await renderPage();
+        await exportAll();
+        expect(await screen.findByRole('alert')).toHaveTextContent('The export failed');
+        vi.mocked(api.createEvidenceExport).mockResolvedValue({ jobId: 'j2', status: 'queued' });
+        vi.mocked(api.getEvidenceExport).mockResolvedValue({ ...job('running', 0), jobId: 'j2' });
+        await exportAll();
+        expect(await screen.findByText(/0 of 3 runs/)).toBeInTheDocument();
+        expect(api.createEvidenceExport).toHaveBeenCalledTimes(2);
+      });
+
+      it('shows an error when too many exports run (429)', async () => {
+        vi.mocked(api.createEvidenceExport).mockRejectedValue(new api.ApiError('busy', 429));
+        await renderPage();
+        await exportAll();
+        expect(await screen.findByRole('alert')).toHaveTextContent('Too many exports are running');
+        expect(
+          screen.getByRole('button', { name: 'Export all runs of the project' }),
+        ).toBeEnabled();
+      });
+
+      it('shows an expired error when the download answers 410', async () => {
+        vi.mocked(api.getEvidenceExport).mockResolvedValue(job('done', 3));
+        vi.mocked(api.downloadEvidenceExport).mockRejectedValue(new api.ApiError('gone', 410));
+        await renderPage();
+        await exportAll();
+        expect(await screen.findByRole('alert')).toHaveTextContent('This export has expired');
+        expect(saveBlob).not.toHaveBeenCalled();
+      });
+
+      it('resumes the active job after a reload', async () => {
+        sessionStorage.setItem('evidence-export-job:p1', 'j1');
+        vi.mocked(api.getEvidenceExport).mockResolvedValue(job('running', 2));
+        await renderPage();
+        expect(await screen.findByText(/2 of 3 runs/)).toBeInTheDocument();
+        expect(api.getEvidenceExport).toHaveBeenCalledWith('p1', 'j1', expect.anything());
+        expect(api.createEvidenceExport).not.toHaveBeenCalled();
+      });
     });
 
     it('shows a run with summary and grouped timeline on its own route', async () => {

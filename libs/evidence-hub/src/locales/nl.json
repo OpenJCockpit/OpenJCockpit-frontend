@@ -25,6 +25,8 @@
       "columnActions": "Acties",
       "search": "Runs zoeken",
       "searchPlaceholder": "Workflow, status, persoon of branch",
+      "workflowFilter": "Filter op workflow",
+      "allWorkflows": "Alle workflows",
       "noMatches": "Geen runs gevonden voor deze zoekopdracht.",
       "title": "Eerdere runs",
       "loadMore": "Meer laden",

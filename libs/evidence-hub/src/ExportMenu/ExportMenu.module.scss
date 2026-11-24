@@ -36,3 +36,38 @@
   color: var(--danger);
   font-size: 13px;
 }
+
+.dates {
+  display: grid;
+  gap: 6px;
+  margin: 6px 0 0;
+  padding: 8px 2px 0;
+  font-size: 13px;
+  border: 0;
+  border-top: 1px solid var(--line-strong);
+  legend {
+    padding: 0 4px;
+    color: var(--muted);
+  }
+  label {
+    display: grid;
+    gap: 2px;
+  }
+}
+.progress {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+.cancel {
+  padding: 0;
+  color: var(--text);
+  font: inherit;
+  text-decoration: underline;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}

@@ -25,6 +25,8 @@
       "columnActions": "Actions",
       "search": "Search runs",
       "searchPlaceholder": "Workflow, status, person or branch",
+      "workflowFilter": "Filter by workflow",
+      "allWorkflows": "All workflows",
       "noMatches": "No runs match your search.",
       "title": "Past runs",
       "loadMore": "Load more",

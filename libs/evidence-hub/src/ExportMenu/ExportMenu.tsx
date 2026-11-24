@@ -1,21 +1,39 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import type { EvidenceExportFormat } from '@openjcockpit/api';
+import type { EvidenceExportFormat, EvidenceExportProgress } from '@openjcockpit/api';
 import { useTranslation } from '@openjcockpit/i18n';
-import { Button, CheckboxField, Icon, IconButton } from '@openjcockpit/ui';
+import { Button, CheckboxField, formInputClass, Icon, IconButton } from '@openjcockpit/ui';
 import styles from './ExportMenu.module.scss';
 
 const FORMATS: EvidenceExportFormat[] = ['json', 'csv', 'markdown', 'pdf'];
 /** CSV only carries the `outputRef`, so the toggle does not apply to it. */
 const OUTPUT_FORMATS = new Set<EvidenceExportFormat>(['json', 'markdown', 'pdf']);
 
+export type ExportError = boolean | 'failed' | 'expired' | 'tooManyJobs';
+
+/** Optional date bounds (`YYYY-MM-DD` from the date inputs) for multi-run scopes. */
+export interface ExportDateRange {
+  from?: string;
+  to?: string;
+}
+
 interface Props {
   /** Translated name of what is exported, used as the button's accessible label. */
   label: string;
-  /** Called with the chosen format; `includeOutputs` is always false for csv. */
-  onExport: (format: EvidenceExportFormat, includeOutputs: boolean) => void;
+  /** Called with the chosen format; `includeOutputs` is always false for csv. `range` only with `dateRange`. */
+  onExport: (
+    format: EvidenceExportFormat,
+    includeOutputs: boolean,
+    range?: ExportDateRange,
+  ) => void;
   pending?: boolean;
-  /** Shows an inline error under the button. */
-  error?: boolean;
+  /** Shows an inline error under the button; `true` means the generic failure. */
+  error?: ExportError;
+  /** Offers optional from/to dates (workflow and project scope). */
+  dateRange?: boolean;
+  /** Shows "12 of 80 runs" while a job runs. */
+  progress?: EvidenceExportProgress;
+  /** Shows a cancel button while a job runs. */
+  onCancel?: () => void;
   disabled?: boolean;
   /** Icon-only trigger for table rows; `label` stays the accessible name and tooltip. */
   compact?: boolean;
@@ -27,12 +45,17 @@ export function ExportMenu({
   onExport,
   pending = false,
   error = false,
+  dateRange = false,
+  progress,
+  onCancel,
   disabled,
   compact = false,
 }: Props) {
   const { t } = useTranslation('evidence');
   const [open, setOpen] = useState(false);
   const [includeOutputs, setIncludeOutputs] = useState(false);
+  const [from, setFrom] = useState('');
+  const [to, setTo] = useState('');
   const root = useRef<HTMLDivElement>(null);
   const popoverId = useId();
 
@@ -54,7 +77,9 @@ export function ExportMenu({
 
   const choose = (format: EvidenceExportFormat) => {
     setOpen(false);
-    onExport(format, includeOutputs && OUTPUT_FORMATS.has(format));
+    const outputs = includeOutputs && OUTPUT_FORMATS.has(format);
+    if (dateRange) onExport(format, outputs, { from: from || undefined, to: to || undefined });
+    else onExport(format, outputs);
   };
 
   return (
@@ -102,11 +127,46 @@ export function ExportMenu({
             checked={includeOutputs}
             onChange={setIncludeOutputs}
           />
+          {dateRange && (
+            <fieldset className={styles.dates}>
+              <legend>{t('export.dateRange')}</legend>
+              <label>
+                {t('export.dateFrom')}
+                <input
+                  className={formInputClass}
+                  type="date"
+                  value={from}
+                  max={to || undefined}
+                  onChange={(e) => setFrom(e.target.value)}
+                />
+              </label>
+              <label>
+                {t('export.dateTo')}
+                <input
+                  className={formInputClass}
+                  type="date"
+                  value={to}
+                  min={from || undefined}
+                  onChange={(e) => setTo(e.target.value)}
+                />
+              </label>
+            </fieldset>
+          )}
         </div>
+      )}
+      {progress && (
+        <p className={styles.progress} role="status">
+          {t('export.progress', { done: progress.runsDone, total: progress.runsTotal })}
+          {onCancel && (
+            <button type="button" className={styles.cancel} onClick={onCancel}>
+              {t('export.cancel')}
+            </button>
+          )}
+        </p>
       )}
       {error && (
         <p className={styles.error} role="alert">
-          {t('export.failed')}
+          {t(error === 'expired' || error === 'tooManyJobs' ? `export.${error}` : 'export.failed')}
         </p>
       )}
     </div>
