@@ -103,6 +103,36 @@ describe('WorkflowOverview', () => {
     });
   });
 
+  it('sends the selected project with the start so ai-control can prepare a git workspace', async () => {
+    vi.mocked(workflowApi.listWorkflows).mockResolvedValue([WORKFLOW]);
+    mockStartResponse('wf-1', 'run-1', 'RUNNING', 'started');
+
+    await renderAsync(
+      <WorkflowOverview
+        project={{
+          id: 'p1',
+          name: 'Acme',
+          gitUrl: 'https://github.com/org/repo.git',
+          active: 1,
+          newProject: 0,
+          gitStatus: 'ACCESSIBLE',
+          createdAt: '2026-01-01T00:00:00Z',
+          updatedAt: '2026-01-01T00:00:00Z',
+        }}
+      />,
+    );
+    await screen.findByText('Customer Onboarding');
+
+    await clickAsync(screen.getByText('Start'));
+
+    await waitFor(() => {
+      expect(workflowApi.startWorkflow).toHaveBeenCalledWith('wf-1', {
+        repositoryUrl: 'https://github.com/org/repo.git',
+        projectId: 'p1',
+      });
+    });
+  });
+
   it('asks for a prompt in a themed dialog when the workflow requires one', async () => {
     const promptWorkflow: WorkflowDefinition = {
       ...WORKFLOW,

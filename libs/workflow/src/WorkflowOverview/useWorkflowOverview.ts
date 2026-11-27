@@ -140,7 +140,14 @@ export function useWorkflowOverview(
     setStartingId(workflow.id);
     setFeedback((prev) => ({ ...prev, [workflow.id]: '' }));
     try {
-      const result = await startWorkflow(workflow.id, input);
+      // A run on a project works in a git workspace prepared by ai-control (branch per run,
+      // checkpoint commits); starting without the project id/repository makes ai-control start a
+      // plain run, and any git tool the workflow declares is then unavailable to the agent.
+      const result = await startWorkflow(workflow.id, {
+        ...input,
+        repositoryUrl: project?.gitUrl,
+        projectId: project?.id,
+      });
       setPromptWorkflow(null);
       setFeedback((prev) => ({
         ...prev,
